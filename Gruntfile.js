@@ -4,14 +4,14 @@
   * Gruntfile.js
   *
   * changelog
-  * 2014-04-15[21:21:21]:authorized
-  * 2014-05-04[10:58:33]:clean
+  * 2014-05-24[20:41:37]:authorized
   *
-  * @info yinyong,osx-x64,UTF-8,10.129.164.4,js,/Users/yinyong/work/jsonData/clo
+  * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe
   * @author yanni4night@gmail.com
-  * @version 0.1.1
+  * @version 0.1.0
   * @since 0.1.0
   */
+
 var fs = require('fs');
 
 module.exports = function(grunt) {
@@ -84,7 +84,16 @@ module.exports = function(grunt) {
             }
 
         },
-        copy: {},
+        copy: {
+            html:{
+                files: [{
+                    expand: true,
+                    cwd: 'template/',
+                    src: ['*.html'],
+                    dest: BUILD_DIR
+                }]
+            }
+        },
         imagemin: {
             images: {
                 files: [{
@@ -96,8 +105,8 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            build: {
-                files: ['static/js/**/*.js', 'static/css/**/*.less', 'template/**/*.html', '_data/**/*.json'],
+            js: {
+                files: ['static/js/**/*.js','template/**/*.html'],
                 tasks: ['default']
             }
         },
@@ -153,25 +162,36 @@ module.exports = function(grunt) {
                     debug: true
                 }
             }
+        },
+        browserify:{
+            dist: {
+                files: {
+                    'build/sogou.js': ['static/js/**/*.js'],
+                },
+                options: {
+                    
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-twig-render');
+    //grunt.loadNpmTasks('grunt-contrib-uglify');
+    //grunt.loadNpmTasks('grunt-twig-render');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-regex-replace');
-    grunt.loadNpmTasks('grunt-contrib-less');
+    //grunt.loadNpmTasks('grunt-contrib-cssmin');
+    //grunt.loadNpmTasks('grunt-regex-replace');
+    //grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    //grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-web-stamp');
+    //grunt.loadNpmTasks('grunt-contrib-imagemin');
+    //grunt.loadNpmTasks('grunt-web-stamp');
     grunt.loadNpmTasks('grunt-express-server');
-    grunt.loadNpmTasks('grunt-shell');
+    //grunt.loadNpmTasks('grunt-shell');
+    grunt.loadNpmTasks('grunt-browserify');
 
 
-    grunt.registerTask('default', []);
+    grunt.registerTask('default', ['jshint','browserify','copy']);
     grunt.registerTask('server',['express']);
 };
