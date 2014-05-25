@@ -5,20 +5,26 @@
  *
  * Passport for sogou.com Ltd.
  *
+ * Compared to previous sogou.js,we removed the
+ * HTML dialog part,and export the least number
+ * of interfaces.
+ *
+ * We plan to support HTML dialog by plugins.
+ *
  * changelog
  * 2014-05-24[20:43:42]:authorized
+ * 2014-05-25[10:48:30]:code matched
  *
- * TODO:return code matching.
- *
- * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe/static/js
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 var UTILS = require('./utils');
 var CODES = require('./codes');
 (function(window, document, undefined) {
     "use strict";
+
+    var FILE_NAME = 'sogou.js';
     var console = window.console;
     var noop = function() {};
 
@@ -37,6 +43,10 @@ var CODES = require('./codes');
             warn: noop,
             error: noop
         };
+    }
+
+    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+        throw new Error(FILE_NAME + ' is only for HTML document');
     }
 
     var _passhtml = '<form method="post" action="https://account.sogou.com/web/login" target="_PassportIframe">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe id="_PassportIframe" name="_PassportIframe" src="about:blank" style="width：1px;height:1px;position:absolute;left:-1000px;"></iframe>';
@@ -85,6 +95,13 @@ var CODES = require('./codes');
         }
     }];
 
+    /**
+     * This is the inner PASSPORT constructor.
+     * As the instance could not be more then one,
+     * it may be called only once.
+     *
+     * @param {Object} options
+     */
     function Passport(options) {
         var i, j, validator, name;
         //This constructor will be called less then twice,
@@ -113,6 +130,14 @@ var CODES = require('./codes');
     }
 
     Passport.prototype = {
+        /**
+         * Do login action.
+         *
+         * @param  {String} username
+         * @param  {String} password
+         * @param  {String} vcode
+         * @param  {Boolean} autoLogin
+         */
         login: function(username, password, vcode, autoLogin) {
             var payload;
 
@@ -140,6 +165,9 @@ var CODES = require('./codes');
 
             this.opt.container.getElementsByTagName('form')[0].submit();
         },
+        /**
+         * Do logtou action.
+         */
         logout: function() {
             var self = this;
             var url = 'https://account.sogou.com/web/logout_js?client_id=' + this.opt.appid;
@@ -147,6 +175,9 @@ var CODES = require('./codes');
                 self.onLogoutSuccess();
             });
         },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
         parserRelation: function() {
             var B = this.cookie.relation;
             if (strstr === typeof B && B.length > 0) {
@@ -163,6 +194,9 @@ var CODES = require('./codes');
             }
             return "";
         },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
         parsePassportCookie: function() {
             var C;
             var E = document.cookie.split("; ");
@@ -193,6 +227,9 @@ var CODES = require('./codes');
                 }
             } catch (F) {}
         },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
         _parsePassportCookie: function(F) {
             var J = 0;
             var C = F.indexOf(":", J);
@@ -292,6 +329,9 @@ var CODES = require('./codes');
                 }
             } catch (E) {}
         },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
         parseCookie: function() {
             var cookie = document.cookie.split("; ");
             var result;
@@ -322,6 +362,10 @@ var CODES = require('./codes');
             } catch (F) {}
 
         },
+        /**
+         * Callback with result from iframe.
+         * @param  {Object} data Should inclding status&needcaptcha at least
+         */
         loginCallback: function(data) {
             var e;
             if (!data || strobject !== typeof data) {
@@ -335,8 +379,8 @@ var CODES = require('./codes');
                 data.captchaimg = 'https://account.sogou.com/captcha?token=' + this.opt._token + '&t=' + (+new Date());
                 this.opt.onLoginFailed(data);
             } else {
-                for(e in CODES){
-                    if(CODES[e].code==data.status){
+                for (e in CODES) {
+                    if (CODES[e].code == data.status) {
                         data.msg = CODES[e].info;
                         break;
                     }
