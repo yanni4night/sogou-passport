@@ -1,46 +1,222 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8"/>
-<title>Sogou passport font-end library</title>
-<meta name="author" content="yinyong@sogou-inc.com"/>
-<link rel="stylesheet" href="css/main.css"/>
-</head>
-<body>
-<input type="text" id="username" value="lovemd@sogou.com"/>
-<input type="password" id="password" value="123456"/>
-<button id="login">登录</button>
-<div id="hide"></div>
-</body>
-<script>
-    var PassportSC = {
-        onApiLoaded:function(){
-            console.log('loaded');
-        }
-    };
-</script>
-<script src="dist/sogou.js"></script>
-<script>
-    function $(id){
-        return document.getElementById(id);
+    <head>
+        <meta charset="utf-8">
+        <title>
+            Simple Sogou Passport Library
+        </title>
+        <meta name="author" content="yinyong@sogou-inc.com"/>
+        <link rel="stylesheet" href="css/main.css" type="text/css"/>
+        <script src="dist/sogou.js" type="text/javascript"></script>
+    </head>
+    <body class="flex">
+        <a href="http://git.ufo.sogou-inc.com/yinyong/passport" class="fork f-f f-m f-c">Fork me</a>
+        <header class="f-f f-m">
+            <div class="logo">
+                <div class="alpha">&alpha;</div>
+            </div>
+            <div class="tit f-1 tc">Simple Sogou Passport Library</div>
+        </header>
+        <article>
+            <h4>Problems</h4>
+            <p>
+                As every developer and you know,our front-end passport has some really serious problems:
+            </p>
+            <ol>
+                <li>Huge size javascript library contains functions which most are useless;</li>
+                <li>Confused login/logout API;</li>
+                <li>Many coupled DOM operations within</li>
+            </ol>
+            <p>
+                What's worse,every product line has to copy
+                a heap of HTML codes to build the login area,which made various style:
+            </p>
+            <p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>product</th>
+                            <th>style</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="http://cp.sogou.com">http://cp.sogou.com</a>
+                            </td>
+                            <td> <img src="/img/cp.png" alt=""></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="http://app.sogou.com">http://app.sogou.com</a>
+                            </td>
+                            <td><img src="/img/app.png" alt=""></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="http://wan.sogou.com">http://wan.sogou.com</a>
+                            </td>
+                            <td><img src="/img/wan.png" alt=""></td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://map.sogou.com">http://map.sogou.com</a></td>
+                            <td><img src="/img/map.png" alt=""></td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://bizhi.sogou.com">http://bizhi.sogou.com</a></td>
+                            <td><img src="/img/bizhi.png" alt=""></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </p>
+            <p>Ugly,disunited,hard to maintain or update.</p>
+            <p>
+                The reason of this may include it's from <a href="http://www.sohu.com" title="http://www.sohu.com">sohu.com</a> -- it's not for <a href="http://www.sogou.com" title="http://www.sogou.com">sogou.com</a>,and we cannot get the source to improve.
+            </p>
+            <p>
+                Last year I do some stuff to make it working under sogou domain,and it works normally for over a year -- sounds like everything is OK.However there is a but:world change,requirements raise,the library has to be improved.
+            </p>
+            <p>
+                I'm still mad at there is nobody in passport group in charge of this library for over a year.I may be the only one they got,which means if there is guy may improve the library,it's me.
+            </p>
+            <h4>Work</h4>
+            <p>
+                So I thought something,and looked at <a href="http://www.baidu.com" title="http://www.baidu.com">baidu.com</a>.Their passport library may be better.As our library is not so complex except the HTML part,I decided to spilt it to the following parts:
+            </p>
+            <ol>
+                <li>Basic core just for login&amp;logout;</li>
+                <li>Usual uniform HTML login area;</li>
+                <li>Custom login area editor</li>
+            </ol>
+            <h4>Progress</h4>
+            <p>The first part is simple,I am already working on it.Thanks to the non-complex logic.The API is following:</p>
+            <p>First,when the library loaded in browser,a passport object named <q>PassportSC</q>,as same as previous:</p>
+<pre>
+&lt;script type="text/javascript" src="dist/sogou.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+    window.PassportSC
+&lt;/script&gt;
+</pre>
+            <p>So you should avoid use <q>PassportSC</q> for other kind of purpose.</p>
+            <p>You can still define <q>PassportSC</q> first,and load library asynchronously.At this situation,it's <q>onApiLoaded</q> function will be called if exists:</p>
+<pre>
+&lt;script type="text/javascript"&gt;
+var PassportSC = {
+    onApiLoaded:function(){
+        alert('library loaded');
+        //Do your passport relative things
     }
-    PassportSC.init({
-        appid: 1100,
-        redirectUrl: location.protocol+"//"+location.host+'/jump.html',
-        container: $('hide'),
-        onLoginSuccess: function(){
-            console.info('login success');
-        },
-        onLoginFailed: function(){
-            console.warn(arguments);
-            console.error('login failed');
-        },
-        onLogoutSuccess: function(){
-            console.info('logout success');
+};
+
+loadSync('sogou.js');
+&lt;/script&gt;
+</pre>
+            <p>You have to initialize it before any other operations:</p>
+            <code>PassportSC.init(options);</code>
+            <p><q>options</q> must be set with the following keys:</p>
+            <ol>
+                <li>appid: null</li>
+                <li>redirectUrl: null</li>
+                <li>container: null</li>
+                <li>onLoginSuccess: function(){}</li>
+                <li>onLoginFailed: function(){}</li>
+                <li>onLogoutSuccess: function(){}</li>
+            </ol>
+            <p>
+                Login with:
+            </p>
+            <code>Passport.login(username, password, vcode, autoLogin);</code>
+            <p>
+                Logout with:
+            </p>
+            <code>Passport.logout();</code>
+            <p>
+                Get user-id which may or may not exist with:
+            </p>
+            <code>Passport.userid();</code>
+            <p>
+            That'a all,so far so simple.All inner functions do not export.If you try to call:
+            <q>JSON.stringify(PassportSC)</q>,you get:
+            <q>{}</q>.
+            </p>
+            <h4>Test</h4>
+            <form action="#" id="form">
+                <fieldset>
+                    <legend id="legend">Login Area</legend>
+                    <label for="username">username:</label>
+                    <input type="text" id="username" value="lovemd@sogou.com" required="required"/>
+                    <label for="passport">passport:</label>
+                    <input type="password" id="password" value="123456" required="required"/>
+                    <button id="login" type="submit">Login</button>
+                    <button id="logout" type="button">Logout</button>
+                    <button id="reset" type="reset">Reset</button>
+                    <span id="info"></span>
+                </fieldset>
+            </form>
+            <h4>Todo</h4>
+            <p>
+                Apparently I have done nothing about the 2nd and the 3rd parts.Actually I could copy and make an example,yeah,when free.If you're a front-end engineer,you really really should offer some advices and help.
+            </p>
+        </article>
+        <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'sogou-ufo'; // required: replace example with your forum shortname
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        <hr/>
+        <footer class="f-f f-c f-m">
+            <span><a href="http://ufo.sogou-inc.com">ufo</a>(C) 2014 All Rights Reserved</span> |
+            <a href="http://git.ufo.sogou-inc.com/yinyong/passport">git.ufo</a> | 
+            <a href="mailto:yinyong@sogou-inc.com">contact</a>
+        </footer>
+        <div id="ppcontainer"></div>
+        <script type="text/javascript">
+        function $(id){
+            return document.getElementById(id);
         }
-    });
-    $('login').onclick = function(){
-    PassportSC.login($('username').value,$('password').value,false);        
-    };
-</script>
+        function info(msg){
+            $('info').innerHTML = msg;
+        }
+        PassportSC.init({
+            appid: 1100,
+            redirectUrl: location.protocol+"//"+location.host+' /jump.html',
+            container: $('ppcontainer'),
+            onLoginSuccess: function(){
+                info('login success');
+            },
+            onLoginFailed: function(){
+                info('login failed');
+            },
+            onLogoutSuccess: function(){
+                info('logout success');
+            }
+        });
+
+        $('logout').onclick = function(e){
+            PassportSC.logout();
+        };
+
+        $('form').onsubmit = function(e){
+            e = e || window.event;
+            PassportSC.login($('username').value,$('password').value,false);
+            e.preventDefault&&e.preventDefault();
+            e.returnValue = false;
+            return false;
+        };
+
+        var userid;
+        if(userid = PassportSC.userid()){
+            $('legend').innerHTML = userid;
+        }
+        </script>
+    </body>
 </html>

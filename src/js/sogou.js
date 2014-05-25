@@ -173,7 +173,7 @@ var CODES = require('./codes');
             var self = this;
             var url = 'https://account.sogou.com/web/logout_js?client_id=' + this.opt.appid;
             UTILS.addIframe(this.opt.container, url, function() {
-                self.onLogoutSuccess();
+                self.opt.onLogoutSuccess();
             });
         },
         /**
@@ -373,7 +373,7 @@ var CODES = require('./codes');
                 console.error('Nothing callback received');
                 this.opt.onLoginFailed(data);
             } else if (0 === +data.status) {
-                this.opt.onLogoutSuccess(data);
+                this.opt.onLoginSuccess(data);
             } else if (+data.status === 20231) {
                 location.href = 'https://account.sogou.com/web/remindActivate?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + this.opt.appid + '&ru=' + encodeURIComponent(location.href);
             } else if (+data.needcaptcha) {

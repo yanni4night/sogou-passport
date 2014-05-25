@@ -41,7 +41,7 @@ module.exports = function(grunt) {
         less: {
             development: {
                 options: {
-                    syncImport:true,
+                    strictMath: true,
                     cleancss: true
                 },
                 files: [{
@@ -61,6 +61,27 @@ module.exports = function(grunt) {
                     src: ['*.html'],
                     dest: WEB_DIR
                 }]
+            },
+            img: {
+                files: [{
+                    expand: true,
+                    cwd: STATIC_DIR,
+                    src: ['**/*.{ico}'],
+                    dest: WEB_DIR
+                }]
+            }
+        },
+        imagemin: {
+            options: {
+                optimizationLevel: 7
+            },
+            static: {
+                files: [{
+                    expand: true,
+                    cwd: STATIC_DIR,
+                    src: ['**/*.{jpg,png,gif}'],
+                    dest: WEB_DIR
+                }]
             }
         },
         watch: {
@@ -68,13 +89,17 @@ module.exports = function(grunt) {
                 files: [STATIC_DIR + '**/*.js'],
                 tasks: ['jshint', 'browserify', 'uglify']
             },
-            css:{
-                files:[STATIC_DIR + '**/*.{css,less}'],
-                tasks:['less']
+            css: {
+                files: [STATIC_DIR + '**/*.{css,less}'],
+                tasks: ['less']
             },
-            html:{
-                files:['template/**/*.html'],
-                tasks:['copy:html']
+            html: {
+                files: ['template/**/*.html'],
+                tasks: ['copy:html']
+            },
+            img: {
+                files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
+                tasks: ['imagemin', 'copy:img']
             }
         },
         clean: {
@@ -105,6 +130,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -112,6 +138,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
 
 
-    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'less', 'copy']);
+    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'less', 'copy', 'imagemin']);
     grunt.registerTask('server', ['express']);
 };
