@@ -1,26 +1,23 @@
 /**
-  * Copyright (C) 2014 yanni4night.com
-  *
-  * Gruntfile.js
-  *
-  * changelog
-  * 2014-05-24[20:41:37]:authorized
-  *
-  * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe
-  * @author yanni4night@gmail.com
-  * @version 0.1.0
-  * @since 0.1.0
-  */
-
-var fs = require('fs');
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * Gruntfile.js
+ *
+ * changelog
+ * 2014-05-24[20:41:37]:authorized
+ * 2014-05-25[11:31:17]:clean
+ *
+ * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
 
 module.exports = function(grunt) {
 
     "use strict";
-    var STATIC_DIR = 'static/';
-    var BUILD_DIR = 'build/';
-
-    var jsonData = grunt.file.readJSON('_data/index.json');
+    var STATIC_DIR = 'src/';
+    var WEB_DIR = 'web/';
 
     grunt.initConfig({
         jshint: {
@@ -29,169 +26,92 @@ module.exports = function(grunt) {
             }
         },
         uglify: {
+            options: {
+                sourceMap: true
+            },
             compress: {
                 files: [{
                     expand: true,
-                    cwd: STATIC_DIR,
+                    cwd: WEB_DIR,
                     src: ['**/*.js'],
-                    dest: BUILD_DIR + STATIC_DIR
+                    dest: WEB_DIR
                 }]
             }
         },
         less: {
             development: {
                 options: {
+                    syncImport:true,
                     cleancss: true
                 },
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['**/*.less'],
+                    src: ['**/*.{css,less}'],
                     ext: '.css',
-                    dest: BUILD_DIR + STATIC_DIR
+                    dest: WEB_DIR
                 }]
             }
-        },
-        cssmin: {
-            merge: {
-                files: [{
-                    expand: true,
-                    cwd: BUILD_DIR,
-                    src: ['**/*.css'],
-                    dest: BUILD_DIR
-                }]
-            }
-        },
-        twig_render: {
-            render: {
-                files: [{
-                    template: 'template/index.html',
-                    data: '_data/index.json',
-                    dest: BUILD_DIR+'index.html'
-                }]
-            }
-        },
-        'regex-replace': {
-            stamp: {
-                src: [BUILD_DIR + '**/*.html'],
-                actions: [{
-                    name: '@',
-                    search: /@([\w\-]+?)@/mg,
-                    replace: function(n) {
-                        return jsonData[RegExp.$1] || ''
-                    }
-                }]
-            }
-
         },
         copy: {
-            html:{
+            html: {
                 files: [{
                     expand: true,
                     cwd: 'template/',
                     src: ['*.html'],
-                    dest: BUILD_DIR
-                }]
-            }
-        },
-        imagemin: {
-            images: {
-                files: [{
-                    expand: true,
-                    cwd: STATIC_DIR,
-                    src: '**/*.{gif,png,jpg}',
-                    dest: BUILD_DIR + STATIC_DIR
+                    dest: WEB_DIR
                 }]
             }
         },
         watch: {
             js: {
-                files: ['static/js/**/*.js','template/**/*.html'],
-                tasks: ['default']
+                files: [STATIC_DIR + '**/*.js'],
+                tasks: ['jshint', 'browserify', 'uglify']
+            },
+            css:{
+                files:[STATIC_DIR + '**/*.{css,less}'],
+                tasks:['less']
+            },
+            html:{
+                files:['template/**/*.html'],
+                tasks:['copy:html']
             }
         },
         clean: {
             options: {
                 force: true
             },
-            built: [BUILD_DIR + "*", "**/._*", "**/.DS_Store"]
-        },
-        htmlmin: {
-            options: {
-                removeComments: true,
-                collapseWhitespace: true
-            },
-            html: {
-                files: [{
-                    expand: true,
-                    cwd: BUILD_DIR,
-                    src: '**/*.html',
-                    ext: '.html',
-                    dest: BUILD_DIR
-                }]
-            }
-        },
-        stamp: {
-            options: {
-                baseDir: BUILD_DIR,
-            },
-            index: {
-                files: [{
-                    expand: true,
-                    cwd: BUILD_DIR,
-                    src: ['**/*.{html,css}'],
-                    dest: BUILD_DIR
-                }]
-            }
-        },
-        shell: {
-            options: {
-                stdout: true
-            },
-            upload: {
-                command: 'sshpass -p "xxx" scp index.html root@ip:/search/path'
-            }
+            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"]
         },
         express: {
             test: {
                 options: {
                     script: 'app.js',
                     background: false,
-                    port: 3008,
+                    port: 3775,
                     node_env: 'development',
                     debug: true
                 }
             }
         },
-        browserify:{
+        browserify: {
             dist: {
-                files: {
-                    'build/sogou.js': ['static/js/**/*.js'],
-                },
-                options: {
-                    
-                }
+                src: [STATIC_DIR + 'js/*.js'],
+                dest: WEB_DIR + '/dist/sogou.js'
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    //grunt.loadNpmTasks('grunt-contrib-uglify');
-    //grunt.loadNpmTasks('grunt-twig-render');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    //grunt.loadNpmTasks('grunt-contrib-cssmin');
-    //grunt.loadNpmTasks('grunt-regex-replace');
-    //grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    //grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    //grunt.loadNpmTasks('grunt-contrib-imagemin');
-    //grunt.loadNpmTasks('grunt-web-stamp');
     grunt.loadNpmTasks('grunt-express-server');
-    //grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-browserify');
 
 
-    grunt.registerTask('default', ['jshint','browserify','copy']);
-    grunt.registerTask('server',['express']);
+    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'less', 'copy']);
+    grunt.registerTask('server', ['express']);
 };

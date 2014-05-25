@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(express.static(__dirname + '/build'));
+app.use(express.static(__dirname + '/web'));
 
 // development only
 if ('development' == app.get('env')) {

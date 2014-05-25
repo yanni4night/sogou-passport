@@ -1,11 +1,12 @@
 {
-  "name": "toulun-project-template",
+  "name": "passport",
   "version": "0.1.0",
-  "description": "A toulun demo project.",
+  "description": "sogou passport font-end library",
   "keywords": [
-    "toulun-project"
+    "passport",
+    "account"
   ],
-  "author": "yanni4night@gmail.com",
+  "author": "yinyong@sogou-inc.com",
   "license": "MIT",
   "devDependencies": {
     "browserify": "^4.1.5",
@@ -14,17 +15,10 @@
     "grunt-browserify": "^2.1.0",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-cssmin": "^0.9.0",
-    "grunt-contrib-htmlmin": "^0.2.0",
-    "grunt-contrib-imagemin": "~0.6.1",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-less": "^0.11.0",
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-express-server": "^0.4.13",
-    "grunt-regex-replace": "^0.2.6",
-    "grunt-shell": "^0.6.4",
-    "grunt-twig-render": "^1.0.1",
-    "grunt-web-stamp": "^0.1.0"
+    "grunt-express-server": "^0.4.13"
   }
 }
