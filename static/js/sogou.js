@@ -51,7 +51,7 @@ var CODES = require('./codes');
     };
 
     //For validations of options in bulk
-    var validators = [{
+    var VALIDATORS = [{
         name: ['appid'],
         validate: function(name, value) {
             return value && (strstr === typeof value || strnumber === typeof value);
@@ -97,8 +97,8 @@ var CODES = require('./codes');
 
         UTILS.mixin(opt, options);
 
-        for (i = validators.length - 1; i >= 0; --i) {
-            validator = validators[i];
+        for (i = VALIDATORS.length - 1; i >= 0; --i) {
+            validator = VALIDATORS[i];
             for (j = validator.name.length - 1; j >= 0; --j) {
                 name = validator.name[j];
                 if (!validator.validate(name, opt[name])) {
@@ -108,7 +108,7 @@ var CODES = require('./codes');
                 }
             }
         }
-
+        //DON'T FORGET IT
         opt._token = UTILS.uuid();
     }
 
@@ -322,12 +322,8 @@ var CODES = require('./codes');
             } catch (F) {}
 
         },
-        /**
-         * [loginCallback description]
-         * @param  {[type]} data [description]
-         * @return {[type]}      [description]
-         */
         loginCallback: function(data) {
+            var e;
             if (!data || strobject !== typeof data) {
                 console.error('Nothing callback received');
                 this.opt.onLoginFailed(data);
@@ -339,6 +335,13 @@ var CODES = require('./codes');
                 data.captchaimg = 'https://account.sogou.com/captcha?token=' + this.opt._token + '&t=' + (+new Date());
                 this.opt.onLoginFailed(data);
             } else {
+                for(e in CODES){
+                    if(CODES[e].code==data.status){
+                        data.msg = CODES[e].info;
+                        break;
+                    }
+                }
+                data.msg = data.msg || "未知错误";
                 this.opt.onLoginFailed(data);
             }
         }
