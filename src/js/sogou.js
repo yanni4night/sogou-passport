@@ -16,7 +16,7 @@
  * 2014-05-25[10:48:30]:code matched
  * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
  * 2014-06-04[16:37:06]:disabled remindActive action
- * 
+ *
  * @author yanni4night@gmail.com
  * @version 0.1.3
  * @since 0.1.0
@@ -195,9 +195,10 @@ var CODES = require('./codes');
                 this.opt.onLoginFailed(data);
             } else if (0 === +data.status) {
                 this.opt.onLoginSuccess(data);
-            }/* else if (+data.status === 20231) {
+            }
+            /* else if (+data.status === 20231) {
                 location.href = FIXED_URLS.active + '?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + this.opt.appid + '&ru=' + encodeURIComponent(location.href);
-            }*/ 
+            }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
                 this.opt.onLoginFailed(data);
@@ -283,15 +284,11 @@ var CODES = require('./codes');
          * Legacy function,DO NOT MODIFY.
          */
         _parsePassportCookie: function(F) {
-            var J = 0;
+            var J = 0,
+                D, B, A, I, lenEnd_offset;
             var C = F.indexOf(":", J);
-            var D;
-            var B;
-            var A;
-            var I;
             this.cookie = {};
             while (C != -1) {
-
                 B = F.substring(J, C);
                 lenEnd_offset = F.indexOf(":", C + 1);
                 if (lenEnd_offset == -1) {
