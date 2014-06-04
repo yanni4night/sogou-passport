@@ -26,16 +26,21 @@ var CODES = require('./codes');
     "use strict";
 
     var FILE_NAME = 'sogou.js';
-    var expando = "sogou-passport-" + (+new Date());
+    var EXPANDO = "sogou-passport-" + (+new Date());
     var HIDDEN_CSS = 'width：1px;height:1px;position:absolute;left:-100000px;';
-    var console = window.console;
-    var noop = function() {};
 
+    var noop = function() {};
     var strundefined = typeof undefined;
     var strstr = typeof '';
     var strobject = typeof {};
     var strnumber = typeof 0;
     var strfunction = typeof noop;
+
+    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+        throw new Error(FILE_NAME + ' is only for HTML document');
+    }
+
+    var console = window.console;
 
     if (strundefined === typeof console) {
         console = {
@@ -48,20 +53,19 @@ var CODES = require('./codes');
         };
     }
 
-    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
-        throw new Error(FILE_NAME + ' is only for HTML document');
-    }
-
-    var _passhtml = '<form method="post" action="https://account.sogou.com/web/login" target="' + expando + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expando + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+    var _passhtml = '<form method="post" action="https://account.sogou.com/web/login" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
     var defaultOptions = {
         appid: null,
         redirectUrl: null,
-        container: null,
         onLoginSuccess: noop,
         onLoginFailed: noop,
         onLogoutSuccess: noop
     };
+
+    //Singleton inner object
+    var gPassport = null;
+    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
 
     //For validations of options in bulk
     var VALIDATORS = [{
@@ -70,7 +74,7 @@ var CODES = require('./codes');
             return value && (strstr === typeof value || strnumber === typeof value);
         },
         errmsg: function(name, value) {
-            return '"' + name + '" SHOULD be set as a string or a number';
+            return '"' + name + '" SHOULD be a string or a number';
         }
     }, {
         name: ['redirectUrl'],
@@ -78,7 +82,7 @@ var CODES = require('./codes');
             return value && strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
         },
         errmsg: function(name, value) {
-            return '"' + name + '" SHOULD be set as a URL which has the some domain as the current page';
+            return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
         }
     }, {
         name: ['onLoginSuccess', 'onLoginFailed', 'onLogoutSuccess'],
@@ -98,7 +102,7 @@ var CODES = require('./codes');
      * @param {Object} options
      */
     function Passport(options) {
-        var i, j, validator, name, opt, container;
+        var i, j, validator, name, opt;
         //This constructor will be called less then twice,
         //whatever even 'defaultOptions' changed...
         opt = this.opt = defaultOptions;
@@ -155,14 +159,15 @@ var CODES = require('./codes');
             };
 
             this._assertContainer();
-            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function(key) {
-                return undefined === payload[RegExp.$1] ? "" : payload[RegExp.$1];
+            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function() {
+                var key = payload[RegExp.$1];
+                return undefined === key ? "" : key;
             });
 
             this.mHTMLContainer.getElementsByTagName('form')[0].submit();
         },
         /**
-         * Do logtou action.
+         * Do logout action.It's an async function.
          */
         logout: function() {
             var self = this;
@@ -195,22 +200,24 @@ var CODES = require('./codes');
                         break;
                     }
                 }
-                data.msg = data.msg || "未知错误";
+                data.msg = data.msg || "Unknown error";
                 this.opt.onLoginFailed(data);
             }
         },
         /**
-         * Assert the HTMLContainer passport created.
-         * @throws {Error} If it's not avaliable any more.
+         * Assert mHTMLContainer,create it if not exists.
+         * @return {HTMLElement} mHTMLContainer
          */
         _assertContainer: function() {
             var container = this.mHTMLContainer;
             if (!container || (strobject !== typeof container) || (strundefined === typeof container.appendChild) || !container.parentNode) {
                 container = this.mHTMLContainer = document.createElement('div');
                 container.style.cssText = HIDDEN_CSS;
-                container.className = expando;
+                container.className = EXPANDO;
                 document.body.appendChild(container);
             }
+
+            return container;
         },
         /**
          * Legacy function,DO NOT MODIFY.
@@ -401,13 +408,9 @@ var CODES = require('./codes');
         }
     };
 
-    //Singleton inner object
-    var gPassport = null;
-    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
-
     //Expose few interfaces
     var PassportSC = {
-        version:'@version@',
+        version: '@version@',//from 'package.json'
         /**
          * Initialize.
          * This must be called at first before
