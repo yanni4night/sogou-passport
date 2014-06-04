@@ -19,6 +19,8 @@ module.exports = function(grunt) {
     var STATIC_DIR = 'src/';
     var WEB_DIR = 'web/';
 
+    var pkg = grunt.file.readJSON('package.json');
+
     grunt.initConfig({
         jshint: {
             check: {
@@ -30,6 +32,9 @@ module.exports = function(grunt) {
                 sourceMap: true
             },
             compress: {
+                options: {
+                    sourceMap: false
+                },
                 files: [{
                     expand: true,
                     cwd: WEB_DIR,
@@ -124,6 +129,9 @@ module.exports = function(grunt) {
                 src: [STATIC_DIR + 'js/*.js'],
                 dest: WEB_DIR + '/dist/sogou.js'
             }
+        },
+        version:{
+            sogou:[WEB_DIR+'/dist/sogou.js']
         }
     });
 
@@ -137,7 +145,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
+    grunt.registerMultiTask('version','set version',function(){
+        this.data.forEach(function(src){
+            var content = grunt.file.read(src);
+            content = content.replace('@version@',pkg.version);
+            grunt.file.write(src,content);
+        });
+    });
 
-    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'less', 'copy', 'imagemin']);
+    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'version','less', 'copy', 'imagemin']);
     grunt.registerTask('server', ['express']);
 };

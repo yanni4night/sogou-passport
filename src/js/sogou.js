@@ -407,6 +407,7 @@ var CODES = require('./codes');
 
     //Expose few interfaces
     var PassportSC = {
+        version:'@version@',
         /**
          * Initialize.
          * This must be called at first before
