@@ -72,7 +72,7 @@
             </p>
             <p>Ugly,disunited,hard to maintain or update.</p>
             <p>
-                The reason of this may include it's from <a href="http://www.sohu.com" title="http://www.sohu.com">sohu.com</a> -- it's not for <a href="http://www.sogou.com" title="http://www.sogou.com">sogou.com</a>,and we cannot get the source to improve.
+                The reason of this may include it's from <a href="http://www.sohu.com" title="http://www.sohu.com">sohu.com</a> -- not <a href="http://www.sogou.com" title="http://www.sogou.com">sogou.com</a>,and we cannot get the source to improve.
             </p>
             <p>
                 Last year I do some stuff to make it working under sogou domain,and it works normally for over a year -- sounds like everything is OK.However there is a but:world change,requirements raise,the library has to be improved.
@@ -105,7 +105,7 @@
 var PassportSC = {
     onApiLoaded:function(){
         alert('library loaded');
-        //Do your passport relative things
+        //Do your passport work here
     }
 };
 
@@ -118,7 +118,6 @@ loadSync('sogou.js');
             <ol>
                 <li>appid: null</li>
                 <li>redirectUrl: null</li>
-                <li>container: null</li>
                 <li>onLoginSuccess: function(){}</li>
                 <li>onLoginFailed: function(){}</li>
                 <li>onLogoutSuccess: function(){}</li>
@@ -126,15 +125,15 @@ loadSync('sogou.js');
             <p>
                 Login with:
             </p>
-            <code>Passport.login(username, password, vcode, autoLogin);</code>
+            <code>PassportSC.login(username, password, vcode, autoLogin);</code>
             <p>
                 Logout with:
             </p>
-            <code>Passport.logout();</code>
+            <code>PassportSC.logout();</code>
             <p>
                 Get user-id which may or may not exist with:
             </p>
-            <code>Passport.userid();</code>
+            <code>PassportSC.userid();</code>
             <p>
             That'a all,so far so simple.All inner functions do not export.If you try to call:
             <q>JSON.stringify(PassportSC)</q>,you get:
@@ -156,7 +155,7 @@ loadSync('sogou.js');
             </form>
             <h4>Todo</h4>
             <p>
-                Apparently I have done nothing about the 2nd and the 3rd parts.Actually I could copy and make an example,yeah,when free.If you're a front-end engineer,you really really should offer some advices and help.
+                Apparently I have done nothing about the 2nd and the 3rd parts.Actually I could copy and make an example,yeah,when free.Offer some advices and help.
             </p>
         </article>
         <div id="disqus_thread"></div>
@@ -189,7 +188,6 @@ loadSync('sogou.js');
         PassportSC.init({
             appid: 1100,
             redirectUrl: location.protocol+"//"+location.host+'/jump.html',
-            container: $('ppcontainer'),
             onLoginSuccess: function(){
                 info('login success');
             },
