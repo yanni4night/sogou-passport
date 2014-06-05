@@ -300,6 +300,17 @@
                 }
             }
             return dest;
+        },
+        insertLink:function(src){
+            if (!src || 'string' !== typeof src) {
+                return null;
+            }
+            var link = document.createElement('link');
+            link.setAttribute('rel','stylesheet');
+            link.setAttribute('type','text/css');
+            link.setAttribute('src',src);
+            document.getElementsByTagName('head')[0].appendChild(link);
+            return link;
         }
     };
 })(window, document);

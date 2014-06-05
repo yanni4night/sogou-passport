@@ -51,16 +51,15 @@ var CODES = require('./codes');
     var console = window.console;
 
     if (strundefined === typeof console) {
-        console = {
-            trace: noop,
-            info: noop,
-            log: noop,
-            debug: noop,
-            warn: noop,
-            error: noop
-        };
+        console = {};
     }
-
+    (function() {
+        var keys = 'trace,info,log,debug,warn,error'.split(','),
+            i;
+        for (i = keys.length - 1; i >= 0; i--) {
+            console[keys[i]] = console[keys[i]] || noop;
+        }
+    })();
     var _passhtml = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
     var defaultOptions = {
