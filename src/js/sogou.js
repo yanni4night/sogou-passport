@@ -166,8 +166,8 @@ var CODES = require('./codes');
             };
 
             this._assertContainer();
-            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function() {
-                var key = payload[RegExp.$1];
+            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function(k,n) {
+                var key = payload[n];
                 return undefined === key ? "" : key;
             });
 
