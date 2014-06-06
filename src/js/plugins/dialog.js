@@ -77,13 +77,12 @@
   PassportDialog.prototype = {
     initEvent: function() {
       var self = this;
-      UTILS.bindEvent(document, 'submit', function(e) {
+      UTILS.bindEvent(UTILS.id(FORM_ID), 'submit', function(e) {
         var dom = UTILS.eventTarget(e);
-        if (dom && dom.id === FORM_ID) {
-          UTILS.preventDefault(e);
-          console.trace('Passport form submitting');
-          self.doPost();
-        }
+        UTILS.preventDefault(e);
+        console.trace('Passport form submitting');
+        self.doPost();
+        return false;
       });
     },
     doPost:function(){

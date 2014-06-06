@@ -384,5 +384,6 @@
     for (var i = types.length - 1; i >= 0; --i) {
         utils['is' + types[i]] = createIs(types[i]);
     }
+    
     module.exports = utils;
 })(window, document);

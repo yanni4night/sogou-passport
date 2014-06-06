@@ -6,7 +6,6 @@
  * changelog
  * 2014-06-06[14:02:08]:authorized
  *
- * @info yinyong,osx-x64,UTF-8,10.129.169.219,js,/Volumes/yinyong/passport/src/js
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0
@@ -19,7 +18,7 @@
     var console = require('./console');
     var array = require('./array');
 
-    var EVT_TYPE_ERR = '"event" has to be a string';
+    var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
 
     var EventEmitter = function() {
@@ -36,7 +35,7 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
             if (!UTILS.isFunction(func)) {
@@ -58,7 +57,10 @@
         };
 
         /**
-         * remove event,multiple events split by space supported.
+         * Remove event,multiple events split by space supported.
+         *
+         * Empty 'func' means remove all listeners named 'event'.
+         * 
          * @param  {String} event
          * @param  {Function} func
          * @return {EventEmitter}     This event emitter
@@ -66,7 +68,7 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
             if (func && !UTILS.isFunction(func)) {
@@ -92,15 +94,16 @@
         };
 
         /**
-         * Emit events,multiple events split by space supported
+         * Emit event(s),multiple events split by space supported.
+         * 
          * @param  {String} event
          * @param  {Object} data
-         * @return {EventEmitter}
+         * @return {EventEmitter} This event emitter
          */
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
 

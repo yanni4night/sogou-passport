@@ -6,7 +6,6 @@
  * changelog
  * 2014-05-24[23:06:47]:authorized
  *
- * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe/static/js
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0

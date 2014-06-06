@@ -3,6 +3,8 @@
  *
  * console.js
  *
+ * Polyfill for console.
+ *
  * changelog
  * 2014-06-06[11:43:57]:authorized
  *
@@ -10,17 +12,22 @@
  * @version 0.1.0
  * @since 0.1.0
  */
-var console = window.console;
-var noop = function() {};
 
-if (!console || 'object' !== typeof console) {
-    console = {};
-}
+(function(window, document, undefined) {
+    "use strict";
 
-var keys = 'trace,info,log,debug,warn,error'.split(',');
+    var console = window.console;
+    var noop = function() {};
 
-for (var i = keys.length - 1; i >= 0; i--) {
-    console[keys[i]] = console[keys[i]] || noop;
-}
+    if (!console || 'object' !== typeof console) {
+        console = {};
+    }
 
-module.exports = console;
+    var keys = 'trace,info,log,debug,warn,error'.split(',');
+
+    for (var i = keys.length - 1; i >= 0; i--) {
+        console[keys[i]] = console[keys[i]] || noop;
+    }
+
+    module.exports = console;
+})(window, document);

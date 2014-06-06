@@ -4,16 +4,19 @@
  *
  * array.js
  *
+ * Some polyfill for ES5 array.
+ *
  * changelog
  * 2014-06-06[14:11:09]:authorized
  *
- * @info yinyong,osx-x64,UTF-8,10.129.169.219,js,/Volumes/yinyong/passport/src/js
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0
  */
+
 (function() {
   "use strict";
+
   var UTILS = require('./utils');
   var array = {};
 
@@ -25,6 +28,8 @@
    * @return {Boolean}
    */
   array.indexOf = function(arr, ele, fromIndex) {
+    var i, len;
+
     if (!arr || !ele) {
       return -1;
     }
@@ -46,7 +51,7 @@
     if (Array.prototype.indexOf) {
       return Array.prototype.indexOf.call(arr, ele, fromIndex);
     } else {
-      for (var i = fromIndex, len = arr.length; i < len; ++i) {
+      for (i = fromIndex, len = arr.length; i < len; ++i) {
         if (ele === arr[i]) {
           return i;
         }
@@ -64,13 +69,15 @@
    * @return {Undefined}
    */
   array.forEach = function(arr, callbackfn, thisArg) {
+    var i, len;
+
     if (!UTILS.isFunction(callbackfn)) return;
 
     if (Array.prototype.forEach) {
       return Array.prototype.forEach.call(arr, callbackfn, thisArg);
     }
 
-    for (var i = 0, len = arr.length; i < len; ++i) {
+    for (i = 0, len = arr.length; i < len; ++i) {
       callbackfn.call(thisArg, arr[i], i, arr);
     }
 
@@ -82,6 +89,8 @@
    * @return {Boolean}
    */
   array.each = array.every = function(arr, callbackfn, thisArg) {
+    var i, len;
+
     if (!arr || !UTILS.isFunction(callbackfn)) {
       return false;
     }
@@ -90,7 +99,7 @@
     if (Array.prototype.every) {
       return Array.prototype.every.call(arr, callbackfn, thisArg);
     } else {
-      for (var i = 0, len = arr.length; i < len; ++i) {
+      for (i = 0, len = arr.length; i < len; ++i) {
         if (!callbackfn.call(thisArg, arr[i], i, arr)) {
           return false;
         }
@@ -108,6 +117,7 @@
    * @return {Boolean}
    */
   array.some = function(arr, callbackfn, thisArg) {
+    var i, len;
     if (!arr || !UTILS.isFunction(callbackfn)) {
       return false;
     }
@@ -116,7 +126,7 @@
     if (Array.prototype.some) {
       return Array.prototype.some.call(arr, callbackfn, thisArg);
     } else {
-      for (var i = 0, len = arr.length; i < len; ++i) {
+      for (i = 0, len = arr.length; i < len; ++i) {
         if (true === callbackfn.call(thisArg, arr[i], i, arr)) {
           return true;
         }
@@ -134,6 +144,8 @@
    * @return {Array}
    */
   array.filter = function(arr, callbackfn, thisArg) {
+    var ret = [];
+
     if (!arr || arguments.length < 2) {
       return arr;
     }
@@ -142,7 +154,6 @@
       return Array.prototype.filter.call(arr, callbackfn, thisArg);
     }
 
-    var ret = [];
     array.forEach(arr, function(val, index) {
       if (callbackfn.call(thisArg, val, index, arr)) {
         ret.push(val);
@@ -150,6 +161,7 @@
     });
     return ret;
   };
+
   module.exports = array;
 })();
 },{"./utils":7}],2:[function(require,module,exports){
@@ -161,7 +173,6 @@
  * changelog
  * 2014-05-24[23:06:47]:authorized
  *
- * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe/static/js
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0
@@ -222,6 +233,8 @@
  *
  * console.js
  *
+ * Polyfill for console.
+ *
  * changelog
  * 2014-06-06[11:43:57]:authorized
  *
@@ -229,20 +242,25 @@
  * @version 0.1.0
  * @since 0.1.0
  */
-var console = window.console;
-var noop = function() {};
 
-if (!console || 'object' !== typeof console) {
-    console = {};
-}
+(function(window, document, undefined) {
+    "use strict";
 
-var keys = 'trace,info,log,debug,warn,error'.split(',');
+    var console = window.console;
+    var noop = function() {};
 
-for (var i = keys.length - 1; i >= 0; i--) {
-    console[keys[i]] = console[keys[i]] || noop;
-}
+    if (!console || 'object' !== typeof console) {
+        console = {};
+    }
 
-module.exports = console;
+    var keys = 'trace,info,log,debug,warn,error'.split(',');
+
+    for (var i = keys.length - 1; i >= 0; i--) {
+        console[keys[i]] = console[keys[i]] || noop;
+    }
+
+    module.exports = console;
+})(window, document);
 },{}],4:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
@@ -659,7 +677,7 @@ module.exports = console;
 
     //Expose few interfaces
     var PassportProxy = {
-        version: '0.1.3', //from 'package.json'
+        version: '0.1.4', //from 'package.json'
         /**
          * Initialize.
          * This must be called at first before
@@ -770,7 +788,6 @@ module.exports = console;
  * changelog
  * 2014-06-06[14:02:08]:authorized
  *
- * @info yinyong,osx-x64,UTF-8,10.129.169.219,js,/Volumes/yinyong/passport/src/js
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0
@@ -783,7 +800,7 @@ module.exports = console;
     var console = require('./console');
     var array = require('./array');
 
-    var EVT_TYPE_ERR = '"event" has to be a string';
+    var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
 
     var EventEmitter = function() {
@@ -800,7 +817,7 @@ module.exports = console;
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
             if (!UTILS.isFunction(func)) {
@@ -822,7 +839,10 @@ module.exports = console;
         };
 
         /**
-         * remove event,multiple events split by space supported.
+         * Remove event,multiple events split by space supported.
+         *
+         * Empty 'func' means remove all listeners named 'event'.
+         * 
          * @param  {String} event
          * @param  {Function} func
          * @return {EventEmitter}     This event emitter
@@ -830,7 +850,7 @@ module.exports = console;
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
             if (func && !UTILS.isFunction(func)) {
@@ -856,15 +876,16 @@ module.exports = console;
         };
 
         /**
-         * Emit events,multiple events split by space supported
+         * Emit event(s),multiple events split by space supported.
+         * 
          * @param  {String} event
          * @param  {Object} data
-         * @return {EventEmitter}
+         * @return {EventEmitter} This event emitter
          */
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)) {
+            if (!UTILS.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
 
@@ -968,13 +989,12 @@ module.exports = console;
   PassportDialog.prototype = {
     initEvent: function() {
       var self = this;
-      UTILS.bindEvent(document, 'submit', function(e) {
+      UTILS.bindEvent(UTILS.id(FORM_ID), 'submit', function(e) {
         var dom = UTILS.eventTarget(e);
-        if (dom && dom.id === FORM_ID) {
-          UTILS.preventDefault(e);
-          console.trace('Passport form submitting');
-          self.doPost();
-        }
+        UTILS.preventDefault(e);
+        console.trace('Passport form submitting');
+        self.doPost();
+        return false;
       });
     },
     doPost:function(){
@@ -1419,6 +1439,7 @@ module.exports = console;
     for (var i = types.length - 1; i >= 0; --i) {
         utils['is' + types[i]] = createIs(types[i]);
     }
+    
     module.exports = utils;
 })(window, document);
 },{}]},{},[1,2,3,4,5,6,7])
