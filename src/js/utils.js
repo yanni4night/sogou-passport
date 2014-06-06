@@ -5,10 +5,10 @@
  *
  * changelog
  * 2014-05-24[23:06:31]:authorized
+ * 2014-06-06[09:23:53]:getIEVersion
  *
- * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe/static/js
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function(window, document, undefined) {
@@ -17,7 +17,7 @@
     var hexcase = 0;
     var chrsz = 8;
 
-    module.exports = {
+    var utils = {
         b64_423: function(E) {
             var D = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"];
             var F = '';
@@ -285,32 +285,104 @@
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
         },
-        isArray:function(obj){
+        isArray: function(obj) {
             return Object.prototype.toString.call(obj) === '[object Array]';
         },
-        mixin:function(dest,src){
-            if(!src||'object'!==typeof src){
+        mixin: function(dest, src) {
+            if (!src || 'object' !== typeof src) {
                 return dest;
             }
-            
-            for(var e in src){
-                if(src.hasOwnProperty(e))
-                {
+
+            for (var e in src) {
+                if (src.hasOwnProperty(e)) {
                     dest[e] = src[e];
                 }
             }
             return dest;
         },
-        insertLink:function(src){
+        insertLink: function(src) {
             if (!src || 'string' !== typeof src) {
                 return null;
             }
             var link = document.createElement('link');
-            link.setAttribute('rel','stylesheet');
-            link.setAttribute('type','text/css');
-            link.setAttribute('src',src);
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('type', 'text/css');
+            link.setAttribute('href', src);
             document.getElementsByTagName('head')[0].appendChild(link);
             return link;
+        },
+        getIEVersion: function() {
+            var ua = navigator.userAgent,
+                matches, tridentMap = {
+                    '4': 8,
+                    '5': 9,
+                    '6': 10,
+                    '7': 11
+                };
+
+            matches = ua.match(/MSIE (\d+)/i);
+
+            if (matches && matches[1]) {
+                //find by msie
+                return +matches[1];
+            }
+
+            matches = ua.match(/Trident\/(\d+)/i);
+            if (matches && matches[1]) {
+                //find by trident
+                return tridentMap[matches[1]] || null;
+            }
+
+            //we did what we could
+            return null;
+        },
+        bindEvent: function(dom, evt, func) {
+            if (document.addEventListener) {
+                dom.addEventListener(evt, func, false);
+            } else if (document.attachEvent) {
+                dom.attachEvent('on' + evt, func);
+            }
+        },
+        stopPropagation: function(evt) {
+            if (evt.stopPropagation) {
+                evt.stopPropagation();
+            } else {
+                evt.cancelBubble = true;
+            }
+        },
+        preventDefault: function(evt) {
+            if (evt.preventDefault) {
+                evt.preventDefault();
+            } else {
+                evt.returnValue = false;
+            }
+        },
+        eventTarget: function(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        },
+        id: function(id) {
+            return document.getElementById(id);
+        },
+        trim: function(str) {
+            if (!this.isString(str)) {
+                return str;
+            } else if (String.prototype.trim) {
+                return str.trim();
+            } else {
+                return str.replace(/(^\s+)|(\s+$)/mg, '');
+            }
         }
     };
+    //is***
+    var types = ['Arguments', 'RegExp', 'Date', 'String', 'Array', 'Boolean', 'Function', 'Number'];
+    var createIs = function(type) {
+        return function(variable) {
+            return '[object ' + type + ']' === ({}).toString.apply(variable);
+        };
+    };
+    for (var i = types.length - 1; i >= 0; --i) {
+        utils['is' + types[i]] = createIs(types[i]);
+    }
+    module.exports = utils;
 })(window, document);

@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: [STATIC_DIR + '**/*.js'],
-                tasks: ['jshint', 'browserify', 'uglify','version']
+                tasks: ['jshint', 'browserify','version']
             },
             css: {
                 files: [STATIC_DIR + '**/*.{css,less}'],
@@ -125,13 +125,17 @@ module.exports = function(grunt) {
             }
         },
         browserify: {
-            dist: {
+            dialog: {
+                src: [STATIC_DIR + 'js/**/*.js'],
+                dest: WEB_DIR + '/dist/passport-dialog.js'
+            },
+            core:{
                 src: [STATIC_DIR + 'js/*.js'],
-                dest: WEB_DIR + '/dist/sogou.js'
+                dest: WEB_DIR + '/dist/passport-core.js'
             }
         },
         version:{
-            sogou:[WEB_DIR+'/dist/sogou.js']
+            sogou:[WEB_DIR+'dist/*.js']
         }
     });
 
@@ -146,10 +150,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
 
     grunt.registerMultiTask('version','set version',function(){
-        this.data.forEach(function(src){
-            var content = grunt.file.read(src);
-            content = content.replace('@version@',pkg.version);
-            grunt.file.write(src,content);
+        this.files.forEach(function(f){
+            f.src.forEach(function(src){
+                var content = grunt.file.read(src);
+                content = content.replace('@version@',pkg.version);
+                grunt.file.write(src,content);
+            });
         });
     });
 

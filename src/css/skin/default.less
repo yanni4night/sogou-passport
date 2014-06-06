@@ -1,0 +1,104 @@
+/**
+  * Copyright (C) 2014 yanni4night.com
+  *
+  * default.less
+  *
+  * changelog
+  * 2014-06-06[09:29:07]:authorized
+  *
+  * @author yanni4night@gmail.com
+  * @version 0.1.0
+  * @since 0.1.0
+  */
+.sogou-passport-pop{
+    .re{position: relative;}
+    .fz0{font-size: 0;}
+    .fl{float: left;}
+    .fr{float: right;}
+    .ab{position: absolute;}
+    .w-fil{width: 100%;}
+    .h-fil{height: 100%;}
+    .sogou-passport-caption{
+        border: 1px solid #ddd;
+        height: 50px;
+        line-height: 50px;
+        text-indent: 60px;
+        font-size: 16px;
+        font-weight: 700;
+        background: #f7f7f7 url(/img/icon.jpg) 10px center no-repeat;
+    }
+    form{
+        .sogou-passport-error{
+            height: 30px;
+            line-height: 30px;
+            color:#fc4343;
+            font-size: 12px;
+        }
+        .sogou-passport-row{
+            position: relative;
+            margin: 0;
+            margin-bottom: 15px;
+            z-index: 18;
+        }
+        .sogou-passport-submitwrapper{
+            margin-bottom: 45px;
+        }
+        input.sogou-passport-input{
+            outline: none;
+            width: 300px;
+            border: 1px solid #ddd;
+            padding:12px 10px 12px 38px;
+            height: 16px;
+            display:block;
+        }
+        input.sogou-passport-submit{
+            outline: none;
+            width: 350px;
+            background-color:#f64014;
+            display: block;
+            height: 48px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            border-radius: 3px;
+            border: none;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            transition: .3s;
+            -moz-transition: .3s;
+            -o-transition: .3s;
+            -webkit-transition: .3s;
+        }
+        .sogou-passport-autologin{
+            input{
+                vertical-align: middle;
+            }
+            label{
+                display: inline;
+                color: #666;
+                font-size: 12px;
+                margin-left: 5px;
+            }
+            a{
+                font-size: 12px;
+            }
+            height: 15px;
+            margin-bottom: 15px;
+        }
+        padding: 0 20px;
+    }
+    color: #434343;
+    font-size: 14px;
+    position: fixed;
+    _position:absolute;
+    width: 400px;
+    height: 500px;
+    left: 50%;
+    top: 50%;
+    margin-left: -200px;
+    margin-top: -250px;
+    z-index: 99999;
+    background: #fff;
+    display: none;
+}

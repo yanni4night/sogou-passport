@@ -7,7 +7,7 @@
         </title>
         <meta name="author" content="yinyong@sogou-inc.com"/>
         <link rel="stylesheet" href="css/main.css" type="text/css"/>
-        <script src="dist/sogou.js" type="text/javascript"></script>
+        <script src="dist/passport-core.js" type="text/javascript"></script>
     </head>
     <body class="flex">
         <a href="http://git.ufo.sogou-inc.com/yinyong/passport" class="fork f-f f-m f-c">Fork me</a>
@@ -77,9 +77,6 @@
             <p>
                 Last year I do some stuff to make it working under sogou domain,and it works normally for over a year -- sounds like everything is OK.However there is a but:world change,requirements raise,the library has to be improved.
             </p>
-            <p>
-                I'm still mad at there is nobody in passport group in charge of this library for over a year.I may be the only one they got,which means if there is guy may improve the library,it's me.
-            </p>
             <h4>Work</h4>
             <p>
                 So I thought something,and looked at <a href="http://www.baidu.com" title="http://www.baidu.com">baidu.com</a>.Their passport library may be better.As our library is not so complex except the HTML part,I decided to spilt it to the following parts:
@@ -118,9 +115,6 @@ loadSync('sogou.js');
             <ol>
                 <li>appid: null</li>
                 <li>redirectUrl: null</li>
-                <li>onLoginSuccess: function(){}</li>
-                <li>onLoginFailed: function(){}</li>
-                <li>onLogoutSuccess: function(){}</li>
             </ol>
             <p>
                 Login with:
@@ -134,11 +128,24 @@ loadSync('sogou.js');
                 Get user-id which may or may not exist with:
             </p>
             <code>PassportSC.userid();</code>
+            <p>Get callback:</p>
+            <code>PassportSC.on('loginsuccess loginfailed logoutsuccess',function(evt,data){});</code>
             <p>
             That'a all,so far so simple.All inner functions do not export.If you try to invoke:
             <q>JSON.stringify(PassportSC)</q>,what you get will like:
             <q>{"version":"0.1.2"}</q>.
             </p>
+            <p>Demo</p>
+<pre>
+PassportSC
+.<b>init</b>({
+    appid: 1100,
+    redirectUrl: location.protocol+"//"+location.host+'/jump.html'
+        })
+.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess</i>',function(evt,data){
+            alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
+        });
+</pre>
             <h4>Test</h4>
             <form action="#" id="form">
                 <fieldset>
@@ -155,7 +162,7 @@ loadSync('sogou.js');
             </form>
             <h4>Todo</h4>
             <p>
-                Apparently I have done nothing about the 2nd and the 3rd parts.Actually I could copy and make an example,yeah,when free.Offer some advices and help.
+                See <a href="test.html">test.html</a>,Offer some advices and help.
             </p>
         </article>
         <div id="disqus_thread"></div>
@@ -187,16 +194,10 @@ loadSync('sogou.js');
         }
         PassportSC.init({
             appid: 1100,
-            redirectUrl: location.protocol+"//"+location.host+'/jump.html',
-            onLoginSuccess: function(){
-                info('login success');
-            },
-            onLoginFailed: function(){
-                info('login failed');
-            },
-            onLogoutSuccess: function(){
-                info('logout success');
-            }
+            redirectUrl: location.protocol+"//"+location.host+'/jump.html'
+        })
+        .on(' loginsuccess  loginfailed  logoutsuccess ',function(evt,data){
+            alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
         });
 
         $('logout').onclick = function(e){

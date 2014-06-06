@@ -16,19 +16,29 @@
  * 2014-05-25[10:48:30]:code matched
  * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
  * 2014-06-04[16:37:06]:disabled remindActive action
+ * 2014-06-06[11:18:50]:getOptions&isInitialized added
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
-var UTILS = require('./utils');
-var CODES = require('./codes');
+
 (function(window, document, undefined) {
     "use strict";
+    var UTILS = require('./utils');
+    var CODES = require('./codes');
+    var console = require('./console');
+    var Event = require('./event');
 
     var FILE_NAME = 'sogou.js';
     var EXPANDO = "sogou-passport-" + (+new Date());
     var HIDDEN_CSS = 'width：1px;height:1px;position:absolute;left:-100000px;';
+
+    var EVENTS = {
+        LOGINSUCCESS: 'loginsuccess',
+        LOGINFAILED: 'loginfailed',
+        LOGOUTSUCCESS: 'logoutsuccess'
+    };
 
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
@@ -48,18 +58,6 @@ var CODES = require('./codes');
         throw new Error(FILE_NAME + ' is only for HTML document');
     }
 
-    var console = window.console;
-
-    if (strundefined === typeof console) {
-        console = {};
-    }
-    (function() {
-        var keys = 'trace,info,log,debug,warn,error'.split(','),
-            i;
-        for (i = keys.length - 1; i >= 0; i--) {
-            console[keys[i]] = console[keys[i]] || noop;
-        }
-    })();
     var _passhtml = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
     var defaultOptions = {
@@ -90,14 +88,6 @@ var CODES = require('./codes');
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
-        }
-    }, {
-        name: ['onLoginSuccess', 'onLoginFailed', 'onLogoutSuccess'],
-        validate: function(name, value) {
-            return strfunction === typeof value;
-        },
-        errmsg: function(name, value) {
-            return '"' + name + '" SHOULD to be a function';
         }
     }];
 
@@ -133,6 +123,8 @@ var CODES = require('./codes');
         }
         //DON'T FORGET IT
         opt._token = UTILS.uuid();
+
+        UTILS.mixin(this, new Event());
     }
 
     Passport.prototype = {
@@ -165,7 +157,7 @@ var CODES = require('./codes');
             };
 
             this._assertContainer();
-            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function(k,n) {
+            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function(k, n) {
                 var key = payload[n];
                 return undefined === key ? "" : key;
             });
@@ -180,7 +172,7 @@ var CODES = require('./codes');
             var url = FIXED_URLS.logout + '?client_id=' + self.opt.appid;
             self._assertContainer();
             UTILS.addIframe(this.mHTMLContainer, url, function() {
-                self.opt.onLogoutSuccess();
+                self.emit(EVENTS.LOGOUTSUCCESS);
             });
         },
         /**
@@ -191,16 +183,19 @@ var CODES = require('./codes');
             var e;
             if (!data || strobject !== typeof data) {
                 console.error('Nothing callback received');
-                this.opt.onLoginFailed(data);
+                //this.opt.onLoginFailed(data);
+                this.emit(EVENTS.LOGINFAILED, data);
             } else if (0 === +data.status) {
-                this.opt.onLoginSuccess(data);
+                //this.opt.onLoginSuccess(data);
+                this.emit(EVENTS.LOGINSUCCESS, data);
             }
             /* else if (+data.status === 20231) {
                 location.href = FIXED_URLS.active + '?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + this.opt.appid + '&ru=' + encodeURIComponent(location.href);
             }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
-                this.opt.onLoginFailed(data);
+                //this.opt.onLoginFailed(data);
+                this.emit(EVENTS.LOGINFAILED, data);
             } else {
                 for (e in CODES) {
                     if (CODES[e].code == data.status) {
@@ -209,8 +204,12 @@ var CODES = require('./codes');
                     }
                 }
                 data.msg = data.msg || "Unknown error";
-                this.opt.onLoginFailed(data);
+                //this.opt.onLoginFailed(data);
+                this.emit(EVENTS.LOGINFAILED, data);
             }
+        },
+        getOptions: function() {
+            return this.opt;
         },
         /**
          * Assert mHTMLContainer,create it if not exists.
@@ -413,7 +412,7 @@ var CODES = require('./codes');
     };
 
     //Expose few interfaces
-    var PassportSC = {
+    var PassportProxy = {
         version: '@version@', //from 'package.json'
         /**
          * Initialize.
@@ -432,6 +431,9 @@ var CODES = require('./codes');
             if (!gPassport) {
                 console.trace('Initialize passport');
                 gPassport = new Passport(options);
+                gPassport.on([EVENTS.LOGINSUCCESS, EVENTS.LOGINFAILED, EVENTS.LOGOUTSUCCESS].join(' '), function(evt, data) {
+                    PassportProxy.emit(evt.type, data);
+                });
             } else {
                 console.warn('Passport has already been initialized');
             }
@@ -488,15 +490,28 @@ var CODES = require('./codes');
             } else {
                 console.trace('Login callback received but [Passport] has not been initialized');
             }
+        },
+        isInitialized: function() {
+            return !!gPassport;
+        },
+        getOptions: function() {
+            return gPassport.getOptions();
+        },
+        getSupportedEvents: function() {
+            return EVENTS;
         }
     };
+
+    UTILS.mixin(PassportProxy, new Event());
+
     //Sync loading supported
     if (window.PassportSC && strobject === typeof window.PassportSC) {
-        UTILS.mixin(window.PassportSC, PassportSC);
+        UTILS.mixin(window.PassportSC, PassportProxy);
         if (strfunction === typeof window.PassportSC.onApiLoaded)
             window.PassportSC.onApiLoaded();
     } else {
-        window.PassportSC = PassportSC;
+        window.PassportSC = PassportProxy;
     }
 
+    module.exports = PassportProxy;
 })(window, document);

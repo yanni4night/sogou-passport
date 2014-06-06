@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Test</title>
+<script type="text/javascript" src="dist/passport-dialog.js"></script>
+<style>
+    body{
+    padding: 0;
+    margin: 0;
+    background: #333;
+    }
+</style>
+</head>
+<body>
+    This is test
+</body>
+<script>
+    PassportSC.init({
+        appid:10010,
+        redirectUrl:location.protocol+'//'+location.host+'/jump.html'
+    });
+    PassportSC.pop();
+</script>
+</html>
