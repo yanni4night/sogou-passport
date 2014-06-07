@@ -164,7 +164,7 @@
 
   module.exports = array;
 })();
-},{"./utils":8}],2:[function(require,module,exports){
+},{"./utils":9}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -359,7 +359,7 @@
             try {
                 parsedArray = unescape(value).split("|");
                 if (parsedArray[0] == "1" || parsedArray[0] == "2" && parsedArray[3]) {
-                    this._parsePassportCookie(UTILS.utf8to16(UTILS.b64_decodex(parsedArray[3])));
+                    this._parsePassportCookie(UTILS.math.utf8to16(UTILS.math.b64_decodex(parsedArray[3])));
                 }
             } catch (e) {}
 
@@ -400,7 +400,7 @@
         }
     };
 })(window, document);
-},{"./utils":8}],6:[function(require,module,exports){
+},{"./utils":9}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -528,7 +528,7 @@
             }
         }
         //DON'T FORGET IT
-        opt._token = UTILS.uuid();
+        opt._token = UTILS.math.uuid();
 
         //we make it an event emitter
         UTILS.mixin(this, new Event());
@@ -591,7 +591,7 @@
             var self = this;
             var url = FIXED_URLS.logout + '?client_id=' + self.opt.appid;
             self._assertContainer();
-            UTILS.addIframe(this.mHTMLContainer, url, function() {
+            UTILS.dom.addIframe(this.mHTMLContainer, url, function() {
                 self.emit(EVENTS.LOGOUTSUCCESS);
             });
         },
@@ -770,7 +770,7 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./utils":8}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./utils":9}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -900,38 +900,27 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":4,"./utils":8}],8:[function(require,module,exports){
+},{"./array":1,"./console":4,"./utils":9}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
- * utils.js
+ * math.js
  *
  * changelog
- * 2014-05-24[23:06:31]:authorized
- * 2014-06-06[09:23:53]:getIEVersion
- *
- * TODO:clean
+ * 2014-06-07[15:36:34]:authorized
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.0
  * @since 0.1.0
  */
-
-(function(window, document, undefined) {
+(function() {
     "use strict";
-
-    var Buggy = require('./buggy');
-    var array = require('./array');
-
-    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-    var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
     //They seem to be const
     var hexcase = 0;
     var chrsz = 8;
-
-    var utils = {
+    
+    var math = {
         b64_423: function(E) {
             var D = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"];
             var F = '';
@@ -1170,25 +1159,6 @@
             }
             return D.join("");
         },
-        addIframe: function(container, url, callback) {
-            var iframe = window.document.createElement('iframe');
-            iframe.style.height = '1px';
-            iframe.style.width = '1px';
-            iframe.style.visibility = 'hidden';
-            iframe.src = url;
-
-            if (iframe.attachEvent) {
-                iframe.attachEvent("onload", function() {
-                    if ('function' === typeof callback) callback();
-                });
-            } else {
-                iframe.onload = function() {
-                    if ('function' === typeof callback) callback();
-                };
-            }
-
-            container.appendChild(iframe);
-        },
         s4: function() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -1198,26 +1168,42 @@
             var s4 = this.s4;
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
-        },
-        /**
-         * Merge object members.
-         * 
-         * @param  {Object} dest 
-         * @param  {Object} src  
-         * @return {Object}      Dest
-         */
-        mixin: function(dest, src) {
-            if (!src || 'object' !== typeof src) {
-                return dest;
-            }
+        }
+    };
 
-            for (var e in src) {
-                if (src.hasOwnProperty(e)) {
-                    dest[e] = src[e];
-                }
-            }
-            return dest;
-        },
+    module.exports = math;
+})();
+},{}],9:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * utils.js
+ *
+ * changelog
+ * 2014-05-24[23:06:31]:authorized
+ * 2014-06-06[09:23:53]:getIEVersion
+ * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
+ *
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.2
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var Buggy = require('./buggy');
+    var array = require('./array');
+    var math = require('./math');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    var type = {};
+
+    var dom = {
         /**
          * Insert a link element
          *
@@ -1225,8 +1211,8 @@
          * @return {HTMLLinkElement}
          * @throws {Error} If parameters illegal
          */
-        insertLink: function(src) {
-            if (!src || !this.isString(src)) {
+        addLink: function(src) {
+            if (!src || !type.isString(src)) {
                 throw new Error('"src" has to be a url string');
             }
             var link = document.createElement('link');
@@ -1236,36 +1222,30 @@
             document.getElementsByTagName('head')[0].appendChild(link);
             return link;
         },
-        /**
-         * Get version of Internet Explorer by user agent.
-         * IE 6~11 supported.
-         *
-         * @return {Integer} Version in number.
-         */
-        getIEVersion: function() {
-            var ua = navigator.userAgent,
-                matches, tridentMap = {
-                    '4': 8,
-                    '5': 9,
-                    '6': 10,
-                    '7': 11
+        addIframe: function(container, url, callback) {
+            if (!url || !type.isString(url)) {
+                throw new Error('"url" has to be a url string');
+            }
+
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
+            iframe.src = url;
+
+            if (iframe.attachEvent) {
+                iframe.attachEvent("onload", function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                });
+            } else {
+                iframe.onload = function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
                 };
-
-            matches = ua.match(/MSIE (\d+)/i);
-
-            if (matches && matches[1]) {
-                //find by msie
-                return +matches[1];
             }
 
-            matches = ua.match(/Trident\/(\d+)/i);
-            if (matches && matches[1]) {
-                //find by trident
-                return tridentMap[matches[1]] || null;
-            }
-
-            //we did what we could
-            return null;
+            container.appendChild(iframe);
         },
         /**
          * Attatch event listener to HTMLElements.
@@ -1275,21 +1255,21 @@
          * @return {this}
          * @throws {Error} If parameters illegal
          */
-        bindEvent: function(dom, evt, func) {
-            if (!dom || !dom.childNodes) {
-                throw new Error('"dom" has to be a HTMLElement');
+        bindEvent: function(ele, evt, func) {
+            if (!ele || !ele.childNodes) {
+                throw new Error('"ele" has to be a HTMLElement');
             }
-            if (!evt || !this.isString(evt)) {
+            if (!evt || !type.isString(evt)) {
                 throw new Error('"evt" has to be a string');
             }
-            if (!func || !this.isFunction(func)) {
+            if (!func || !type.isFunction(func)) {
                 throw new Error('"func" has to be a function');
             }
 
             if (document.addEventListener) {
-                dom.addEventListener(evt, func, false);
+                ele.addEventListener(evt, func, false);
             } else if (document.attachEvent) {
-                dom.attachEvent('on' + evt, func);
+                ele.attachEvent('on' + evt, func);
             }
 
             return this;
@@ -1342,6 +1322,65 @@
             });
             return (ele && ele.id === id) ? ele : null;
         },
+    };
+
+    var utils = {
+        math: math,
+        array: array, //alias
+        dom: dom,
+        type: type,
+        /**
+         * Merge object members.
+         *
+         * @param  {Object} dest
+         * @param  {Object} src
+         * @return {Object}      Dest
+         */
+        mixin: function(dest, src) {
+            if (!src || 'object' !== typeof src) {
+                return dest;
+            }
+
+            for (var e in src) {
+                if (src.hasOwnProperty(e)) {
+                    dest[e] = src[e];
+                }
+            }
+            return dest;
+        },
+
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 6~11 supported.
+         *
+         * @return {Integer} Version in number.
+         */
+        getIEVersion: function() {
+            var ua = navigator.userAgent,
+                matches, tridentMap = {
+                    '4': 8,
+                    '5': 9,
+                    '6': 10,
+                    '7': 11
+                };
+
+            matches = ua.match(/MSIE (\d+)/i);
+
+            if (matches && matches[1]) {
+                //find by msie
+                return +matches[1];
+            }
+
+            matches = ua.match(/Trident\/(\d+)/i);
+            if (matches && matches[1]) {
+                //find by trident
+                return tridentMap[matches[1]] || null;
+            }
+
+            //we did what we could
+            return null;
+        },
+
         /**
          * Trim a string.If a non-string passed in,
          * convert it to a string.
@@ -1354,21 +1393,26 @@
             if (String.prototype.trim) {
                 return String.prototype.trim.call(String(str));
             } else {
-                return str.replace(rtrim, '');
+                return String(str).replace(rtrim, '');
             }
         }
     };
-    //is***
-    var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
-    var createIs = function(type) {
-        return function(variable) {
-            return '[object ' + type + ']' === ({}).toString.apply(variable);
+
+    (function() {
+        //is***
+        var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
+        var key;
+        var createIs = function(type) {
+            return function(variable) {
+                return '[object ' + type + ']' === ({}).toString.apply(variable);
+            };
         };
-    };
-    for (var i = types.length - 1; i >= 0; --i) {
-        utils['is' + types[i]] = createIs(types[i]);
-    }
+        for (var i = types.length - 1; i >= 0; --i) {
+            key = 'is' + types[i];
+            utils[key] = type[key] = createIs(types[i]);
+        }
+    })();
 
     module.exports = utils;
 })(window, document);
-},{"./array":1,"./buggy":2}]},{},[1,2,3,4,5,6,7,8])
+},{"./array":1,"./buggy":2,"./math":8}]},{},[1,2,3,4,5,6,7,8,9])

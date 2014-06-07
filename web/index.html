@@ -197,7 +197,7 @@ PassportSC
             redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
         .on(' loginsuccess  loginfailed  logoutsuccess ',function(evt,data){
-            alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
+            info(evt.type.replace(/(log(?:in|out))/,"$1 "));
         });
 
         $('logout').onclick = function(e){

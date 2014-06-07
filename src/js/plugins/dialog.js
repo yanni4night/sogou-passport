@@ -19,7 +19,7 @@
   var UTILS = require('../utils');
   var console = require('../console');
 
-  var IE6 = UTILS.getIEVersion() == '6';
+  //var IE6 = UTILS.getIEVersion() == '6';
 
   var WRAPPER_ID = 'sogou-passport-pop';
   var FORM_ID = 'sogou-passport-form';
@@ -49,6 +49,7 @@
     '</form>';
 
   var PassportDialog = function(options) {
+    var userid;
     this.options = {
       template: DEFAULT_HTML,
       style: null
@@ -58,7 +59,7 @@
 
     //FIXME by style
     //preload
-    UTILS.insertLink('css/skin/default.css');
+    UTILS.dom.addLink('css/skin/default.css');
 
     var wrapper = this.wrapper = document.createElement('div');
     wrapper.id = wrapper.className = WRAPPER_ID;
@@ -67,53 +68,57 @@
 
     this.initEvent();
 
-    PassportSC.on('loginfailed',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '登录失败';
-    }).on('loginsuccess',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '登录成功';
-    }).on('needcaptcha',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '需要验证码';
+    if (!!(userid = PassportSC.userid())) {
+      UTILS.dom.id(USER_ID).value = userid;
+    }
+
+    PassportSC.on('loginfailed', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '登录失败';
+    }).on('loginsuccess', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
+    }).on('needcaptcha', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
     });
   };
 
   PassportDialog.prototype = {
     initEvent: function() {
       var self = this;
-      UTILS.bindEvent(UTILS.id(FORM_ID), 'submit', function(e) {
-        var dom = UTILS.eventTarget(e);
-        UTILS.preventDefault(e);
+      UTILS.dom.bindEvent(UTILS.dom.id(FORM_ID), 'submit', function(e) {
+        var dom = UTILS.dom.eventTarget(e);
+        UTILS.dom.preventDefault(e);
         console.trace('Passport form submitting');
         self.doPost();
         return false;
       });
     },
-    doPost:function(){
+    doPost: function() {
       var user$, pass$, auto$;
-      var user,pass,auto;
-      if (!(user$ = UTILS.id(USER_ID))) {
+      var user, pass, auto;
+      if (!(user$ = UTILS.dom.id(USER_ID))) {
         console.error('Element[#' + USER_ID + '] does not exist');
         return;
       }
-      if (!(pass$ = UTILS.id(PASS_ID))) {
+      if (!(pass$ = UTILS.dom.id(PASS_ID))) {
         console.error('Element[#' + PASS_ID + '] does not exist');
         return;
       }
-      if (!(auto$ = UTILS.id(AUTO_ID))) {
+      if (!(auto$ = UTILS.dom.id(AUTO_ID))) {
         console.error('Element[#' + AUTO_ID + '] does not exist');
         return;
       }
-      if(!(user = UTILS.trim(user$.value))){
+      if (!(user = UTILS.trim(user$.value))) {
         console.trace('user empty');
         return;
       }
-      if(!(pass = UTILS.trim(pass$.value))){
+      if (!(pass = UTILS.trim(pass$.value))) {
         console.trace('user empty');
         return;
       }
 
       auto = auto$.checked;
 
-      PassportSC.login(user,pass,auto);
+      PassportSC.login(user, pass, auto);
     },
     show: function() {
       this.wrapper.style.display = 'block';

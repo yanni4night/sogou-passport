@@ -125,7 +125,7 @@
             }
         }
         //DON'T FORGET IT
-        opt._token = UTILS.uuid();
+        opt._token = UTILS.math.uuid();
 
         //we make it an event emitter
         UTILS.mixin(this, new Event());
@@ -188,7 +188,7 @@
             var self = this;
             var url = FIXED_URLS.logout + '?client_id=' + self.opt.appid;
             self._assertContainer();
-            UTILS.addIframe(this.mHTMLContainer, url, function() {
+            UTILS.dom.addIframe(this.mHTMLContainer, url, function() {
                 self.emit(EVENTS.LOGOUTSUCCESS);
             });
         },

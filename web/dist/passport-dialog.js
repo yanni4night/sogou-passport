@@ -164,7 +164,7 @@
 
   module.exports = array;
 })();
-},{"./utils":9}],2:[function(require,module,exports){
+},{"./utils":10}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -359,7 +359,7 @@
             try {
                 parsedArray = unescape(value).split("|");
                 if (parsedArray[0] == "1" || parsedArray[0] == "2" && parsedArray[3]) {
-                    this._parsePassportCookie(UTILS.utf8to16(UTILS.b64_decodex(parsedArray[3])));
+                    this._parsePassportCookie(UTILS.math.utf8to16(UTILS.math.b64_decodex(parsedArray[3])));
                 }
             } catch (e) {}
 
@@ -400,7 +400,7 @@
         }
     };
 })(window, document);
-},{"./utils":9}],6:[function(require,module,exports){
+},{"./utils":10}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -528,7 +528,7 @@
             }
         }
         //DON'T FORGET IT
-        opt._token = UTILS.uuid();
+        opt._token = UTILS.math.uuid();
 
         //we make it an event emitter
         UTILS.mixin(this, new Event());
@@ -591,7 +591,7 @@
             var self = this;
             var url = FIXED_URLS.logout + '?client_id=' + self.opt.appid;
             self._assertContainer();
-            UTILS.addIframe(this.mHTMLContainer, url, function() {
+            UTILS.dom.addIframe(this.mHTMLContainer, url, function() {
                 self.emit(EVENTS.LOGOUTSUCCESS);
             });
         },
@@ -770,7 +770,7 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./utils":9}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./utils":10}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -900,183 +900,27 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":4,"./utils":9}],8:[function(require,module,exports){
+},{"./array":1,"./console":4,"./utils":10}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
- * dialog.js
- *
- * We attempt to show a login dialog in HTML.
+ * math.js
  *
  * changelog
- * 2014-06-04[23:14:19]:authorized
+ * 2014-06-07[15:36:34]:authorized
  *
  * @author yanni4night@gmail.com
  * @version 0.1.0
  * @since 0.1.0
  */
-(function(window, document, undefined) {
-  "use strict";
-
-  var PassportSC = require('../core');
-  var UTILS = require('../utils');
-  var console = require('../console');
-
-  var IE6 = UTILS.getIEVersion() == '6';
-
-  var WRAPPER_ID = 'sogou-passport-pop';
-  var FORM_ID = 'sogou-passport-form';
-  var USER_ID = 'sogou-passport-user';
-  var PASS_ID = 'sogou-passport-pass';
-  var AUTO_ID = 'sogou-passport-auto';
-  var ERROR_ID = 'sogou-passport-error';
-
-  var DEFAULT_HTML = '' +
-    '<div class="sogou-passport-caption">搜狗帐号登录</div>' +
-    '<form id="' + FORM_ID + '" action="#" autocomplete="off" type="post">' +
-    '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
-    '<div class="sogou-passport-row re">' +
-    '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
-    '</div>' +
-    '<div class="sogou-passport-row re">' +
-    '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" placeholder="密码"/>' +
-    '</div>' +
-    '<div class="sogou-passport-row sogou-passport-autologin">' +
-    '<input type="checkbox" id="' + AUTO_ID + '"/>' +
-    '<label for="sogou-passport-auto">下次自动登录</label>' +
-    '<a href="#" class="fr" target="_blank">找回密码</a>' +
-    '</div>' +
-    '<div class="sogou-passport-row sogou-passport-submitwrapper">' +
-    '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
-    '</div>' +
-    '</form>';
-
-  var PassportDialog = function(options) {
-    this.options = {
-      template: DEFAULT_HTML,
-      style: null
-    };
-
-    UTILS.mixin(this.options, options);
-
-    //FIXME by style
-    //preload
-    UTILS.insertLink('css/skin/default.css');
-
-    var wrapper = this.wrapper = document.createElement('div');
-    wrapper.id = wrapper.className = WRAPPER_ID;
-    wrapper.innerHTML = this.options.template;
-    document.body.appendChild(wrapper);
-
-    this.initEvent();
-
-    PassportSC.on('loginfailed',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '登录失败';
-    }).on('loginsuccess',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '登录成功';
-    }).on('needcaptcha',function(e){
-      UTILS.id(ERROR_ID).innerHTML = '需要验证码';
-    });
-  };
-
-  PassportDialog.prototype = {
-    initEvent: function() {
-      var self = this;
-      UTILS.bindEvent(UTILS.id(FORM_ID), 'submit', function(e) {
-        var dom = UTILS.eventTarget(e);
-        UTILS.preventDefault(e);
-        console.trace('Passport form submitting');
-        self.doPost();
-        return false;
-      });
-    },
-    doPost:function(){
-      var user$, pass$, auto$;
-      var user,pass,auto;
-      if (!(user$ = UTILS.id(USER_ID))) {
-        console.error('Element[#' + USER_ID + '] does not exist');
-        return;
-      }
-      if (!(pass$ = UTILS.id(PASS_ID))) {
-        console.error('Element[#' + PASS_ID + '] does not exist');
-        return;
-      }
-      if (!(auto$ = UTILS.id(AUTO_ID))) {
-        console.error('Element[#' + AUTO_ID + '] does not exist');
-        return;
-      }
-      if(!(user = UTILS.trim(user$.value))){
-        console.trace('user empty');
-        return;
-      }
-      if(!(pass = UTILS.trim(pass$.value))){
-        console.trace('user empty');
-        return;
-      }
-
-      auto = auto$.checked;
-
-      PassportSC.login(user,pass,auto);
-    },
-    show: function() {
-      this.wrapper.style.display = 'block';
-    },
-    hide: function() {
-      this.wrapper.style.display = 'none';
-    }
-  };
-
-  var gPassportDialog = null;
-  /**
-   * [pop description]
-   * @param  {Object} options
-   * @return {this}
-   */
-  PassportSC.pop = function(options) {
-
-    if (!this.isInitialized()) {
-      throw new Error('You have to initialize passport before pop');
-    }
-
-    if (!gPassportDialog) {
-      gPassportDialog = new PassportDialog(options);
-    }
-    gPassportDialog.show();
-  };
-
-})(window, document);
-},{"../console":4,"../core":6,"../utils":9}],9:[function(require,module,exports){
-/**
- * Copyright (C) 2014 yanni4night.com
- *
- * utils.js
- *
- * changelog
- * 2014-05-24[23:06:31]:authorized
- * 2014-06-06[09:23:53]:getIEVersion
- *
- * TODO:clean
- *
- * @author yanni4night@gmail.com
- * @version 0.1.1
- * @since 0.1.0
- */
-
-(function(window, document, undefined) {
+(function() {
     "use strict";
-
-    var Buggy = require('./buggy');
-    var array = require('./array');
-
-    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-    var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
     //They seem to be const
     var hexcase = 0;
     var chrsz = 8;
-
-    var utils = {
+    
+    var math = {
         b64_423: function(E) {
             var D = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"];
             var F = '';
@@ -1315,25 +1159,6 @@
             }
             return D.join("");
         },
-        addIframe: function(container, url, callback) {
-            var iframe = window.document.createElement('iframe');
-            iframe.style.height = '1px';
-            iframe.style.width = '1px';
-            iframe.style.visibility = 'hidden';
-            iframe.src = url;
-
-            if (iframe.attachEvent) {
-                iframe.attachEvent("onload", function() {
-                    if ('function' === typeof callback) callback();
-                });
-            } else {
-                iframe.onload = function() {
-                    if ('function' === typeof callback) callback();
-                };
-            }
-
-            container.appendChild(iframe);
-        },
         s4: function() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -1343,26 +1168,192 @@
             var s4 = this.s4;
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
-        },
-        /**
-         * Merge object members.
-         * 
-         * @param  {Object} dest 
-         * @param  {Object} src  
-         * @return {Object}      Dest
-         */
-        mixin: function(dest, src) {
-            if (!src || 'object' !== typeof src) {
-                return dest;
-            }
+        }
+    };
 
-            for (var e in src) {
-                if (src.hasOwnProperty(e)) {
-                    dest[e] = src[e];
-                }
-            }
-            return dest;
-        },
+    module.exports = math;
+})();
+},{}],9:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * dialog.js
+ *
+ * We attempt to show a login dialog in HTML.
+ *
+ * changelog
+ * 2014-06-04[23:14:19]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+(function(window, document, undefined) {
+  "use strict";
+
+  var PassportSC = require('../core');
+  var UTILS = require('../utils');
+  var console = require('../console');
+
+  //var IE6 = UTILS.getIEVersion() == '6';
+
+  var WRAPPER_ID = 'sogou-passport-pop';
+  var FORM_ID = 'sogou-passport-form';
+  var USER_ID = 'sogou-passport-user';
+  var PASS_ID = 'sogou-passport-pass';
+  var AUTO_ID = 'sogou-passport-auto';
+  var ERROR_ID = 'sogou-passport-error';
+
+  var DEFAULT_HTML = '' +
+    '<div class="sogou-passport-caption">搜狗帐号登录</div>' +
+    '<form id="' + FORM_ID + '" action="#" autocomplete="off" type="post">' +
+    '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
+    '<div class="sogou-passport-row re">' +
+    '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
+    '</div>' +
+    '<div class="sogou-passport-row re">' +
+    '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" placeholder="密码"/>' +
+    '</div>' +
+    '<div class="sogou-passport-row sogou-passport-autologin">' +
+    '<input type="checkbox" id="' + AUTO_ID + '"/>' +
+    '<label for="sogou-passport-auto">下次自动登录</label>' +
+    '<a href="#" class="fr" target="_blank">找回密码</a>' +
+    '</div>' +
+    '<div class="sogou-passport-row sogou-passport-submitwrapper">' +
+    '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
+    '</div>' +
+    '</form>';
+
+  var PassportDialog = function(options) {
+    var userid;
+    this.options = {
+      template: DEFAULT_HTML,
+      style: null
+    };
+
+    UTILS.mixin(this.options, options);
+
+    //FIXME by style
+    //preload
+    UTILS.dom.addLink('css/skin/default.css');
+
+    var wrapper = this.wrapper = document.createElement('div');
+    wrapper.id = wrapper.className = WRAPPER_ID;
+    wrapper.innerHTML = this.options.template;
+    document.body.appendChild(wrapper);
+
+    this.initEvent();
+
+    if (!!(userid = PassportSC.userid())) {
+      UTILS.dom.id(USER_ID).value = userid;
+    }
+
+    PassportSC.on('loginfailed', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '登录失败';
+    }).on('loginsuccess', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
+    }).on('needcaptcha', function(e) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
+    });
+  };
+
+  PassportDialog.prototype = {
+    initEvent: function() {
+      var self = this;
+      UTILS.dom.bindEvent(UTILS.dom.id(FORM_ID), 'submit', function(e) {
+        var dom = UTILS.dom.eventTarget(e);
+        UTILS.dom.preventDefault(e);
+        console.trace('Passport form submitting');
+        self.doPost();
+        return false;
+      });
+    },
+    doPost: function() {
+      var user$, pass$, auto$;
+      var user, pass, auto;
+      if (!(user$ = UTILS.dom.id(USER_ID))) {
+        console.error('Element[#' + USER_ID + '] does not exist');
+        return;
+      }
+      if (!(pass$ = UTILS.dom.id(PASS_ID))) {
+        console.error('Element[#' + PASS_ID + '] does not exist');
+        return;
+      }
+      if (!(auto$ = UTILS.dom.id(AUTO_ID))) {
+        console.error('Element[#' + AUTO_ID + '] does not exist');
+        return;
+      }
+      if (!(user = UTILS.trim(user$.value))) {
+        console.trace('user empty');
+        return;
+      }
+      if (!(pass = UTILS.trim(pass$.value))) {
+        console.trace('user empty');
+        return;
+      }
+
+      auto = auto$.checked;
+
+      PassportSC.login(user, pass, auto);
+    },
+    show: function() {
+      this.wrapper.style.display = 'block';
+    },
+    hide: function() {
+      this.wrapper.style.display = 'none';
+    }
+  };
+
+  var gPassportDialog = null;
+  /**
+   * [pop description]
+   * @param  {Object} options
+   * @return {this}
+   */
+  PassportSC.pop = function(options) {
+
+    if (!this.isInitialized()) {
+      throw new Error('You have to initialize passport before pop');
+    }
+
+    if (!gPassportDialog) {
+      gPassportDialog = new PassportDialog(options);
+    }
+    gPassportDialog.show();
+  };
+
+})(window, document);
+},{"../console":4,"../core":6,"../utils":10}],10:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * utils.js
+ *
+ * changelog
+ * 2014-05-24[23:06:31]:authorized
+ * 2014-06-06[09:23:53]:getIEVersion
+ * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
+ *
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.2
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var Buggy = require('./buggy');
+    var array = require('./array');
+    var math = require('./math');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    var type = {};
+
+    var dom = {
         /**
          * Insert a link element
          *
@@ -1370,8 +1361,8 @@
          * @return {HTMLLinkElement}
          * @throws {Error} If parameters illegal
          */
-        insertLink: function(src) {
-            if (!src || !this.isString(src)) {
+        addLink: function(src) {
+            if (!src || !type.isString(src)) {
                 throw new Error('"src" has to be a url string');
             }
             var link = document.createElement('link');
@@ -1381,36 +1372,30 @@
             document.getElementsByTagName('head')[0].appendChild(link);
             return link;
         },
-        /**
-         * Get version of Internet Explorer by user agent.
-         * IE 6~11 supported.
-         *
-         * @return {Integer} Version in number.
-         */
-        getIEVersion: function() {
-            var ua = navigator.userAgent,
-                matches, tridentMap = {
-                    '4': 8,
-                    '5': 9,
-                    '6': 10,
-                    '7': 11
+        addIframe: function(container, url, callback) {
+            if (!url || !type.isString(url)) {
+                throw new Error('"url" has to be a url string');
+            }
+
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
+            iframe.src = url;
+
+            if (iframe.attachEvent) {
+                iframe.attachEvent("onload", function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                });
+            } else {
+                iframe.onload = function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
                 };
-
-            matches = ua.match(/MSIE (\d+)/i);
-
-            if (matches && matches[1]) {
-                //find by msie
-                return +matches[1];
             }
 
-            matches = ua.match(/Trident\/(\d+)/i);
-            if (matches && matches[1]) {
-                //find by trident
-                return tridentMap[matches[1]] || null;
-            }
-
-            //we did what we could
-            return null;
+            container.appendChild(iframe);
         },
         /**
          * Attatch event listener to HTMLElements.
@@ -1420,21 +1405,21 @@
          * @return {this}
          * @throws {Error} If parameters illegal
          */
-        bindEvent: function(dom, evt, func) {
-            if (!dom || !dom.childNodes) {
-                throw new Error('"dom" has to be a HTMLElement');
+        bindEvent: function(ele, evt, func) {
+            if (!ele || !ele.childNodes) {
+                throw new Error('"ele" has to be a HTMLElement');
             }
-            if (!evt || !this.isString(evt)) {
+            if (!evt || !type.isString(evt)) {
                 throw new Error('"evt" has to be a string');
             }
-            if (!func || !this.isFunction(func)) {
+            if (!func || !type.isFunction(func)) {
                 throw new Error('"func" has to be a function');
             }
 
             if (document.addEventListener) {
-                dom.addEventListener(evt, func, false);
+                ele.addEventListener(evt, func, false);
             } else if (document.attachEvent) {
-                dom.attachEvent('on' + evt, func);
+                ele.attachEvent('on' + evt, func);
             }
 
             return this;
@@ -1487,6 +1472,65 @@
             });
             return (ele && ele.id === id) ? ele : null;
         },
+    };
+
+    var utils = {
+        math: math,
+        array: array, //alias
+        dom: dom,
+        type: type,
+        /**
+         * Merge object members.
+         *
+         * @param  {Object} dest
+         * @param  {Object} src
+         * @return {Object}      Dest
+         */
+        mixin: function(dest, src) {
+            if (!src || 'object' !== typeof src) {
+                return dest;
+            }
+
+            for (var e in src) {
+                if (src.hasOwnProperty(e)) {
+                    dest[e] = src[e];
+                }
+            }
+            return dest;
+        },
+
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 6~11 supported.
+         *
+         * @return {Integer} Version in number.
+         */
+        getIEVersion: function() {
+            var ua = navigator.userAgent,
+                matches, tridentMap = {
+                    '4': 8,
+                    '5': 9,
+                    '6': 10,
+                    '7': 11
+                };
+
+            matches = ua.match(/MSIE (\d+)/i);
+
+            if (matches && matches[1]) {
+                //find by msie
+                return +matches[1];
+            }
+
+            matches = ua.match(/Trident\/(\d+)/i);
+            if (matches && matches[1]) {
+                //find by trident
+                return tridentMap[matches[1]] || null;
+            }
+
+            //we did what we could
+            return null;
+        },
+
         /**
          * Trim a string.If a non-string passed in,
          * convert it to a string.
@@ -1499,21 +1543,26 @@
             if (String.prototype.trim) {
                 return String.prototype.trim.call(String(str));
             } else {
-                return str.replace(rtrim, '');
+                return String(str).replace(rtrim, '');
             }
         }
     };
-    //is***
-    var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
-    var createIs = function(type) {
-        return function(variable) {
-            return '[object ' + type + ']' === ({}).toString.apply(variable);
+
+    (function() {
+        //is***
+        var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
+        var key;
+        var createIs = function(type) {
+            return function(variable) {
+                return '[object ' + type + ']' === ({}).toString.apply(variable);
+            };
         };
-    };
-    for (var i = types.length - 1; i >= 0; --i) {
-        utils['is' + types[i]] = createIs(types[i]);
-    }
+        for (var i = types.length - 1; i >= 0; --i) {
+            key = 'is' + types[i];
+            utils[key] = type[key] = createIs(types[i]);
+        }
+    })();
 
     module.exports = utils;
 })(window, document);
-},{"./array":1,"./buggy":2}]},{},[1,2,3,4,5,6,7,8,9])
+},{"./array":1,"./buggy":2,"./math":8}]},{},[1,2,3,4,5,6,7,8,9,10])

@@ -50,7 +50,7 @@
             try {
                 parsedArray = unescape(value).split("|");
                 if (parsedArray[0] == "1" || parsedArray[0] == "2" && parsedArray[3]) {
-                    this._parsePassportCookie(UTILS.utf8to16(UTILS.b64_decodex(parsedArray[3])));
+                    this._parsePassportCookie(UTILS.math.utf8to16(UTILS.math.b64_decodex(parsedArray[3])));
                 }
             } catch (e) {}
 
