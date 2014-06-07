@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: [STATIC_DIR + '**/*.js'],
-                tasks: ['jshint', 'browserify','version']
+                tasks: ['jshint', 'browserify', 'version']
             },
             css: {
                 files: [STATIC_DIR + '**/*.{css,less}'],
@@ -129,13 +129,13 @@ module.exports = function(grunt) {
                 src: [STATIC_DIR + 'js/**/*.js'],
                 dest: WEB_DIR + '/dist/passport-dialog.js'
             },
-            core:{
+            core: {
                 src: [STATIC_DIR + 'js/*.js'],
                 dest: WEB_DIR + '/dist/passport-core.js'
             }
         },
-        version:{
-            sogou:[WEB_DIR+'dist/*.js']
+        version: {
+            sogou: [WEB_DIR + 'dist/*.js']
         }
     });
 
@@ -149,16 +149,17 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerMultiTask('version','set version',function(){
-        this.files.forEach(function(f){
-            f.src.forEach(function(src){
+    grunt.registerMultiTask('version', 'set version', function() {
+        this.files.forEach(function(f) {
+            f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace('@version@',pkg.version);
-                grunt.file.write(src,content);
+                content = content.replace('@version@', pkg.version);
+                grunt.file.write(src, content);
             });
         });
     });
 
-    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'version','less', 'copy', 'imagemin']);
+    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'version', 'less', 'copy', 'imagemin']);
+    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'uglify', 'version', 'less', 'copy', 'imagemin']);
     grunt.registerTask('server', ['express']);
 };

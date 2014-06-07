@@ -3,11 +3,28 @@
   "version": "0.1.5",
   "description": "simple sogou passport font-end library",
   "keywords": [
+    "sogou",
     "passport",
     "account"
   ],
-  "author": "yanni4night@gmail.com",
-  "license": "GPLv3",
+  "homepage": "http://passport.ufo.sogou-inc.com/",
+  "author": {
+    "name": "Yanni Nightingale",
+    "email": "yanni4night@gmail.com",
+    "url": "http://yanni4night.com"
+  },
+  "bugs": {
+    "url": "http://git.ufo.sogou-inc.com/yinyong/passport/issues"
+  },
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "git@git.ufo.sogou-inc.com:yinyong/passport.git"
+  },
+  "licenses": [{
+    "type": "GPLv3",
+    "url": "http://git.ufo.sogou-inc.com/yinyong/passport/blob/master/LICENSE-GPLv3"
+  }],
   "devDependencies": {
     "browserify": "^4.1.5",
     "express": "~3.4.5",
