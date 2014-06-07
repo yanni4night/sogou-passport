@@ -7,9 +7,10 @@
  *
  * changelog
  * 2014-06-07[13:47:16]:authorized
+ * 2014-06-07[15:21:54]:search cookie by regexp
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function(window, document, undefined) {
@@ -23,9 +24,9 @@
             return this.cookie;
         },
         parsePassportCookie: function() {
-            var value, i, parsedArray;
+            var value, i, parsedArray,matches;
 
-            if (true !== window.navigator && navigator.cookieEnabled) {
+            if (true !== (window.navigator && navigator.cookieEnabled)) {
                 return this;
             }
             //clear
@@ -33,16 +34,10 @@
 
             var cookieArray = document.cookie.split("; ");
             for (i = 0; i < cookieArray.length; ++i) {
-                if (cookieArray[i].indexOf("ppinf=") === 0) {
-                    value = cookieArray[i].slice(6);
-                    break;
-                }
-                if (cookieArray[i].indexOf("ppinfo=") === 0) {
-                    value = cookieArray[i].slice(7);
-                    break;
-                }
-                if (cookieArray[i].indexOf("passport=") === 0) {
-                    value = cookieArray[i].slice(9);
+                matches = cookieArray[i].match(/^p(?:pinf|pinfo|assport)=(.+)$/);
+                if(matches&&matches[1])
+                {
+                    value = matches[1];
                     break;
                 }
             }
