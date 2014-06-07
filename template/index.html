@@ -144,22 +144,49 @@ PassportSC
     appid: 1100,
     redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
-.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess needcaptcha</i>',function(evt,data){
+.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess needcaptcha 3rdlogincomplete</i>',function(evt,data){
             alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
         });
 </pre>
             <h4>Test</h4>
+            <div id="info">Try the following login,remember to permit a popup window:</div>
             <form action="#" id="form">
                 <fieldset>
-                    <legend id="legend">Login Area</legend>
-                    <label for="username">username:</label>
-                    <input type="text" id="username" value="lovemd@sogou.com" required="required"/>
-                    <label for="passport">passport:</label>
-                    <input type="password" id="password" value="123456" required="required"/>
-                    <button id="login" type="submit">Login</button>
-                    <button id="logout" type="button">Logout</button>
-                    <button id="reset" type="reset">Reset</button>
-                    <span id="info"></span>
+                    <legend id="legend">Sogou Login Area</legend>
+                    <div>
+                        <label for="username">username:</label>
+                        <input type="text" id="username" value="lovemd@sogou.com" required="required"/>
+                    </div>
+                    <div>
+                        <label for="passport">passport:</label>
+                        <input type="password" id="password" value="123456" required="required"/>
+                    </div>
+                    <div>
+                        <button id="login" type="submit">Login</button>
+                        <button id="logout" type="button">Logout</button>
+                        <button id="reset" type="reset">Reset</button>
+                        
+                    </div>
+                </fieldset>
+            </form>
+            <form action="#" id="trd-form">
+                <fieldset>
+                    <legend id="trd-legend">Third-party Login Area</legend>
+                    <div>
+                        <label><input type="radio" name="provider" value="qq" checked="checked"/> qq</label>
+                        <label><input type="radio" name="provider" value="sina"/> sina</label>
+                        <label><input type="radio" name="provider" value="renren"/> renren</label>
+                    </div>
+
+                    <div>
+                        <label><input type="radio" name="display" value="page"/> page</label>
+                        <label><input type="radio" name="display" value="popup" checked="checked"/> popup</label>
+                    </div>
+
+                    <div>
+                        <button id="trd-login" type="submit">Login</button>
+                        <button id="trd-reset" type="reset">Reset</button>
+                    </div>
                 </fieldset>
             </form>
             <h4>Todo</h4>
@@ -194,12 +221,12 @@ PassportSC
         function info(msg){
             $('info').innerHTML = msg;
         }
-        PassportSC.init({
+        PassportSC({
             appid: 1120,
             redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
-        .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha ',function(evt,data){
-            info(evt.type.replace(/(log(?:in|out)|need)/,"$1 "));
+        .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha 3rdlogincomplete',function(evt,data){
+            $('info').innerHTML = evt.type.replace(/(log(?:in|out)|need)/,"$1 ");
         });
 
         $('logout').onclick = function(e){
@@ -214,10 +241,44 @@ PassportSC
             return false;
         };
 
-        var userid;
-        if(userid = PassportSC.userid()){
-            $('legend').innerHTML = userid;
+        $('trd-form').onsubmit = function(e){
+            e = e || window.event;
+            var i,provider,display,ru;
+            try{
+            var providerRadios = document.getElementsByName('provider');
+            for(i=providerRadios.length-1;i>=0;--i){
+                if(providerRadios[i].checked){
+                    provider = providerRadios[i].value;
+                    break;
+                }
+            }
+            var displayRadios = document.getElementsByName('display');
+            for(i=displayRadios.length-1;i>=0;--i){
+                if(displayRadios[i].checked){
+                    display = displayRadios[i].value;
+                    break;
+                }
+            }
+            if(provider&&display)
+            {   
+                if('popup'===display)
+                    {
+                        ru = location.protocol+"//"+location.host+"/popup.html";
+                    }
+                    else 
+                        ru = undefined;
+                PassportSC.login3rd(provider,display,ru);
+            }
+
+        }catch(e){
+            alert(e);
         }
+
+            e.preventDefault&&e.preventDefault();
+            e.returnValue = false;
+            return false;
+        };
+
         </script>
     </body>
 </html>

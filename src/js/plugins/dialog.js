@@ -78,6 +78,8 @@
       UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
     }).on('needcaptcha', function(e,data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
+    }).on('3rdlogincomplete', function(e,data) {
+      UTILS.dom.id(ERROR_ID).innerHTML = '第三方登录完成';
     });
   };
 

@@ -20,9 +20,10 @@
  * 2014-06-07[11:03:49]:make 'getOptions' returns copy
  * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
  * 2014-06-07[20:07:16]:reconstruction PassportSC
+ * 2014-06-08[01:28:21]:third party login supported by 'login3rd'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.6
+ * @version 0.1.7
  * @since 0.1.0
  */
 
@@ -40,18 +41,29 @@
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;display:block;';
 
     var EVENTS = {
-        LOGINSUCCESS: 'loginsuccess',
-        LOGINFAILED: 'loginfailed',
-        LOGOUTSUCCESS: 'logoutsuccess',
-        NEEDCAPTCHA: 'needcaptcha'
+        login_success: 'loginsuccess',
+        login_failed: 'loginfailed',
+        logout_success: 'logoutsuccess',
+        need_captcha: 'needcaptcha',
+        third_party_login_complete: '3rdlogincomplete'
     };
 
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
         logout: 'https://account.sogou.com/web/logout_js',
         //active: 'https://account.sogou.com/web/remindActivate',
-        captcha: 'https://account.sogou.com/captcha'
+        captcha: 'https://account.sogou.com/captcha',
+        trdparty: 'http://account.sogou.com/connect/login'
     };
+
+    var THIRD_PARTY_SIZE = {
+        size: {
+            renren: [880, 620],
+            sina: [780, 640],
+            qq: [500, 300]
+        }
+    };
+
 
     var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -87,7 +99,7 @@
     /**
      * Create frameWrapper if it not exists.
      *
-     * @param {Function} 
+     * @param {Function}
      * @return {HTMLElement} frameWrapper
      */
     function assertFrameWrapper(callback) {
@@ -140,7 +152,7 @@
 
     /**
      * Simple template replacer.
-     * 
+     *
      * @param  {String} tpl
      * @param  {Object} data
      * @return {String}
@@ -156,7 +168,7 @@
      * Core passport object.
      *
      * This will be merged into PassportSC.
-     * 
+     *
      * @class
      */
     var Passport = {
@@ -222,12 +234,54 @@
                 token: gOptions._token
             };
 
-            assertFrameWrapper(function(container){
-                container.innerHTML = template(HTML_FRAME_LOGIN,payload);
+            assertFrameWrapper(function(container) {
+                container.innerHTML = template(HTML_FRAME_LOGIN, payload);
                 container.getElementsByTagName('form')[0].submit();
             });
 
-            return this;
+        },
+        /**
+         * Third party login.
+         *
+         * @param  {String} provider qq|sina|renren
+         * @param  {String} display page|popup
+         * @param  {String} redirectUrl
+         */
+        login3rd: function(provider, display, redirectUrl) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            type.assertNonEmptyString('provider', provider);
+
+            var size = THIRD_PARTY_SIZE.size[provider];
+            if (!size) {
+                throw new Error('provider:"' + provider + '" is not supported in  third party login');
+            }
+
+            if ('popup' === display) {
+                //popup and at least 2
+                type.assertNonEmptyString('redirectUrl', redirectUrl);
+            } else if (type.isUndefined(display)) {
+                //One
+                display = 'page';
+                redirectUrl = location.href;
+            } else {
+                //At least two and not popup
+                redirectUrl = redirectUrl || location.href;
+            }
+
+            var authUrl = FIXED_URLS.trdparty + '?client_id=' + gOptions.appid + '&provider=' + provider + '&ru=' + encodeURIComponent(redirectUrl);
+
+            if ('popup' === display) {
+                var left = (window.screen.availWidth - size[0]) / 2;
+                window.open(authUrl, '', 'height=' + size[1] + ',width=' + size[0] + ',top=80,left=' + left + ',toolbar=no,menubar=no');
+            } else if ('page' === display) {
+                location.href = authUrl;
+            } else {
+                throw new Error('display:"' + display + '" is not supported in third party login');
+            }
+
         },
         /**
          * Do logout.
@@ -244,11 +298,10 @@
 
             assertFrameWrapper(function(container) {
                 UTILS.dom.addIframe(container, url, function() {
-                    self.emit(EVENTS.LOGOUTSUCCESS);
+                    self.emit(EVENTS.logout_success);
                 });
             });
 
-            return this;
         },
         /**
          * Get userid from cookie
@@ -276,16 +329,16 @@
 
             if (!data || type.strobject !== typeof data) {
                 console.error('Nothing callback received');
-                this.emit(EVENTS.LOGINFAILED, data);
+                this.emit(EVENTS.login_failed, data);
             } else if (0 === +data.status) {
-                this.emit(EVENTS.LOGINSUCCESS, data);
+                this.emit(EVENTS.login_success, data);
             }
             /* else if (+data.status === 20231) {
                 location.href = FIXED_URLS.active + '?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
             }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
-                this.emit(EVENTS.NEEDCAPTCHA, data);
+                this.emit(EVENTS.need_captcha, data);
             } else {
                 for (var e in CODES) {
                     if (CODES[e].code == data.status) {
@@ -294,8 +347,15 @@
                     }
                 }
                 data.msg = data.msg || "Unknown error";
-                this.emit(EVENTS.LOGINFAILED, data);
+                this.emit(EVENTS.login_failed, data);
             }
+        },
+        _logincb3rd: function() {
+            if (!this.isInitialized()) {
+                console.trace('Login3rd callback received but [Passport] has not been initialized');
+                return;
+            }
+            this.emit(EVENTS.third_party_login_complete);
         },
         /**
          * If passport has been initialized.
@@ -316,12 +376,12 @@
         },
         /**
          * Get a copy of events which passport supports.
-         * 
+         *
          * @return {Object}
          */
         getSupportedEvents: function() {
             var events = {};
-            return UTILS.mixin(events,EVENTS);
+            return UTILS.mixin(events, EVENTS);
         }
     };
 
