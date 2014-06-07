@@ -116,6 +116,8 @@ loadSync('sogou.js');
                 <li>appid: null</li>
                 <li>redirectUrl: null</li>
             </ol>
+            <p>By the way,it equals:</p>
+            <code>PassportSC(options);</code>
             <p>
                 Login with:
             </p>
@@ -132,8 +134,8 @@ loadSync('sogou.js');
             <code>PassportSC.on('loginsuccess loginfailed logoutsuccess',function(evt,data){});</code>
             <p>
             That'a all,so far so simple.All inner functions do not export.If you try to invoke:
-            <q>JSON.stringify(PassportSC)</q>,what you get will like:
-            <q>{"version":"0.1.2"}</q>.
+            <q>JSON.stringify(PassportSC)</q>,what you get will be:
+            <q>undefined</q> because it's a function.
             </p>
             <p>Demo</p>
 <pre>
@@ -142,7 +144,7 @@ PassportSC
     appid: 1100,
     redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
-.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess</i>',function(evt,data){
+.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess needcaptcha</i>',function(evt,data){
             alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
         });
 </pre>
@@ -193,11 +195,11 @@ PassportSC
             $('info').innerHTML = msg;
         }
         PassportSC.init({
-            appid: 1100,
+            appid: 1120,
             redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
-        .on(' loginsuccess  loginfailed  logoutsuccess ',function(evt,data){
-            info(evt.type.replace(/(log(?:in|out))/,"$1 "));
+        .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha ',function(evt,data){
+            info(evt.type.replace(/(log(?:in|out)|need)/,"$1 "));
         });
 
         $('logout').onclick = function(e){

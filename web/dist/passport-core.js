@@ -435,9 +435,10 @@
  * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
  * 2014-06-07[11:03:49]:make 'getOptions' returns copy
  * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
+ * 2014-06-07[20:07:16]:reconstruction PassportSC
  *
  * @author yanni4night@gmail.com
- * @version 0.1.5
+ * @version 0.1.6
  * @since 0.1.0
  */
 
@@ -452,7 +453,7 @@
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
     var EXPANDO = type.expando;
-    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
+    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;display:block;';
 
     var EVENTS = {
         LOGINSUCCESS: 'loginsuccess',
@@ -468,16 +469,7 @@
         captcha: 'https://account.sogou.com/captcha'
     };
 
-    var _passhtml = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
-
-    var defaultOptions = {
-        appid: null,
-        redirectUrl: null
-    };
-
-    //Singleton inner object
-    var gPassport = null;
-    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
+    var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
     //For validations of options in bulk
     var VALIDATORS = [{
@@ -498,18 +490,49 @@
         }
     }];
 
+    var gOptions = null;
+    var PassportSC = null;
+    var frameWrapper = null;
+    var defaultOptions = {
+        appid: null,
+        redirectUrl: null
+    };
+
+    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
+
+    /**
+     * Create frameWrapper if it not exists.
+     *
+     * @param {Function} 
+     * @return {HTMLElement} frameWrapper
+     */
+    function assertFrameWrapper(callback) {
+        var c = frameWrapper;
+        if (!c || (type.strobject !== typeof c) || (type.strundefined === typeof c.appendChild) || !c.parentNode) {
+            c = frameWrapper = document.createElement('div');
+            c.style.cssText = HIDDEN_CSS;
+            c.className = c.id = EXPANDO;
+            document.body.appendChild(c);
+        }
+
+        if (type.isFunction(callback)) {
+            callback(c);
+        }
+        return c;
+    }
+
     /**
      * This is the inner PASSPORT constructor.
      * As the instance could not be more then one,
      * it may be called only once.
      *
      * @param {Object} options
-     * @class
+     * @throws {Error} If any validattion failed
      */
-    function Passport(options) {
+    function validateOptions(options) {
         var i, j, validator, name, opt;
 
-        opt = this.opt = {};
+        opt = gOptions = {};
 
         type.assertPlainObject('options', options);
 
@@ -529,26 +552,70 @@
         }
         //DON'T FORGET IT
         opt._token = UTILS.math.uuid();
-
-        //we make it an event emitter
-        UTILS.mixin(this, new Event());
     }
 
     /**
-     * Passport prototype.
+     * Simple template replacer.
+     * 
+     * @param  {String} tpl
+     * @param  {Object} data
+     * @return {String}
+     */
+    function template(tpl, data) {
+        return tpl.replace(/<%=([\w\-]+?)%>/g, function(k, n) {
+            var key = data[n];
+            return undefined === key ? "" : key;
+        });
+    }
+
+    /**
+     * Core passport object.
      *
+     * This will be merged into PassportSC.
+     * 
      * @class
      */
-    Passport.prototype = {
+    var Passport = {
+        version: '0.1.6', //see 'package.json'
         /**
-         * Do login action.
+         * Initialize.
+         * This must be called at first before
+         * any other operations.
+         *
+         * The following options must be set in options:
+         * 1.appid -- Integer of ID,it depends on the product line;
+         * 2.redirectUrl -- A same domain page url for cross-domain;
+         *
+         * @param  {Obejct} options Required options
+         * @return {Object} PassportSC
+         */
+        init: function(options) {
+            if (!this.isInitialized()) {
+                console.trace('Initialize passport');
+                validateOptions(options);
+            } else {
+                console.warn('Passport has already been initialized');
+            }
+            //support both PassportSC() and PassportSC.init()
+            return PassportSC;
+        },
+        /**
+         * Do login
          *
          * @param  {String} username
          * @param  {String} password
          * @param  {String} vcode
          * @param  {Boolean} autoLogin
+         * @return {Object} this
+         * @throws {Error} If not initialized
          */
         login: function(username, password, vcode, autoLogin) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            console.trace('logining with:' + Array.prototype.join.call(arguments));
+
             var payload;
 
             if (arguments.length < 4) {
@@ -566,36 +633,63 @@
                 password: password,
                 vcode: vcode || "",
                 autoLogin: +(!!autoLogin), //:0/1
-                appid: this.opt.appid,
-                redirectUrl: this.opt.redirectUrl,
-                token: this.opt._token
+                appid: gOptions.appid,
+                redirectUrl: gOptions.redirectUrl,
+                token: gOptions._token
             };
 
-            this._assertContainer();
-            this.mHTMLContainer.innerHTML = _passhtml.replace(/<%=(\w+?)%>/g, function(k, n) {
-                var key = payload[n];
-                return undefined === key ? "" : key;
+            assertFrameWrapper(function(container){
+                container.innerHTML = template(HTML_FRAME_LOGIN,payload);
+                container.getElementsByTagName('form')[0].submit();
             });
 
-            this.mHTMLContainer.getElementsByTagName('form')[0].submit();
+            return this;
         },
         /**
-         * Do logout action.It's an async function.
+         * Do logout.
+         * @return {Object} this
+         * @throws {Error} If not initialized
          */
         logout: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+            console.trace('logouting');
             var self = this;
-            var url = FIXED_URLS.logout + '?client_id=' + self.opt.appid;
-            self._assertContainer();
-            UTILS.dom.addIframe(this.mHTMLContainer, url, function() {
-                self.emit(EVENTS.LOGOUTSUCCESS);
+            var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
+
+            assertFrameWrapper(function(container) {
+                UTILS.dom.addIframe(container, url, function() {
+                    self.emit(EVENTS.LOGOUTSUCCESS);
+                });
             });
+
+            return this;
         },
         /**
-         * Callback with result from iframe.
-         * @param  {Object} data Should inclding status&needcaptcha at least
+         * Get userid from cookie
+         * @return {String} userid or empty string
+         * @throws {Error} If not initialized
          */
-        loginCallback: function(data) {
-            var e;
+        userid: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            return PassportCookieParser.parse().userid || "";
+        },
+        /**
+         * Login callback from iframe.
+         * DO NOT call it directly.
+         *
+         * @param  {Object} data login result
+         */
+        _logincb: function(data) {
+            if (!this.isInitialized()) {
+                console.trace('Login callback received but [Passport] has not been initialized');
+                return;
+            }
+
             if (!data || type.strobject !== typeof data) {
                 console.error('Nothing callback received');
                 this.emit(EVENTS.LOGINFAILED, data);
@@ -603,13 +697,13 @@
                 this.emit(EVENTS.LOGINSUCCESS, data);
             }
             /* else if (+data.status === 20231) {
-                location.href = FIXED_URLS.active + '?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + this.opt.appid + '&ru=' + encodeURIComponent(location.href);
+                location.href = FIXED_URLS.active + '?email=' + encodeURIComponent(this._currentUname) + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
             }*/
             else if (+data.needcaptcha) {
-                data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
+                data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
                 this.emit(EVENTS.NEEDCAPTCHA, data);
             } else {
-                for (e in CODES) {
+                for (var e in CODES) {
                     if (CODES[e].code == data.status) {
                         data.msg = CODES[e].info;
                         break;
@@ -620,117 +714,12 @@
             }
         },
         /**
-         * Get options.
-         *
-         * @return {Object}
-         */
-        getOptions: function() {
-            return this.opt;
-        },
-        /**
-         * Assert mHTMLContainer,create it if not exists.
-         * @return {HTMLElement} mHTMLContainer
-         */
-        _assertContainer: function() {
-            var container = this.mHTMLContainer;
-            if (!container || (type.strobject !== typeof container) || (type.strundefined === typeof container.appendChild) || !container.parentNode) {
-                container = this.mHTMLContainer = document.createElement('div');
-                container.style.cssText = HIDDEN_CSS;
-                container.className = container.id = EXPANDO;
-                document.body.appendChild(container);
-            }
-
-            return container;
-        }
-    };
-
-    //Expose few interfaces
-    var PassportProxy = {
-        version: '0.1.5', //from 'package.json'
-        /**
-         * Initialize.
-         * This must be called at first before
-         * any other operations.
-         *
-         * The following options must be set in options:
-         * 1.appid -- Integer of ID,it depends on the product line;
-         * 2.redirectUrl -- A same domain page url for cross-domain;
-         * 3.container -- An empty HTML element,hidden usually
-         *
-         * @param  {Obejct} options Required options
-         * @return {Object} this
-         */
-        init: function(options) {
-            if (!gPassport) {
-                console.trace('Initialize passport');
-                gPassport = new Passport(options);
-                gPassport.on([EVENTS.LOGINSUCCESS, EVENTS.LOGINFAILED, EVENTS.LOGOUTSUCCESS, EVENTS.NEEDCAPTCHA].join(' '), function(evt, data) {
-                    PassportProxy.emit(evt.type, data);
-                });
-            } else {
-                console.warn('Passport has already been initialized');
-            }
-
-            return this;
-        },
-        /**
-         * Do login
-         * @return {Object} this
-         * @throws {Error} If not initialized
-         */
-        login: function() {
-            if (!gPassport) {
-                throw new Error(NOT_INITIALIZED_ERROR);
-            }
-            console.trace('logining with:' + Array.prototype.join.call(arguments));
-            gPassport.login.apply(gPassport, arguments);
-            return this;
-        },
-        /**
-         * Do logout.
-         * @return {Object} this
-         * @throws {Error} If not initialized
-         */
-        logout: function() {
-            if (!gPassport) {
-                throw new Error(NOT_INITIALIZED_ERROR);
-            }
-            console.trace('logouting');
-            gPassport.logout.apply(gPassport, arguments);
-            return this;
-        },
-        /**
-         * Get userid from cookie
-         * @return {String} userid or empty string
-         * @throws {Error} If not initialized
-         */
-        userid: function() {
-            if (!gPassport) {
-                throw new Error(NOT_INITIALIZED_ERROR);
-            }
-            var cookie = PassportCookieParser.parse();
-            return cookie.userid || "";
-        },
-        /**
-         * Login callback from iframe.
-         * DO NOT call it directly.
-         *
-         * @param  {Object} data login result
-         */
-        _logincb: function(data) {
-            if (gPassport) {
-                gPassport.loginCallback(data);
-            } else {
-                console.trace('Login callback received but [Passport] has not been initialized');
-            }
-        },
-        /**
          * If passport has been initialized.
          *
          * @return {Boolean}
          */
         isInitialized: function() {
-            return !!gPassport;
+            return !!gOptions;
         },
         /**
          * Get a copy of options.
@@ -739,31 +728,40 @@
          */
         getOptions: function() {
             var opts = {};
-            return UTILS.mixin(opts, gPassport.getOptions());
+            return UTILS.mixin(opts, gOptions);
         },
         /**
-         * Get events which passport supports.
+         * Get a copy of events which passport supports.
+         * 
          * @return {Object}
          */
         getSupportedEvents: function() {
-            return EVENTS;
+            var events = {};
+            return UTILS.mixin(events,EVENTS);
         }
     };
 
+    //Hide source
+    PassportSC = function() {
+        return Passport.init.apply(Passport, arguments);
+    };
+
+    UTILS.mixin(PassportSC, Passport);
+
 
     //Make proxy an event emitter too.
-    UTILS.mixin(PassportProxy, new Event());
+    UTILS.mixin(PassportSC, new Event());
 
     //Sync loading supported
     if (window.PassportSC && type.strobject === typeof window.PassportSC) {
-        UTILS.mixin(window.PassportSC, PassportProxy);
+        UTILS.mixin(window.PassportSC, PassportSC);
         if (strfunction === typeof window.PassportSC.onApiLoaded)
             window.PassportSC.onApiLoaded();
     } else {
-        window.PassportSC = PassportProxy;
+        window.PassportSC = PassportSC;
     }
 
-    module.exports = PassportProxy;
+    module.exports = PassportSC;
 })(window, document);
 },{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":11}],7:[function(require,module,exports){
 /**
