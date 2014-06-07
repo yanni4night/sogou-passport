@@ -164,7 +164,49 @@
 
   module.exports = array;
 })();
-},{"./utils":6}],2:[function(require,module,exports){
+},{"./utils":7}],2:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * buggy.js
+ *
+ * changelog
+ * 2014-06-07[10:08:13]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+    var expando = 'sogou-passport-' + (+new Date());
+
+    var Buggy = {
+        /**
+         * "getElementById" is buggy on IE6/7.
+         * 
+         * @see  https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L528
+         * @property
+         */
+        getElementById: (function(document) {
+            var div = document.createElement('div');
+
+            document.documentElement.appendChild(div).setAttribute('id', expando);
+
+            var buggy = document.getElementsByName && document.getElementsByName(expando).length;
+            
+            document.documentElement.removeChild(div);
+            
+            div = null;
+
+            return !!buggy;
+        })(document)
+    };
+
+    module.exports = Buggy;
+})(window, document);
+},{}],3:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -227,7 +269,7 @@
         }
     };
 })(window, document);
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -261,7 +303,7 @@
 
     module.exports = console;
 })(window, document);
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -779,7 +821,7 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":2,"./console":3,"./event":5,"./utils":6}],5:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./event":6,"./utils":7}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -909,7 +951,7 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":3,"./utils":6}],6:[function(require,module,exports){
+},{"./array":1,"./console":4,"./utils":7}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -923,8 +965,16 @@
  * @version 0.1.1
  * @since 0.1.0
  */
+
 (function(window, document, undefined) {
     "use strict";
+
+    var Buggy = require('./buggy');
+    var array = require('./array');
+
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" );
+
 
     var hexcase = 0;
     var chrsz = 8;
@@ -1197,9 +1247,6 @@
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
         },
-        isArray: function(obj) {
-            return Object.prototype.toString.call(obj) === '[object Array]';
-        },
         mixin: function(dest, src) {
             if (!src || 'object' !== typeof src) {
                 return dest;
@@ -1273,16 +1320,44 @@
             e = e || window.event;
             return e.target || e.srcElement;
         },
+        /**
+         * Get HTMLElement by id.
+         *
+         * @param  {String} id
+         * @return {HTMLElement}
+         */
         id: function(id) {
-            return document.getElementById(id);
+            var ele = document.getElementById(id),
+                all, node;
+            if (!Buggy.getElementById) {
+                //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
+                return (ele && ele.parentNode) ? ele : null;
+            } else if (ele) {
+                node = typeof ele.getAttributeNode !== 'undefined' && ele.getAttributeNode("id");
+                if (node && node.value === id) {
+                    return ele;
+                }
+            }
+            all = document.getElementsByTagName('*');
+            array.some(all, function(ele) {
+                if (ele && ele.nodeType === 1 && ele.id === id) {
+                    return true;
+                }
+            });
+            return ele && ele.id === id ? ele : null;
         },
+        /**
+         * Trim s string.
+         * @param  {String} str Source string
+         * @return {String}    Trimed string
+         */
         trim: function(str) {
             if (!this.isString(str)) {
                 return str;
             } else if (String.prototype.trim) {
                 return str.trim();
             } else {
-                return str.replace(/(^\s+)|(\s+$)/mg, '');
+                return str.replace(rtrim, '');
             }
         }
     };
@@ -1296,7 +1371,7 @@
     for (var i = types.length - 1; i >= 0; --i) {
         utils['is' + types[i]] = createIs(types[i]);
     }
-    
+
     module.exports = utils;
 })(window, document);
-},{}]},{},[1,2,3,4,5,6])
+},{"./array":1,"./buggy":2}]},{},[1,2,3,4,5,6,7])
