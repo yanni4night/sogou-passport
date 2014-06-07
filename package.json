@@ -1,13 +1,13 @@
 {
   "name": "passport",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "simple sogou passport font-end library",
   "keywords": [
     "passport",
     "account"
   ],
   "author": "yanni4night@gmail.com",
-  "license": "MIT",
+  "license": "GPLv3",
   "devDependencies": {
     "browserify": "^4.1.5",
     "express": "~3.4.5",

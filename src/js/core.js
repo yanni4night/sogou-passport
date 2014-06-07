@@ -18,9 +18,10 @@
  * 2014-06-04[16:37:06]:disabled 'remindActive' action
  * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
  * 2014-06-07[11:03:49]:make 'getOptions' returns copy
+ * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
  *
  * @author yanni4night@gmail.com
- * @version 0.1.4
+ * @version 0.1.5
  * @since 0.1.0
  */
 
@@ -39,7 +40,8 @@
     var EVENTS = {
         LOGINSUCCESS: 'loginsuccess',
         LOGINFAILED: 'loginfailed',
-        LOGOUTSUCCESS: 'logoutsuccess'
+        LOGOUTSUCCESS: 'logoutsuccess',
+        NEEDCAPTCHA: 'needcaptcha'
     };
 
     var FIXED_URLS = {
@@ -206,7 +208,7 @@
             }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
-                this.emit(EVENTS.LOGINFAILED, data);
+                this.emit(EVENTS.NEEDCAPTCHA, data);
             } else {
                 for (e in CODES) {
                     if (CODES[e].code == data.status) {
@@ -446,7 +448,7 @@
             if (!gPassport) {
                 console.trace('Initialize passport');
                 gPassport = new Passport(options);
-                gPassport.on([EVENTS.LOGINSUCCESS, EVENTS.LOGINFAILED, EVENTS.LOGOUTSUCCESS].join(' '), function(evt, data) {
+                gPassport.on([EVENTS.LOGINSUCCESS, EVENTS.LOGINFAILED, EVENTS.LOGOUTSUCCESS, EVENTS.NEEDCAPTCHA].join(' '), function(evt, data) {
                     PassportProxy.emit(evt.type, data);
                 });
             } else {

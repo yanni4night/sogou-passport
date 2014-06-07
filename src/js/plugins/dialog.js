@@ -71,6 +71,8 @@
       UTILS.id(ERROR_ID).innerHTML = '登录失败';
     }).on('loginsuccess',function(e){
       UTILS.id(ERROR_ID).innerHTML = '登录成功';
+    }).on('needcaptcha',function(e){
+      UTILS.id(ERROR_ID).innerHTML = '需要验证码';
     });
   };
 

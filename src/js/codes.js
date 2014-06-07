@@ -13,6 +13,7 @@
 
 (function(window, document, undefined) {
     "use strict";
+    
     module.exports = {
         SYSTEM_ERROR: {
             code: 10001,
