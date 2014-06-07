@@ -13,6 +13,7 @@
 
 (function(window, document, undefined) {
     "use strict";
+    
     var expando = 'sogou-passport-' + (+new Date());
 
     var Buggy = {
@@ -25,6 +26,7 @@
         getElementById: (function(document) {
             var div = document.createElement('div');
 
+            //document.body is null here
             document.documentElement.appendChild(div).setAttribute('id', expando);
 
             var buggy = document.getElementsByName && document.getElementsByName(expando).length;

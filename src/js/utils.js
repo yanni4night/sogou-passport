@@ -7,6 +7,8 @@
  * 2014-05-24[23:06:31]:authorized
  * 2014-06-06[09:23:53]:getIEVersion
  *
+ * TODO:clean
+ *
  * @author yanni4night@gmail.com
  * @version 0.1.1
  * @since 0.1.0
@@ -18,10 +20,11 @@
     var Buggy = require('./buggy');
     var array = require('./array');
 
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
     var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" );
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
-
+    //They seem to be const
     var hexcase = 0;
     var chrsz = 8;
 
@@ -293,6 +296,13 @@
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
         },
+        /**
+         * Merge object members.
+         * 
+         * @param  {Object} dest 
+         * @param  {Object} src  
+         * @return {Object}      Dest
+         */
         mixin: function(dest, src) {
             if (!src || 'object' !== typeof src) {
                 return dest;
@@ -305,17 +315,30 @@
             }
             return dest;
         },
+        /**
+         * Insert a link element
+         *
+         * @param  {String} src Link url
+         * @return {HTMLLinkElement}
+         * @throws {Error} If parameters illegal
+         */
         insertLink: function(src) {
-            if (!src || 'string' !== typeof src) {
-                return null;
+            if (!src || !this.isString(src)) {
+                throw new Error('"src" has to be a url string');
             }
             var link = document.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('type', 'text/css');
-            link.setAttribute('href', src);
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = src;
             document.getElementsByTagName('head')[0].appendChild(link);
             return link;
         },
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 6~11 supported.
+         *
+         * @return {Integer} Version in number.
+         */
         getIEVersion: function() {
             var ua = navigator.userAgent,
                 matches, tridentMap = {
@@ -341,12 +364,32 @@
             //we did what we could
             return null;
         },
+        /**
+         * Attatch event listener to HTMLElements.
+         * @param  {HTMLElement} dom
+         * @param  {String} evt
+         * @param  {Function} func
+         * @return {this}
+         * @throws {Error} If parameters illegal
+         */
         bindEvent: function(dom, evt, func) {
+            if (!dom || !dom.childNodes) {
+                throw new Error('"dom" has to be a HTMLElement');
+            }
+            if (!evt || !this.isString(evt)) {
+                throw new Error('"evt" has to be a string');
+            }
+            if (!func || !this.isFunction(func)) {
+                throw new Error('"func" has to be a function');
+            }
+
             if (document.addEventListener) {
                 dom.addEventListener(evt, func, false);
             } else if (document.attachEvent) {
                 dom.attachEvent('on' + evt, func);
             }
+
+            return this;
         },
         stopPropagation: function(evt) {
             if (evt.stopPropagation) {
@@ -376,39 +419,44 @@
             var ele = document.getElementById(id),
                 all, node;
             if (!Buggy.getElementById) {
+                //BlackBerry 4.6
                 //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
                 return (ele && ele.parentNode) ? ele : null;
             } else if (ele) {
+                //IE6/7
                 node = typeof ele.getAttributeNode !== 'undefined' && ele.getAttributeNode("id");
                 if (node && node.value === id) {
                     return ele;
                 }
             }
+            //TODO test
             all = document.getElementsByTagName('*');
             array.some(all, function(ele) {
+                //ignore comment
                 if (ele && ele.nodeType === 1 && ele.id === id) {
                     return true;
                 }
             });
-            return ele && ele.id === id ? ele : null;
+            return (ele && ele.id === id) ? ele : null;
         },
         /**
-         * Trim s string.
-         * @param  {String} str Source string
+         * Trim a string.If a non-string passed in,
+         * convert it to a string.
+         *
+         * @param  {Object} str Source string
          * @return {String}    Trimed string
+         * @version 0.1.1
          */
         trim: function(str) {
-            if (!this.isString(str)) {
-                return str;
-            } else if (String.prototype.trim) {
-                return str.trim();
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
             } else {
                 return str.replace(rtrim, '');
             }
         }
     };
     //is***
-    var types = ['Arguments', 'RegExp', 'Date', 'String', 'Array', 'Boolean', 'Function', 'Number'];
+    var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
     var createIs = function(type) {
         return function(variable) {
             return '[object ' + type + ']' === ({}).toString.apply(variable);

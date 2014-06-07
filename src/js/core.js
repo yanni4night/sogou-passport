@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
- * sogou.js
+ * core.js
  *
  * Passport for sogou.com Ltd.
  *
@@ -15,8 +15,9 @@
  * 2014-05-24[20:43:42]:authorized
  * 2014-05-25[10:48:30]:code matched
  * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
- * 2014-06-04[16:37:06]:disabled remindActive action
- * 2014-06-06[11:18:50]:getOptions&isInitialized added
+ * 2014-06-04[16:37:06]:disabled 'remindActive' action
+ * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
+ * 2014-06-07[11:03:49]:make 'getOptions' returns copy
  *
  * @author yanni4night@gmail.com
  * @version 0.1.4
@@ -25,14 +26,15 @@
 
 (function(window, document, undefined) {
     "use strict";
+
     var UTILS = require('./utils');
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
 
-    var FILE_NAME = 'sogou.js';
+    var FILE_NAME = 'sogou-passport(@version@).js';
     var EXPANDO = "sogou-passport-" + (+new Date());
-    var HIDDEN_CSS = 'width：1px;height:1px;position:absolute;left:-100000px;';
+    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
     var EVENTS = {
         LOGINSUCCESS: 'loginsuccess',
@@ -62,10 +64,7 @@
 
     var defaultOptions = {
         appid: null,
-        redirectUrl: null,
-        onLoginSuccess: noop,
-        onLoginFailed: noop,
-        onLogoutSuccess: noop
+        redirectUrl: null
     };
 
     //Singleton inner object
@@ -97,17 +96,18 @@
      * it may be called only once.
      *
      * @param {Object} options
+     * @class
      */
     function Passport(options) {
         var i, j, validator, name, opt;
-        //This constructor will be called less then twice,
-        //whatever even 'defaultOptions' changed...
-        opt = this.opt = defaultOptions;
+
+        opt = this.opt = {};
 
         if (!options || strobject !== typeof options) {
             throw new Error('"options" MUST be a plain object');
         }
 
+        UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
 
         for (i = VALIDATORS.length - 1; i >= 0; --i) {
@@ -124,9 +124,15 @@
         //DON'T FORGET IT
         opt._token = UTILS.uuid();
 
+        //we make it an event emitter
         UTILS.mixin(this, new Event());
     }
 
+    /**
+     * Passport prototype.
+     * 
+     * @class
+     */
     Passport.prototype = {
         /**
          * Do login action.
@@ -150,7 +156,7 @@
                 username: username,
                 password: password,
                 vcode: vcode,
-                autoLogin: +(!!autoLogin),
+                autoLogin: +(!!autoLogin), //:0/1
                 appid: this.opt.appid,
                 redirectUrl: this.opt.redirectUrl,
                 token: this.opt._token
@@ -183,10 +189,8 @@
             var e;
             if (!data || strobject !== typeof data) {
                 console.error('Nothing callback received');
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             } else if (0 === +data.status) {
-                //this.opt.onLoginSuccess(data);
                 this.emit(EVENTS.LOGINSUCCESS, data);
             }
             /* else if (+data.status === 20231) {
@@ -194,7 +198,6 @@
             }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             } else {
                 for (e in CODES) {
@@ -204,10 +207,14 @@
                     }
                 }
                 data.msg = data.msg || "Unknown error";
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             }
         },
+        /**
+         * Get options.
+         * 
+         * @return {Object}
+         */
         getOptions: function() {
             return this.opt;
         },
@@ -491,17 +498,34 @@
                 console.trace('Login callback received but [Passport] has not been initialized');
             }
         },
+        /**
+         * If passport has been initialized.
+         *
+         * @return {Boolean}
+         */
         isInitialized: function() {
             return !!gPassport;
         },
+        /**
+         * Get a copy of options.
+         *
+         * @return {Object}
+         */
         getOptions: function() {
-            return gPassport.getOptions();
+            var opts = {};
+            return UTILS.mixin(opts, gPassport.getOptions());
         },
+        /**
+         * Get events which passport supports.
+         * @return {Object}
+         */
         getSupportedEvents: function() {
             return EVENTS;
         }
     };
 
+
+    //Make proxy an event emitter too.
     UTILS.mixin(PassportProxy, new Event());
 
     //Sync loading supported

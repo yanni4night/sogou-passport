@@ -180,6 +180,7 @@
 
 (function(window, document, undefined) {
     "use strict";
+    
     var expando = 'sogou-passport-' + (+new Date());
 
     var Buggy = {
@@ -192,6 +193,7 @@
         getElementById: (function(document) {
             var div = document.createElement('div');
 
+            //document.body is null here
             document.documentElement.appendChild(div).setAttribute('id', expando);
 
             var buggy = document.getElementsByName && document.getElementsByName(expando).length;
@@ -307,7 +309,7 @@
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
- * sogou.js
+ * core.js
  *
  * Passport for sogou.com Ltd.
  *
@@ -321,8 +323,9 @@
  * 2014-05-24[20:43:42]:authorized
  * 2014-05-25[10:48:30]:code matched
  * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
- * 2014-06-04[16:37:06]:disabled remindActive action
- * 2014-06-06[11:18:50]:getOptions&isInitialized added
+ * 2014-06-04[16:37:06]:disabled 'remindActive' action
+ * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
+ * 2014-06-07[11:03:49]:make 'getOptions' returns copy
  *
  * @author yanni4night@gmail.com
  * @version 0.1.4
@@ -331,14 +334,15 @@
 
 (function(window, document, undefined) {
     "use strict";
+
     var UTILS = require('./utils');
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
 
-    var FILE_NAME = 'sogou.js';
+    var FILE_NAME = 'sogou-passport(0.1.4).js';
     var EXPANDO = "sogou-passport-" + (+new Date());
-    var HIDDEN_CSS = 'width：1px;height:1px;position:absolute;left:-100000px;';
+    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
     var EVENTS = {
         LOGINSUCCESS: 'loginsuccess',
@@ -368,10 +372,7 @@
 
     var defaultOptions = {
         appid: null,
-        redirectUrl: null,
-        onLoginSuccess: noop,
-        onLoginFailed: noop,
-        onLogoutSuccess: noop
+        redirectUrl: null
     };
 
     //Singleton inner object
@@ -403,17 +404,18 @@
      * it may be called only once.
      *
      * @param {Object} options
+     * @class
      */
     function Passport(options) {
         var i, j, validator, name, opt;
-        //This constructor will be called less then twice,
-        //whatever even 'defaultOptions' changed...
-        opt = this.opt = defaultOptions;
+
+        opt = this.opt = {};
 
         if (!options || strobject !== typeof options) {
             throw new Error('"options" MUST be a plain object');
         }
 
+        UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
 
         for (i = VALIDATORS.length - 1; i >= 0; --i) {
@@ -430,9 +432,15 @@
         //DON'T FORGET IT
         opt._token = UTILS.uuid();
 
+        //we make it an event emitter
         UTILS.mixin(this, new Event());
     }
 
+    /**
+     * Passport prototype.
+     * 
+     * @class
+     */
     Passport.prototype = {
         /**
          * Do login action.
@@ -456,7 +464,7 @@
                 username: username,
                 password: password,
                 vcode: vcode,
-                autoLogin: +(!!autoLogin),
+                autoLogin: +(!!autoLogin), //:0/1
                 appid: this.opt.appid,
                 redirectUrl: this.opt.redirectUrl,
                 token: this.opt._token
@@ -489,10 +497,8 @@
             var e;
             if (!data || strobject !== typeof data) {
                 console.error('Nothing callback received');
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             } else if (0 === +data.status) {
-                //this.opt.onLoginSuccess(data);
                 this.emit(EVENTS.LOGINSUCCESS, data);
             }
             /* else if (+data.status === 20231) {
@@ -500,7 +506,6 @@
             }*/
             else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + this.opt._token + '&t=' + (+new Date());
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             } else {
                 for (e in CODES) {
@@ -510,10 +515,14 @@
                     }
                 }
                 data.msg = data.msg || "Unknown error";
-                //this.opt.onLoginFailed(data);
                 this.emit(EVENTS.LOGINFAILED, data);
             }
         },
+        /**
+         * Get options.
+         * 
+         * @return {Object}
+         */
         getOptions: function() {
             return this.opt;
         },
@@ -719,7 +728,7 @@
 
     //Expose few interfaces
     var PassportProxy = {
-        version: '0.1.4', //from 'package.json'
+        version: '@version@', //from 'package.json'
         /**
          * Initialize.
          * This must be called at first before
@@ -797,17 +806,34 @@
                 console.trace('Login callback received but [Passport] has not been initialized');
             }
         },
+        /**
+         * If passport has been initialized.
+         *
+         * @return {Boolean}
+         */
         isInitialized: function() {
             return !!gPassport;
         },
+        /**
+         * Get a copy of options.
+         *
+         * @return {Object}
+         */
         getOptions: function() {
-            return gPassport.getOptions();
+            var opts = {};
+            return UTILS.mixin(opts, gPassport.getOptions());
         },
+        /**
+         * Get events which passport supports.
+         * @return {Object}
+         */
         getSupportedEvents: function() {
             return EVENTS;
         }
     };
 
+
+    //Make proxy an event emitter too.
     UTILS.mixin(PassportProxy, new Event());
 
     //Sync loading supported
@@ -961,6 +987,8 @@
  * 2014-05-24[23:06:31]:authorized
  * 2014-06-06[09:23:53]:getIEVersion
  *
+ * TODO:clean
+ *
  * @author yanni4night@gmail.com
  * @version 0.1.1
  * @since 0.1.0
@@ -972,10 +1000,11 @@
     var Buggy = require('./buggy');
     var array = require('./array');
 
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
     var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" );
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
-
+    //They seem to be const
     var hexcase = 0;
     var chrsz = 8;
 
@@ -1247,6 +1276,13 @@
             return s4() + s4() + s4() + s4() +
                 s4() + s4() + s4() + s4();
         },
+        /**
+         * Merge object members.
+         * 
+         * @param  {Object} dest 
+         * @param  {Object} src  
+         * @return {Object}      Dest
+         */
         mixin: function(dest, src) {
             if (!src || 'object' !== typeof src) {
                 return dest;
@@ -1259,17 +1295,30 @@
             }
             return dest;
         },
+        /**
+         * Insert a link element
+         *
+         * @param  {String} src Link url
+         * @return {HTMLLinkElement}
+         * @throws {Error} If parameters illegal
+         */
         insertLink: function(src) {
-            if (!src || 'string' !== typeof src) {
-                return null;
+            if (!src || !this.isString(src)) {
+                throw new Error('"src" has to be a url string');
             }
             var link = document.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('type', 'text/css');
-            link.setAttribute('href', src);
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = src;
             document.getElementsByTagName('head')[0].appendChild(link);
             return link;
         },
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 6~11 supported.
+         *
+         * @return {Integer} Version in number.
+         */
         getIEVersion: function() {
             var ua = navigator.userAgent,
                 matches, tridentMap = {
@@ -1295,12 +1344,32 @@
             //we did what we could
             return null;
         },
+        /**
+         * Attatch event listener to HTMLElements.
+         * @param  {HTMLElement} dom
+         * @param  {String} evt
+         * @param  {Function} func
+         * @return {this}
+         * @throws {Error} If parameters illegal
+         */
         bindEvent: function(dom, evt, func) {
+            if (!dom || !dom.childNodes) {
+                throw new Error('"dom" has to be a HTMLElement');
+            }
+            if (!evt || !this.isString(evt)) {
+                throw new Error('"evt" has to be a string');
+            }
+            if (!func || !this.isFunction(func)) {
+                throw new Error('"func" has to be a function');
+            }
+
             if (document.addEventListener) {
                 dom.addEventListener(evt, func, false);
             } else if (document.attachEvent) {
                 dom.attachEvent('on' + evt, func);
             }
+
+            return this;
         },
         stopPropagation: function(evt) {
             if (evt.stopPropagation) {
@@ -1330,39 +1399,44 @@
             var ele = document.getElementById(id),
                 all, node;
             if (!Buggy.getElementById) {
+                //BlackBerry 4.6
                 //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
                 return (ele && ele.parentNode) ? ele : null;
             } else if (ele) {
+                //IE6/7
                 node = typeof ele.getAttributeNode !== 'undefined' && ele.getAttributeNode("id");
                 if (node && node.value === id) {
                     return ele;
                 }
             }
+            //TODO test
             all = document.getElementsByTagName('*');
             array.some(all, function(ele) {
+                //ignore comment
                 if (ele && ele.nodeType === 1 && ele.id === id) {
                     return true;
                 }
             });
-            return ele && ele.id === id ? ele : null;
+            return (ele && ele.id === id) ? ele : null;
         },
         /**
-         * Trim s string.
-         * @param  {String} str Source string
+         * Trim a string.If a non-string passed in,
+         * convert it to a string.
+         *
+         * @param  {Object} str Source string
          * @return {String}    Trimed string
+         * @version 0.1.1
          */
         trim: function(str) {
-            if (!this.isString(str)) {
-                return str;
-            } else if (String.prototype.trim) {
-                return str.trim();
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
             } else {
                 return str.replace(rtrim, '');
             }
         }
     };
     //is***
-    var types = ['Arguments', 'RegExp', 'Date', 'String', 'Array', 'Boolean', 'Function', 'Number'];
+    var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
     var createIs = function(type) {
         return function(variable) {
             return '[object ' + type + ']' === ({}).toString.apply(variable);
