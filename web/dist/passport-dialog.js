@@ -21,7 +21,8 @@
   var array = {};
 
   /**
-   * [indexOf description]
+   * ES5 array indexOf polyfill.
+   *
    * @param  {Array} arr
    * @param  {Object} ele
    * @param  {Integer} fromIndex
@@ -62,7 +63,8 @@
   };
 
   /**
-   * [forEach description]
+   * ES5 array forEach polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -71,7 +73,8 @@
   array.forEach = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!type.isFunction(callbackfn)) return;
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     if (Array.prototype.forEach) {
       return Array.prototype.forEach.call(arr, callbackfn, thisArg);
@@ -83,7 +86,8 @@
 
   };
   /**
-   * [every description]
+   * ES5 array every polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} func
    * @return {Boolean}
@@ -91,9 +95,8 @@
   array.each = array.every = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!arr || !type.isFunction(callbackfn)) {
-      return false;
-    }
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     //ES5
     if (Array.prototype.every) {
@@ -110,7 +113,8 @@
   };
 
   /**
-   * [some description]
+   * ES5 array some polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -118,9 +122,9 @@
    */
   array.some = function(arr, callbackfn, thisArg) {
     var i, len;
-    if (!arr || !type.isFunction(callbackfn)) {
-      return false;
-    }
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     //ES5
     if (Array.prototype.some) {
@@ -137,7 +141,8 @@
   };
 
   /**
-   * [filter description]
+   * ES5 array filter polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -146,9 +151,9 @@
   array.filter = function(arr, callbackfn, thisArg) {
     var ret = [];
 
-    if (!arr || arguments.length < 2) {
-      return arr;
-    }
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
 
     if (Array.prototype.filter) {
       return Array.prototype.filter.call(arr, callbackfn, thisArg);
@@ -180,13 +185,13 @@
 
 (function(window, document, undefined) {
     "use strict";
-    
-    var expando = 'sogou-passport-' + (+new Date());
+
+    var expando = require('./type').expando;
 
     var Buggy = {
         /**
          * "getElementById" is buggy on IE6/7.
-         * 
+         *
          * @see  https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L528
          * @property
          */
@@ -197,9 +202,9 @@
             document.documentElement.appendChild(div).setAttribute('id', expando);
 
             var buggy = document.getElementsByName && document.getElementsByName(expando).length;
-            
+
             document.documentElement.removeChild(div);
-            
+
             div = null;
 
             return !!buggy;
@@ -208,7 +213,7 @@
 
     module.exports = Buggy;
 })(window, document);
-},{}],3:[function(require,module,exports){
+},{"./type":11}],3:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -443,10 +448,10 @@
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
-    var type = require('./type');
+    var type = UTILS.type;
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
-    var EXPANDO = "sogou-passport-" + (+new Date());
+    var EXPANDO = type.expando;
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
     var EVENTS = {
@@ -506,7 +511,7 @@
 
         opt = this.opt = {};
 
-        type.assertPlainObject('options',options);
+        type.assertPlainObject('options', options);
 
         UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
@@ -553,8 +558,8 @@
 
             //this._currentUname = username;
 
-            type.assertNonEmptyString('username',username);
-            type.assertNonEmptyString('password',password);
+            type.assertNonEmptyString('username', username);
+            type.assertNonEmptyString('password', password);
 
             payload = {
                 username: username,
@@ -760,7 +765,7 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./type":11,"./utils":12}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":12}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -779,6 +784,7 @@
 
 (function(window, document, undefined) {
     "use strict";
+    
     var type = require('./type');
     var buggy = require('./buggy');
 
@@ -902,7 +908,7 @@
                 }
             });
             return (ele && ele.id === id) ? ele : null;
-        },
+        }
     };
     module.exports = dom;
 })(window, document);
@@ -927,9 +933,6 @@
     var console = require('./console');
     var array = UTILS.array;
     var type = UTILS.type;
-
-    var EVT_TYPE_ERR = '"event" has to be a non-empty string';
-    var FUN_TYPE_ERR = '"func" has to be a function';
 
     var EventEmitter = function() {
 
@@ -1471,6 +1474,7 @@
     var noop = function() {};
 
     var type = {
+        expando: "sogou-passport-" + (+new Date()),
         noop: noop,
         strundefined: typeof undefined,
         strstr: typeof '',
@@ -1480,8 +1484,11 @@
         isNullOrUndefined: function(obj) {
             return this.isNull(obj) || this.isUndefined(obj);
         },
+        isNonNullOrUndefined: function(obj) {
+            return !this.isNullOrUndefined(obj);
+        },
         isInteger: function(num) {
-            return this.strnumber === typeof num && /^(\-|\+)?\d+?$/i.test(num);
+            return this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num);
         },
         isNull: function(obj) {
             return null === obj;
@@ -1489,19 +1496,42 @@
         isUndefined: function(obj) {
             return undefined === obj;
         },
+        /**
+         * Check if obj is a non-null object.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
         isPlainObject: function(obj) {
             return this.isObject(obj) && !this.isNull(obj);
         },
         isNonEmptyString: function(obj) {
             return obj && this.isString(obj);
         },
-        isHTMLElement:function(obj){
-            return obj&&obj.childNodes&&obj.appendChild;
+        isHTMLElement: function(obj) {
+            return obj && obj.childNodes && obj.tagName && obj.appendChild;
+        },
+        /**
+         * Check if obj is null,undefined,empty array or empty string.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isEmpty: function(obj) {
+            return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
+        },
+        isGeneralizedObject: function(obj) {
+            return this.strobject === typeof obj;
         }
     };
 
     var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number,Object".split(',');
 
+    /**
+     * Create is* functions.
+     * @param  {String} vari
+     * @return {Function}
+     */
     function createIs(vari) {
         return (function(vari) {
             return function(variable) {
@@ -1510,11 +1540,16 @@
         })(vari);
     }
 
+    /**
+     * Create assert function.
+     * @param  {String} vari
+     * @return {Function}
+     */
     function createAssert(vari) {
         return (function(vari) {
             return function(name, variable) {
 
-                if(arguments.length<2){
+                if (arguments.length < 2) {
                     variable = name;
                     name = String(variable);
                 }
@@ -1531,7 +1566,8 @@
         type['assert' + typeKeys[i]] = createAssert(typeKeys[i]);
     }
 
-    var assertKeys = "HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonEmptyString".split(',');
+    //create missing asserts
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,GeneralizedObject".split(',');
     for (i = assertKeys.length; i >= 0; --i) {
         type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }
@@ -1582,12 +1618,13 @@
          * @return {Object}      Dest
          */
         mixin: function(dest, src) {
-            if (!src || type.strobject !== typeof src) {
-                return dest;
-            }
+
+            src = src || {};
+
+            type.assertNonNullOrUndefined('dest', dest);
 
             for (var e in src) {
-                if (src.hasOwnProperty(e)) {
+                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
                     dest[e] = src[e];
                 }
             }
@@ -1596,9 +1633,9 @@
 
         /**
          * Get version of Internet Explorer by user agent.
-         * IE 6~11 supported.
+         * IE 11 supported.
          *
-         * @return {Integer} Version in number.
+         * @return {Integer} Version in integer.
          */
         getIEVersion: function() {
             var ua = navigator.userAgent,
@@ -1645,13 +1682,17 @@
          * Freeze an object by Object.freeze,so it does not
          * work on old browsers.
          *
-         * This function is trying to remind developers to not 
+         * This function is trying to remind developers to not
          * modify something.
-         * 
+         *
          * @param  {Object} obj Object to be freezed
          * @return {Object}    Source object
          */
         freeze: function(obj) {
+
+            type.assertNonNullOrUndefined('obj', obj);
+            type.assertGeneralizedObject('obj', obj);
+
             if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
                 Object.freeze(obj);
             }

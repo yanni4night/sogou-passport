@@ -17,6 +17,7 @@
     var noop = function() {};
 
     var type = {
+        expando: "sogou-passport-" + (+new Date()),
         noop: noop,
         strundefined: typeof undefined,
         strstr: typeof '',
@@ -26,8 +27,11 @@
         isNullOrUndefined: function(obj) {
             return this.isNull(obj) || this.isUndefined(obj);
         },
+        isNonNullOrUndefined: function(obj) {
+            return !this.isNullOrUndefined(obj);
+        },
         isInteger: function(num) {
-            return this.strnumber === typeof num && /^(\-|\+)?\d+?$/i.test(num);
+            return this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num);
         },
         isNull: function(obj) {
             return null === obj;
@@ -35,19 +39,42 @@
         isUndefined: function(obj) {
             return undefined === obj;
         },
+        /**
+         * Check if obj is a non-null object.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
         isPlainObject: function(obj) {
             return this.isObject(obj) && !this.isNull(obj);
         },
         isNonEmptyString: function(obj) {
             return obj && this.isString(obj);
         },
-        isHTMLElement:function(obj){
-            return obj&&obj.childNodes&&obj.appendChild;
+        isHTMLElement: function(obj) {
+            return obj && obj.childNodes && obj.tagName && obj.appendChild;
+        },
+        /**
+         * Check if obj is null,undefined,empty array or empty string.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isEmpty: function(obj) {
+            return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
+        },
+        isGeneralizedObject: function(obj) {
+            return this.strobject === typeof obj;
         }
     };
 
     var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number,Object".split(',');
 
+    /**
+     * Create is* functions.
+     * @param  {String} vari
+     * @return {Function}
+     */
     function createIs(vari) {
         return (function(vari) {
             return function(variable) {
@@ -56,11 +83,16 @@
         })(vari);
     }
 
+    /**
+     * Create assert function.
+     * @param  {String} vari
+     * @return {Function}
+     */
     function createAssert(vari) {
         return (function(vari) {
             return function(name, variable) {
 
-                if(arguments.length<2){
+                if (arguments.length < 2) {
                     variable = name;
                     name = String(variable);
                 }
@@ -77,7 +109,8 @@
         type['assert' + typeKeys[i]] = createAssert(typeKeys[i]);
     }
 
-    var assertKeys = "HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonEmptyString".split(',');
+    //create missing asserts
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,GeneralizedObject".split(',');
     for (i = assertKeys.length; i >= 0; --i) {
         type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }

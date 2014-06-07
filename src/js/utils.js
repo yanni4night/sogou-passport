@@ -40,12 +40,13 @@
          * @return {Object}      Dest
          */
         mixin: function(dest, src) {
-            if (!src || type.strobject !== typeof src) {
-                return dest;
-            }
+
+            src = src || {};
+
+            type.assertNonNullOrUndefined('dest', dest);
 
             for (var e in src) {
-                if (src.hasOwnProperty(e)) {
+                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
                     dest[e] = src[e];
                 }
             }
@@ -54,9 +55,9 @@
 
         /**
          * Get version of Internet Explorer by user agent.
-         * IE 6~11 supported.
+         * IE 11 supported.
          *
-         * @return {Integer} Version in number.
+         * @return {Integer} Version in integer.
          */
         getIEVersion: function() {
             var ua = navigator.userAgent,
@@ -103,13 +104,17 @@
          * Freeze an object by Object.freeze,so it does not
          * work on old browsers.
          *
-         * This function is trying to remind developers to not 
+         * This function is trying to remind developers to not
          * modify something.
-         * 
+         *
          * @param  {Object} obj Object to be freezed
          * @return {Object}    Source object
          */
         freeze: function(obj) {
+
+            type.assertNonNullOrUndefined('obj', obj);
+            type.assertGeneralizedObject('obj', obj);
+
             if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
                 Object.freeze(obj);
             }

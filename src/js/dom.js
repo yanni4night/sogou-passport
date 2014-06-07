@@ -16,6 +16,7 @@
 
 (function(window, document, undefined) {
     "use strict";
+    
     var type = require('./type');
     var buggy = require('./buggy');
 
@@ -139,7 +140,7 @@
                 }
             });
             return (ele && ele.id === id) ? ele : null;
-        },
+        }
     };
     module.exports = dom;
 })(window, document);

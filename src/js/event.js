@@ -19,9 +19,6 @@
     var array = UTILS.array;
     var type = UTILS.type;
 
-    var EVT_TYPE_ERR = '"event" has to be a non-empty string';
-    var FUN_TYPE_ERR = '"func" has to be a function';
-
     var EventEmitter = function() {
 
         var listeners = {};

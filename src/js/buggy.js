@@ -13,13 +13,13 @@
 
 (function(window, document, undefined) {
     "use strict";
-    
-    var expando = 'sogou-passport-' + (+new Date());
+
+    var expando = require('./type').expando;
 
     var Buggy = {
         /**
          * "getElementById" is buggy on IE6/7.
-         * 
+         *
          * @see  https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L528
          * @property
          */
@@ -30,9 +30,9 @@
             document.documentElement.appendChild(div).setAttribute('id', expando);
 
             var buggy = document.getElementsByName && document.getElementsByName(expando).length;
-            
+
             document.documentElement.removeChild(div);
-            
+
             div = null;
 
             return !!buggy;

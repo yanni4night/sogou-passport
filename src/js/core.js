@@ -32,10 +32,10 @@
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
-    var type = require('./type');
+    var type = UTILS.type;
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
-    var EXPANDO = "sogou-passport-" + (+new Date());
+    var EXPANDO = type.expando;
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
     var EVENTS = {
@@ -95,7 +95,7 @@
 
         opt = this.opt = {};
 
-        type.assertPlainObject('options',options);
+        type.assertPlainObject('options', options);
 
         UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
@@ -142,8 +142,8 @@
 
             //this._currentUname = username;
 
-            type.assertNonEmptyString('username',username);
-            type.assertNonEmptyString('password',password);
+            type.assertNonEmptyString('username', username);
+            type.assertNonEmptyString('password', password);
 
             payload = {
                 username: username,

@@ -20,7 +20,8 @@
   var array = {};
 
   /**
-   * [indexOf description]
+   * ES5 array indexOf polyfill.
+   *
    * @param  {Array} arr
    * @param  {Object} ele
    * @param  {Integer} fromIndex
@@ -61,7 +62,8 @@
   };
 
   /**
-   * [forEach description]
+   * ES5 array forEach polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -70,7 +72,8 @@
   array.forEach = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!type.isFunction(callbackfn)) return;
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     if (Array.prototype.forEach) {
       return Array.prototype.forEach.call(arr, callbackfn, thisArg);
@@ -82,7 +85,8 @@
 
   };
   /**
-   * [every description]
+   * ES5 array every polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} func
    * @return {Boolean}
@@ -90,9 +94,8 @@
   array.each = array.every = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!arr || !type.isFunction(callbackfn)) {
-      return false;
-    }
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     //ES5
     if (Array.prototype.every) {
@@ -109,7 +112,8 @@
   };
 
   /**
-   * [some description]
+   * ES5 array some polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -117,9 +121,9 @@
    */
   array.some = function(arr, callbackfn, thisArg) {
     var i, len;
-    if (!arr || !type.isFunction(callbackfn)) {
-      return false;
-    }
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
 
     //ES5
     if (Array.prototype.some) {
@@ -136,7 +140,8 @@
   };
 
   /**
-   * [filter description]
+   * ES5 array filter polyfill.
+   *
    * @param  {Array} arr
    * @param  {Function} callbackfn
    * @param  {Object} thisArg
@@ -145,9 +150,9 @@
   array.filter = function(arr, callbackfn, thisArg) {
     var ret = [];
 
-    if (!arr || arguments.length < 2) {
-      return arr;
-    }
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
 
     if (Array.prototype.filter) {
       return Array.prototype.filter.call(arr, callbackfn, thisArg);
