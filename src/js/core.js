@@ -35,7 +35,6 @@
     var type = require('./type');
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
-    var FILE_NAME = 'sogou-passport(@version@).js';
     var EXPANDO = "sogou-passport-" + (+new Date());
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
@@ -46,20 +45,12 @@
         NEEDCAPTCHA: 'needcaptcha'
     };
 
-    Object.freeze(EVENTS);
-
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
         logout: 'https://account.sogou.com/web/logout_js',
         //active: 'https://account.sogou.com/web/remindActivate',
         captcha: 'https://account.sogou.com/captcha'
     };
-
-    Object.freeze(FIXED_URLS);
-
-    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
-        throw new Error(FILE_NAME + ' is only for HTML document');
-    }
 
     var _passhtml = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 

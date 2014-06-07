@@ -43,5 +43,7 @@
         type[key] = createIs(typeKeys[i]);
     }
 
+    //As type is required by utils,we cannot use utils.freeze
+
     module.exports = type;
 })();

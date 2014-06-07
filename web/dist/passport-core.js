@@ -165,7 +165,7 @@
 
   module.exports = array;
 })();
-},{"./type":9,"./utils":10}],2:[function(require,module,exports){
+},{"./type":10,"./utils":11}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -281,7 +281,7 @@
     module.exports = codes;
 
 })(window, document);
-},{"./utils":10}],4:[function(require,module,exports){
+},{"./utils":11}],4:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -315,7 +315,7 @@
 
     module.exports = console;
 })(window);
-},{"./type":9}],5:[function(require,module,exports){
+},{"./type":10}],5:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -409,7 +409,7 @@
         }
     };
 })(window, document);
-},{"./utils":10}],6:[function(require,module,exports){
+},{"./utils":11}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -447,7 +447,6 @@
     var type = require('./type');
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
-    var FILE_NAME = 'sogou-passport(0.1.5).js';
     var EXPANDO = "sogou-passport-" + (+new Date());
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-100000px;';
 
@@ -458,20 +457,12 @@
         NEEDCAPTCHA: 'needcaptcha'
     };
 
-    Object.freeze(EVENTS);
-
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
         logout: 'https://account.sogou.com/web/logout_js',
         //active: 'https://account.sogou.com/web/remindActivate',
         captcha: 'https://account.sogou.com/captcha'
     };
-
-    Object.freeze(FIXED_URLS);
-
-    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
-        throw new Error(FILE_NAME + ' is only for HTML document');
-    }
 
     var _passhtml = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -658,7 +649,7 @@
 
     //Expose few interfaces
     var PassportProxy = {
-        version: '@version@', //from 'package.json'
+        version: '0.1.5', //from 'package.json'
         /**
          * Initialize.
          * This must be called at first before
@@ -777,7 +768,155 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./type":9,"./utils":10}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./type":10,"./utils":11}],7:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * dom.js
+ *
+ * Some simple DOM operations.
+ *
+ * changelog
+ * 2014-06-07[16:33:33]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+
+(function(window, document, undefined) {
+    "use strict";
+    var type = require('./type');
+    var buggy = require('./buggy');
+
+    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+        throw new Error("It's only for HTML document");
+    }
+
+    var dom = {
+        /**
+         * Insert a link element
+         *
+         * @param  {String} src Link url
+         * @return {HTMLLinkElement}
+         * @throws {Error} If parameters illegal
+         */
+        addLink: function(src) {
+            if (!src || !type.isString(src)) {
+                throw new Error('"src" has to be a url string');
+            }
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = src;
+            document.getElementsByTagName('head')[0].appendChild(link);
+            return link;
+        },
+        addIframe: function(container, url, callback) {
+            if (!url || !type.isString(url)) {
+                throw new Error('"url" has to be a url string');
+            }
+
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
+            iframe.src = url;
+
+            if (iframe.attachEvent) {
+                iframe.attachEvent("onload", function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                });
+            } else {
+                iframe.onload = function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                };
+            }
+
+            container.appendChild(iframe);
+        },
+        /**
+         * Attatch event listener to HTMLElements.
+         * @param  {HTMLElement} dom
+         * @param  {String} evt
+         * @param  {Function} func
+         * @return {this}
+         * @throws {Error} If parameters illegal
+         */
+        bindEvent: function(ele, evt, func) {
+            if (!ele || !ele.childNodes) {
+                throw new Error('"ele" has to be a HTMLElement');
+            }
+            if (!evt || !type.isString(evt)) {
+                throw new Error('"evt" has to be a string');
+            }
+            if (!func || !type.isFunction(func)) {
+                throw new Error('"func" has to be a function');
+            }
+
+            if (document.addEventListener) {
+                ele.addEventListener(evt, func, false);
+            } else if (document.attachEvent) {
+                ele.attachEvent('on' + evt, func);
+            }
+
+            return this;
+        },
+        stopPropagation: function(evt) {
+            if (evt.stopPropagation) {
+                evt.stopPropagation();
+            } else {
+                evt.cancelBubble = true;
+            }
+        },
+        preventDefault: function(evt) {
+            if (evt.preventDefault) {
+                evt.preventDefault();
+            } else {
+                evt.returnValue = false;
+            }
+        },
+        eventTarget: function(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        },
+        /**
+         * Get HTMLElement by id.
+         *
+         * @param  {String} id
+         * @return {HTMLElement}
+         */
+        id: function(id) {
+            var ele = document.getElementById(id),
+                all, node;
+            if (!buggy.getElementById) {
+                //BlackBerry 4.6
+                //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
+                return (ele && ele.parentNode) ? ele : null;
+            } else if (ele) {
+                //IE6/7
+                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
+                if (node && node.value === id) {
+                    return ele;
+                }
+            }
+            //TODO test
+            all = document.getElementsByTagName('*');
+            array.some(all, function(ele) {
+                //ignore comment
+                if (ele && ele.nodeType === 1 && ele.id === id) {
+                    return true;
+                }
+            });
+            return (ele && ele.id === id) ? ele : null;
+        },
+    };
+    module.exports = dom;
+})(window, document);
+},{"./buggy":2,"./type":10}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -908,7 +1047,7 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":4,"./type":9,"./utils":10}],8:[function(require,module,exports){
+},{"./array":1,"./console":4,"./type":10,"./utils":11}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1181,7 +1320,7 @@
 
     module.exports = math;
 })();
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1227,9 +1366,11 @@
         type[key] = createIs(typeKeys[i]);
     }
 
+    //As type is required by utils,we cannot use utils.freeze
+
     module.exports = type;
 })();
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1239,149 +1380,29 @@
  * 2014-05-24[23:06:31]:authorized
  * 2014-06-06[09:23:53]:getIEVersion
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
+ * 2014-06-07[16:39:34]:remove 'dom' module
  *
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.3
  * @since 0.1.0
  */
 
-(function(window, document, undefined) {
+(function(undefined) {
     "use strict";
 
-    var Buggy = require('./buggy');
     var array = require('./array');
     var math = require('./math');
     var type = require('./type');
+    var dom = require('./dom');
 
     //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
     var whitespace = "[\\x20\\t\\r\\n\\f]";
     var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
-    var dom = {
-        /**
-         * Insert a link element
-         *
-         * @param  {String} src Link url
-         * @return {HTMLLinkElement}
-         * @throws {Error} If parameters illegal
-         */
-        addLink: function(src) {
-            if (!src || !type.isString(src)) {
-                throw new Error('"src" has to be a url string');
-            }
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = src;
-            document.getElementsByTagName('head')[0].appendChild(link);
-            return link;
-        },
-        addIframe: function(container, url, callback) {
-            if (!url || !type.isString(url)) {
-                throw new Error('"url" has to be a url string');
-            }
-
-            var iframe = document.createElement('iframe');
-            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
-            iframe.src = url;
-
-            if (iframe.attachEvent) {
-                iframe.attachEvent("onload", function() {
-                    if (type.isFunction(callback)) {
-                        callback();
-                    }
-                });
-            } else {
-                iframe.onload = function() {
-                    if (type.isFunction(callback)) {
-                        callback();
-                    }
-                };
-            }
-
-            container.appendChild(iframe);
-        },
-        /**
-         * Attatch event listener to HTMLElements.
-         * @param  {HTMLElement} dom
-         * @param  {String} evt
-         * @param  {Function} func
-         * @return {this}
-         * @throws {Error} If parameters illegal
-         */
-        bindEvent: function(ele, evt, func) {
-            if (!ele || !ele.childNodes) {
-                throw new Error('"ele" has to be a HTMLElement');
-            }
-            if (!evt || !type.isString(evt)) {
-                throw new Error('"evt" has to be a string');
-            }
-            if (!func || !type.isFunction(func)) {
-                throw new Error('"func" has to be a function');
-            }
-
-            if (document.addEventListener) {
-                ele.addEventListener(evt, func, false);
-            } else if (document.attachEvent) {
-                ele.attachEvent('on' + evt, func);
-            }
-
-            return this;
-        },
-        stopPropagation: function(evt) {
-            if (evt.stopPropagation) {
-                evt.stopPropagation();
-            } else {
-                evt.cancelBubble = true;
-            }
-        },
-        preventDefault: function(evt) {
-            if (evt.preventDefault) {
-                evt.preventDefault();
-            } else {
-                evt.returnValue = false;
-            }
-        },
-        eventTarget: function(e) {
-            e = e || window.event;
-            return e.target || e.srcElement;
-        },
-        /**
-         * Get HTMLElement by id.
-         *
-         * @param  {String} id
-         * @return {HTMLElement}
-         */
-        id: function(id) {
-            var ele = document.getElementById(id),
-                all, node;
-            if (!Buggy.getElementById) {
-                //BlackBerry 4.6
-                //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
-                return (ele && ele.parentNode) ? ele : null;
-            } else if (ele) {
-                //IE6/7
-                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
-                if (node && node.value === id) {
-                    return ele;
-                }
-            }
-            //TODO test
-            all = document.getElementsByTagName('*');
-            array.some(all, function(ele) {
-                //ignore comment
-                if (ele && ele.nodeType === 1 && ele.id === id) {
-                    return true;
-                }
-            });
-            return (ele && ele.id === id) ? ele : null;
-        },
-    };
-
     var utils = {
         math: math,
-        array: array, //alias
+        array: array,
         dom: dom,
         type: type,
         /**
@@ -1470,8 +1491,6 @@
         }
     };
 
-    utils.freeze(type);//we have to freeze type here
-
     module.exports = utils;
-})(window, document);
-},{"./array":1,"./buggy":2,"./math":8,"./type":9}]},{},[1,2,3,4,5,6,7,8,9,10])
+})();
+},{"./array":1,"./dom":7,"./math":9,"./type":10}]},{},[1,2,3,4,5,6,7,8,9,10,11])
