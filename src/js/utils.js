@@ -118,5 +118,10 @@
         }
     };
 
+    utils.freeze(math);
+    utils.freeze(dom);
+    utils.freeze(type);
+    utils.freeze(array);
+
     module.exports = utils;
 })();
