@@ -32,6 +32,7 @@
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
+    var PassportCookieParser = require('./cookie').PassportCookieParser;
 
     var FILE_NAME = 'sogou-passport(@version@).js';
     var EXPANDO = "sogou-passport-" + (+new Date());
@@ -242,189 +243,6 @@
             }
 
             return container;
-        },
-        /**
-         * Legacy function,DO NOT MODIFY.
-         */
-        parserRelation: function() {
-            var B = this.cookie.relation;
-            if (strstr === typeof B && B.length > 0) {
-                var A = B.split(";");
-                for (var F = 0; F < A.length; F++) {
-                    var D = A[F].split(",");
-                    var E = D[2].split("#");
-                    for (var C = 0; C < E.length; C++) {
-                        if (this.opt.appid == E[C]) {
-                            return D[0];
-                        }
-                    }
-                }
-            }
-            return "";
-        },
-        /**
-         * Legacy function,DO NOT MODIFY.
-         */
-        parsePassportCookie: function() {
-            var C;
-            var E = document.cookie.split("; ");
-            for (var D = 0; D < E.length; D++) {
-                if (E[D].indexOf("ppinf=") === 0) {
-                    C = E[D].substr(6);
-                    break;
-                }
-                if (E[D].indexOf("ppinfo=") === 0) {
-                    C = E[D].substr(7);
-                    break;
-                }
-                if (E[D].indexOf("passport=") === 0) {
-                    C = E[D].substr(9);
-                    break;
-                }
-            }
-            if (D == E.length) {
-                this.cookie = false;
-                return;
-            }
-            try {
-                var A = unescape(C).split("|");
-                if (A[0] == "1" || A[0] == "2") {
-                    var B = UTILS.utf8to16(UTILS.b64_decodex(A[3]));
-                    this._parsePassportCookie(B);
-                    return;
-                }
-            } catch (F) {}
-        },
-        /**
-         * Legacy function,DO NOT MODIFY.
-         */
-        _parsePassportCookie: function(F) {
-            var J = 0,
-                D, B, A, I, lenEnd_offset;
-            var C = F.indexOf(":", J);
-            this.cookie = {};
-            while (C != -1) {
-                B = F.substring(J, C);
-                lenEnd_offset = F.indexOf(":", C + 1);
-                if (lenEnd_offset == -1) {
-                    break;
-                }
-                A = parseInt(F.substring(C + 1, lenEnd_offset));
-                I = F.substr(lenEnd_offset + 1, A);
-                if (F.charAt(lenEnd_offset + 1 + A) != "|") {
-                    break;
-                }
-                this.cookie[B] = I;
-                J = lenEnd_offset + 2 + A;
-                C = F.indexOf(":", J);
-            }
-            relation_userid = this.parserRelation();
-            if (strstr === typeof relation_userid && relation_userid.length > 0) {
-                this.cookie[B] = relation_userid;
-            }
-            try {
-                this.cookie.service = {};
-                var H = this.cookie.service;
-                H.mail = 0;
-                H.alumni = 0;
-                H.chinaren = 0;
-                H.blog = 0;
-                H.pp = 0;
-                H.club = 0;
-                H.crclub = 0;
-                H.group = 0;
-                H.say = 0;
-                H.music = 0;
-                H.focus = 0;
-                H["17173"] = 0;
-                H.vip = 0;
-                H.rpggame = 0;
-                H.pinyin = 0;
-                H.relaxgame = 0;
-                var G = this.cookie.serviceuse;
-                if (G.charAt(0) == 1) {
-                    H.mail = "sohu";
-                } else {
-                    if (G.charAt(2) == 1) {
-                        H.mail = "sogou";
-                    } else {
-                        if (this.cookie.userid.indexOf("@chinaren.com") > 0) {
-                            H.mail = "chinaren";
-                        }
-                    }
-                } if (G.charAt(1) == 1) {
-                    H.alumni = 1;
-                }
-                if (G.charAt(3) == 1) {
-                    H.blog = 1;
-                }
-                if (G.charAt(4) == 1) {
-                    H.pp = 1;
-                }
-                if (G.charAt(5) == 1) {
-                    H.club = 1;
-                }
-                if (G.charAt(7) == 1) {
-                    H.crclub = 1;
-                }
-                if (G.charAt(8) == 1) {
-                    H.group = 1;
-                }
-                if (G.charAt(10) == 1) {
-                    H.music = 1;
-                }
-                if (G.charAt(11) == 1 || this.cookie.userid.lastIndexOf("@focus.cn") > 0) {
-                    H.focus = 1;
-                }
-                if (G.charAt(12) == 1 || this.cookie.userid.indexOf("@17173.com") > 0) {
-                    H["17173"] = 1;
-                }
-                if (G.charAt(13) == 1) {
-                    H.vip = 1;
-                }
-                if (G.charAt(14) == 1) {
-                    H.rpggame = 1;
-                }
-                if (G.charAt(15) == 1) {
-                    H.pinyin = 1;
-                }
-                if (G.charAt(16) == 1) {
-                    H.relaxgame = 1;
-                }
-            } catch (E) {}
-        },
-        /**
-         * Legacy function,DO NOT MODIFY.
-         */
-        parseCookie: function() {
-            var cookie = document.cookie.split("; ");
-            var result;
-            for (var i = 0, l = cookie.length; i < l; i++) {
-                if (cookie[i].indexOf("ppinf=") === 0) {
-                    result = cookie[i].substr(6);
-                    break;
-                }
-                if (cookie[i].indexOf("ppinfo=") === 0) {
-                    result = cookie[i].substr(7);
-                    break;
-                }
-                if (cookie[i].indexOf("passport=") === 0) {
-                    result = cookie[i].substr(9);
-                    break;
-                }
-            }
-            if (!result) {
-                return null;
-            }
-            try {
-                result = unescape(result).split("|");
-                if (result[0] == "1" || result[0] == "2") {
-                    result = UTILS.utf8to16(UTILS.b64_decodex(result[3]));
-                    this.parsePassportCookie(result);
-                    return;
-                }
-            } catch (F) {}
-
         }
     };
 
@@ -492,8 +310,8 @@
             if (!gPassport) {
                 throw new Error(NOT_INITIALIZED_ERROR);
             }
-            gPassport.parsePassportCookie();
-            return gPassport.cookie.userid || "";
+            var cookie = PassportCookieParser.parse();
+            return cookie.userid || "";
         },
         /**
          * Login callback from iframe.
