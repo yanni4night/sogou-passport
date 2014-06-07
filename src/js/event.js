@@ -16,8 +16,8 @@
     
     var UTILS = require('./utils');
     var console = require('./console');
-    var array = require('./array');
-    var type = require('./type');
+    var array = UTILS.array;
+    var type = UTILS.type;
 
     var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
@@ -36,12 +36,8 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
-            if (!type.isFunction(func)) {
-                throw new Error(FUN_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
 
             evtArr = UTILS.trim(event).split(/\s/);
 
@@ -69,12 +65,9 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
-            if (func && !type.isFunction(func)) {
-                throw new Error(FUN_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
             evtArr = UTILS.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
@@ -104,9 +97,7 @@
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
 
             evtArr = UTILS.trim(event).split(/\s/);
 

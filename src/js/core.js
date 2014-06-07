@@ -95,9 +95,7 @@
 
         opt = this.opt = {};
 
-        if (!options || type.strobject !== typeof options) {
-            throw new Error('"options" has be a plain object');
-        }
+        type.assertPlainObject('options',options);
 
         UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
@@ -144,13 +142,8 @@
 
             //this._currentUname = username;
 
-            if (!username || !type.isString(username)) {
-                throw new Error('"username" has to be a non-empty string');
-            }
-
-            if (!password || !type.isString(password)) {
-                throw new Error('"password" has to be a non-empty string');
-            }
+            type.assertNonEmptyString('username',username);
+            type.assertNonEmptyString('password',password);
 
             payload = {
                 username: username,

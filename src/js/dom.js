@@ -32,9 +32,9 @@
          * @throws {Error} If parameters illegal
          */
         addLink: function(src) {
-            if (!src || !type.isString(src)) {
-                throw new Error('"src" has to be a url string');
-            }
+
+            type.assertNonEmptyString('src',src);
+
             var link = document.createElement('link');
             link.rel = 'stylesheet';
             link.type = 'text/css';
@@ -43,9 +43,9 @@
             return link;
         },
         addIframe: function(container, url, callback) {
-            if (!url || !type.isString(url)) {
-                throw new Error('"url" has to be a url string');
-            }
+
+            type.assertHTMLElement('container',container);
+            type.assertNonEmptyString('url',url);
 
             var iframe = document.createElement('iframe');
             iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
@@ -76,15 +76,10 @@
          * @throws {Error} If parameters illegal
          */
         bindEvent: function(ele, evt, func) {
-            if (!ele || !ele.childNodes) {
-                throw new Error('"ele" has to be a HTMLElement');
-            }
-            if (!evt || !type.isString(evt)) {
-                throw new Error('"evt" has to be a string');
-            }
-            if (!func || !type.isFunction(func)) {
-                throw new Error('"func" has to be a function');
-            }
+
+            type.assertHTMLElement('ele',ele);
+            type.assertNonEmptyString('evt',evt);
+            type.assertFunction('func',func);
 
             if (document.addEventListener) {
                 ele.addEventListener(evt, func, false);
@@ -119,6 +114,9 @@
          * @return {HTMLElement}
          */
         id: function(id) {
+            
+            type.assertNonEmptyString('id',id);
+
             var ele = document.getElementById(id),
                 all, node;
             if (!buggy.getElementById) {

@@ -17,7 +17,6 @@
 (function() {
   "use strict";
 
-  var UTILS = require('./utils');
   var type = require('./type');
   var array = {};
 
@@ -165,7 +164,7 @@
 
   module.exports = array;
 })();
-},{"./type":11,"./utils":12}],2:[function(require,module,exports){
+},{"./type":11}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -507,9 +506,7 @@
 
         opt = this.opt = {};
 
-        if (!options || type.strobject !== typeof options) {
-            throw new Error('"options" has be a plain object');
-        }
+        type.assertPlainObject('options',options);
 
         UTILS.mixin(opt, defaultOptions);
         UTILS.mixin(opt, options);
@@ -556,13 +553,8 @@
 
             //this._currentUname = username;
 
-            if (!username || !type.isString(username)) {
-                throw new Error('"username" has to be a non-empty string');
-            }
-
-            if (!password || !type.isString(password)) {
-                throw new Error('"password" has to be a non-empty string');
-            }
+            type.assertNonEmptyString('username',username);
+            type.assertNonEmptyString('password',password);
 
             payload = {
                 username: username,
@@ -803,9 +795,9 @@
          * @throws {Error} If parameters illegal
          */
         addLink: function(src) {
-            if (!src || !type.isString(src)) {
-                throw new Error('"src" has to be a url string');
-            }
+
+            type.assertNonEmptyString('src',src);
+
             var link = document.createElement('link');
             link.rel = 'stylesheet';
             link.type = 'text/css';
@@ -814,9 +806,9 @@
             return link;
         },
         addIframe: function(container, url, callback) {
-            if (!url || !type.isString(url)) {
-                throw new Error('"url" has to be a url string');
-            }
+
+            type.assertHTMLElement('container',container);
+            type.assertNonEmptyString('url',url);
 
             var iframe = document.createElement('iframe');
             iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
@@ -847,15 +839,10 @@
          * @throws {Error} If parameters illegal
          */
         bindEvent: function(ele, evt, func) {
-            if (!ele || !ele.childNodes) {
-                throw new Error('"ele" has to be a HTMLElement');
-            }
-            if (!evt || !type.isString(evt)) {
-                throw new Error('"evt" has to be a string');
-            }
-            if (!func || !type.isFunction(func)) {
-                throw new Error('"func" has to be a function');
-            }
+
+            type.assertHTMLElement('ele',ele);
+            type.assertNonEmptyString('evt',evt);
+            type.assertFunction('func',func);
 
             if (document.addEventListener) {
                 ele.addEventListener(evt, func, false);
@@ -890,6 +877,9 @@
          * @return {HTMLElement}
          */
         id: function(id) {
+            
+            type.assertNonEmptyString('id',id);
+
             var ele = document.getElementById(id),
                 all, node;
             if (!buggy.getElementById) {
@@ -935,8 +925,8 @@
     
     var UTILS = require('./utils');
     var console = require('./console');
-    var array = require('./array');
-    var type = require('./type');
+    var array = UTILS.array;
+    var type = UTILS.type;
 
     var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
@@ -955,12 +945,8 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
-            if (!type.isFunction(func)) {
-                throw new Error(FUN_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
 
             evtArr = UTILS.trim(event).split(/\s/);
 
@@ -988,12 +974,9 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
-            if (func && !type.isFunction(func)) {
-                throw new Error(FUN_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
             evtArr = UTILS.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
@@ -1023,9 +1006,7 @@
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!type.isString(event)||!event) {
-                throw new Error(EVT_TYPE_ERR);
-            }
+            type.assertNonEmptyString('event',event);
 
             evtArr = UTILS.trim(event).split(/\s/);
 
@@ -1047,7 +1028,7 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":4,"./type":11,"./utils":12}],9:[function(require,module,exports){
+},{"./console":4,"./utils":12}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1478,9 +1459,10 @@
  *
  * changelog
  * 2014-06-07[15:50:11]:authorized
+ * 2014-06-07[17:26:01]:asserts,customs
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function() {
@@ -1496,28 +1478,65 @@
         strnumber: typeof 0,
         strfunction: typeof noop,
         isNullOrUndefined: function(obj) {
-            return undefined === obj || null === obj;
+            return this.isNull(obj) || this.isUndefined(obj);
         },
         isInteger: function(num) {
             return this.strnumber === typeof num && /^(\-|\+)?\d+?$/i.test(num);
+        },
+        isNull: function(obj) {
+            return null === obj;
+        },
+        isUndefined: function(obj) {
+            return undefined === obj;
+        },
+        isPlainObject: function(obj) {
+            return this.isObject(obj) && !this.isNull(obj);
+        },
+        isNonEmptyString: function(obj) {
+            return obj && this.isString(obj);
+        },
+        isHTMLElement:function(obj){
+            return obj&&obj.childNodes&&obj.appendChild;
         }
     };
 
-    var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
-    var key;
-    var createIs = function(type) {
-        return function(variable) {
-            return '[object ' + type + ']' === ({}).toString.apply(variable);
-        };
-    };
+    var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number,Object".split(',');
+
+    function createIs(vari) {
+        return (function(vari) {
+            return function(variable) {
+                return '[object ' + vari + ']' === ({}).toString.apply(variable);
+            };
+        })(vari);
+    }
+
+    function createAssert(vari) {
+        return (function(vari) {
+            return function(name, variable) {
+
+                if(arguments.length<2){
+                    variable = name;
+                    name = String(variable);
+                }
+
+                if (!type['is' + vari](variable)) {
+                    throw new Error('"' + name + '" has to be a(n) ' + vari);
+                }
+            };
+        })(vari);
+    }
 
     for (var i = typeKeys.length - 1; i >= 0; --i) {
-        key = 'is' + typeKeys[i];
-        type[key] = createIs(typeKeys[i]);
+        type['is' + typeKeys[i]] = createIs(typeKeys[i]);
+        type['assert' + typeKeys[i]] = createAssert(typeKeys[i]);
+    }
+
+    var assertKeys = "HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonEmptyString".split(',');
+    for (i = assertKeys.length; i >= 0; --i) {
+        type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }
 
     //As type is required by utils,we cannot use utils.freeze
-
     module.exports = type;
 })();
 },{}],12:[function(require,module,exports){

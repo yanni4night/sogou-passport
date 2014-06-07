@@ -16,7 +16,6 @@
 (function() {
   "use strict";
 
-  var UTILS = require('./utils');
   var type = require('./type');
   var array = {};
 
