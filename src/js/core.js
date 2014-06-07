@@ -32,6 +32,7 @@
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
+    var type = require('./type');
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
     var FILE_NAME = 'sogou-passport(@version@).js';
@@ -45,6 +46,8 @@
         NEEDCAPTCHA: 'needcaptcha'
     };
 
+    Object.freeze(EVENTS);
+
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
         logout: 'https://account.sogou.com/web/logout_js',
@@ -52,12 +55,7 @@
         captcha: 'https://account.sogou.com/captcha'
     };
 
-    var noop = function() {};
-    var strundefined = typeof undefined;
-    var strstr = typeof '';
-    var strobject = typeof {};
-    var strnumber = typeof 0;
-    var strfunction = typeof noop;
+    Object.freeze(FIXED_URLS);
 
     if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
         throw new Error(FILE_NAME + ' is only for HTML document');
@@ -78,7 +76,7 @@
     var VALIDATORS = [{
         name: ['appid'],
         validate: function(name, value) {
-            return value && (strstr === typeof value || strnumber === typeof value);
+            return value && (type.strstr === typeof value || type.strnumber === typeof value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a string or a number';
@@ -86,7 +84,7 @@
     }, {
         name: ['redirectUrl'],
         validate: function(name, value) {
-            return value && strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+            return value && type.strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
@@ -106,8 +104,8 @@
 
         opt = this.opt = {};
 
-        if (!options || strobject !== typeof options) {
-            throw new Error('"options" MUST be a plain object');
+        if (!options || type.strobject !== typeof options) {
+            throw new Error('"options" has be a plain object');
         }
 
         UTILS.mixin(opt, defaultOptions);
@@ -118,7 +116,7 @@
             for (j = validator.name.length - 1; j >= 0; --j) {
                 name = validator.name[j];
                 if (!validator.validate(name, opt[name])) {
-                    throw new Error(strfunction === typeof validator.errmsg ?
+                    throw new Error(type.strfunction === typeof validator.errmsg ?
                         validator.errmsg(name, opt[name]) : validator.errmsg
                     );
                 }
@@ -155,11 +153,11 @@
 
             //this._currentUname = username;
 
-            if (!username || !UTILS.isString(username)) {
+            if (!username || !type.isString(username)) {
                 throw new Error('"username" has to be a non-empty string');
             }
 
-            if (!password || !UTILS.isString(password)) {
+            if (!password || !type.isString(password)) {
                 throw new Error('"password" has to be a non-empty string');
             }
 
@@ -198,7 +196,7 @@
          */
         loginCallback: function(data) {
             var e;
-            if (!data || strobject !== typeof data) {
+            if (!data || type.strobject !== typeof data) {
                 console.error('Nothing callback received');
                 this.emit(EVENTS.LOGINFAILED, data);
             } else if (0 === +data.status) {
@@ -235,7 +233,7 @@
          */
         _assertContainer: function() {
             var container = this.mHTMLContainer;
-            if (!container || (strobject !== typeof container) || (strundefined === typeof container.appendChild) || !container.parentNode) {
+            if (!container || (type.strobject !== typeof container) || (type.strundefined === typeof container.appendChild) || !container.parentNode) {
                 container = this.mHTMLContainer = document.createElement('div');
                 container.style.cssText = HIDDEN_CSS;
                 container.className = container.id = EXPANDO;
@@ -357,7 +355,7 @@
     UTILS.mixin(PassportProxy, new Event());
 
     //Sync loading supported
-    if (window.PassportSC && strobject === typeof window.PassportSC) {
+    if (window.PassportSC && type.strobject === typeof window.PassportSC) {
         UTILS.mixin(window.PassportSC, PassportProxy);
         if (strfunction === typeof window.PassportSC.onApiLoaded)
             window.PassportSC.onApiLoaded();

@@ -72,11 +72,11 @@
       UTILS.dom.id(USER_ID).value = userid;
     }
 
-    PassportSC.on('loginfailed', function(e) {
-      UTILS.dom.id(ERROR_ID).innerHTML = '登录失败';
-    }).on('loginsuccess', function(e) {
+    PassportSC.on('loginfailed', function(e,data) {
+      UTILS.dom.id(ERROR_ID).innerHTML = data.msg||'登录失败';
+    }).on('loginsuccess', function(e,data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
-    }).on('needcaptcha', function(e) {
+    }).on('needcaptcha', function(e,data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
     });
   };

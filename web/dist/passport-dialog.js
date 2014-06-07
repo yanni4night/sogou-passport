@@ -18,6 +18,7 @@
   "use strict";
 
   var UTILS = require('./utils');
+  var type = require('./type');
   var array = {};
 
   /**
@@ -71,7 +72,7 @@
   array.forEach = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!UTILS.isFunction(callbackfn)) return;
+    if (!type.isFunction(callbackfn)) return;
 
     if (Array.prototype.forEach) {
       return Array.prototype.forEach.call(arr, callbackfn, thisArg);
@@ -91,7 +92,7 @@
   array.each = array.every = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!arr || !UTILS.isFunction(callbackfn)) {
+    if (!arr || !type.isFunction(callbackfn)) {
       return false;
     }
 
@@ -118,7 +119,7 @@
    */
   array.some = function(arr, callbackfn, thisArg) {
     var i, len;
-    if (!arr || !UTILS.isFunction(callbackfn)) {
+    if (!arr || !type.isFunction(callbackfn)) {
       return false;
     }
 
@@ -164,7 +165,7 @@
 
   module.exports = array;
 })();
-},{"./utils":10}],2:[function(require,module,exports){
+},{"./type":10,"./utils":11}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -224,8 +225,11 @@
 
 (function(window, document, undefined) {
     "use strict";
+
+    //Just for freeze
+    var utils = require('./utils');
     
-    module.exports = {
+    var codes = {
         SYSTEM_ERROR: {
             code: 10001,
             info: "未知错误"
@@ -271,8 +275,13 @@
             info: "请输入通行证密码"
         }
     };
+
+    utils.freeze(codes);
+
+    module.exports = codes;
+
 })(window, document);
-},{}],4:[function(require,module,exports){
+},{"./utils":11}],4:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -288,25 +297,25 @@
  * @since 0.1.0
  */
 
-(function(window, document, undefined) {
+(function(window, undefined) {
     "use strict";
 
+    var type = require('./type');
     var console = window.console;
-    var noop = function() {};
 
-    if (!console || 'object' !== typeof console) {
+    if (!console || type.strobject !== typeof console) {
         console = {};
     }
 
     var keys = 'trace,info,log,debug,warn,error'.split(',');
 
     for (var i = keys.length - 1; i >= 0; i--) {
-        console[keys[i]] = console[keys[i]] || noop;
+        console[keys[i]] = console[keys[i]] || type.noop;
     }
 
     module.exports = console;
-})(window, document);
-},{}],5:[function(require,module,exports){
+})(window);
+},{"./type":10}],5:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -400,7 +409,7 @@
         }
     };
 })(window, document);
-},{"./utils":10}],6:[function(require,module,exports){
+},{"./utils":11}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -435,6 +444,7 @@
     var CODES = require('./codes');
     var console = require('./console');
     var Event = require('./event');
+    var type = require('./type');
     var PassportCookieParser = require('./cookie').PassportCookieParser;
 
     var FILE_NAME = 'sogou-passport(0.1.5).js';
@@ -448,6 +458,8 @@
         NEEDCAPTCHA: 'needcaptcha'
     };
 
+    Object.freeze(EVENTS);
+
     var FIXED_URLS = {
         login: 'https://account.sogou.com/web/login',
         logout: 'https://account.sogou.com/web/logout_js',
@@ -455,12 +467,7 @@
         captcha: 'https://account.sogou.com/captcha'
     };
 
-    var noop = function() {};
-    var strundefined = typeof undefined;
-    var strstr = typeof '';
-    var strobject = typeof {};
-    var strnumber = typeof 0;
-    var strfunction = typeof noop;
+    Object.freeze(FIXED_URLS);
 
     if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
         throw new Error(FILE_NAME + ' is only for HTML document');
@@ -481,7 +488,7 @@
     var VALIDATORS = [{
         name: ['appid'],
         validate: function(name, value) {
-            return value && (strstr === typeof value || strnumber === typeof value);
+            return value && (type.strstr === typeof value || type.strnumber === typeof value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a string or a number';
@@ -489,7 +496,7 @@
     }, {
         name: ['redirectUrl'],
         validate: function(name, value) {
-            return value && strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+            return value && type.strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
@@ -509,8 +516,8 @@
 
         opt = this.opt = {};
 
-        if (!options || strobject !== typeof options) {
-            throw new Error('"options" MUST be a plain object');
+        if (!options || type.strobject !== typeof options) {
+            throw new Error('"options" has be a plain object');
         }
 
         UTILS.mixin(opt, defaultOptions);
@@ -521,7 +528,7 @@
             for (j = validator.name.length - 1; j >= 0; --j) {
                 name = validator.name[j];
                 if (!validator.validate(name, opt[name])) {
-                    throw new Error(strfunction === typeof validator.errmsg ?
+                    throw new Error(type.strfunction === typeof validator.errmsg ?
                         validator.errmsg(name, opt[name]) : validator.errmsg
                     );
                 }
@@ -558,11 +565,11 @@
 
             //this._currentUname = username;
 
-            if (!username || !UTILS.isString(username)) {
+            if (!username || !type.isString(username)) {
                 throw new Error('"username" has to be a non-empty string');
             }
 
-            if (!password || !UTILS.isString(password)) {
+            if (!password || !type.isString(password)) {
                 throw new Error('"password" has to be a non-empty string');
             }
 
@@ -601,7 +608,7 @@
          */
         loginCallback: function(data) {
             var e;
-            if (!data || strobject !== typeof data) {
+            if (!data || type.strobject !== typeof data) {
                 console.error('Nothing callback received');
                 this.emit(EVENTS.LOGINFAILED, data);
             } else if (0 === +data.status) {
@@ -638,7 +645,7 @@
          */
         _assertContainer: function() {
             var container = this.mHTMLContainer;
-            if (!container || (strobject !== typeof container) || (strundefined === typeof container.appendChild) || !container.parentNode) {
+            if (!container || (type.strobject !== typeof container) || (type.strundefined === typeof container.appendChild) || !container.parentNode) {
                 container = this.mHTMLContainer = document.createElement('div');
                 container.style.cssText = HIDDEN_CSS;
                 container.className = container.id = EXPANDO;
@@ -760,7 +767,7 @@
     UTILS.mixin(PassportProxy, new Event());
 
     //Sync loading supported
-    if (window.PassportSC && strobject === typeof window.PassportSC) {
+    if (window.PassportSC && type.strobject === typeof window.PassportSC) {
         UTILS.mixin(window.PassportSC, PassportProxy);
         if (strfunction === typeof window.PassportSC.onApiLoaded)
             window.PassportSC.onApiLoaded();
@@ -770,7 +777,7 @@
 
     module.exports = PassportProxy;
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./utils":10}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":7,"./type":10,"./utils":11}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -790,6 +797,7 @@
     var UTILS = require('./utils');
     var console = require('./console');
     var array = require('./array');
+    var type = require('./type');
 
     var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
@@ -808,10 +816,10 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
-            if (!UTILS.isFunction(func)) {
+            if (!type.isFunction(func)) {
                 throw new Error(FUN_TYPE_ERR);
             }
 
@@ -841,10 +849,10 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
-            if (func && !UTILS.isFunction(func)) {
+            if (func && !type.isFunction(func)) {
                 throw new Error(FUN_TYPE_ERR);
             }
             evtArr = UTILS.trim(event).split(/\s/);
@@ -854,7 +862,7 @@
                     return this;
                 } else {
                     objs = listeners[evt];
-                    if (UTILS.isArray(objs)) {
+                    if (type.isArray(objs)) {
                         listeners[evt] = array.filter(objs, function(obj) {
                             return obj.func !== func;
                         });
@@ -876,7 +884,7 @@
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
 
@@ -884,7 +892,7 @@
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];
-                if (UTILS.isArray(objs)) {
+                if (type.isArray(objs)) {
                     array.forEach(objs, function(obj) {
                         //add timestamp
                         obj.timestamp = +new Date();
@@ -900,7 +908,7 @@
 
     module.exports = EventEmitter;
 })();
-},{"./array":1,"./console":4,"./utils":10}],8:[function(require,module,exports){
+},{"./array":1,"./console":4,"./type":10,"./utils":11}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1248,11 +1256,11 @@
       UTILS.dom.id(USER_ID).value = userid;
     }
 
-    PassportSC.on('loginfailed', function(e) {
-      UTILS.dom.id(ERROR_ID).innerHTML = '登录失败';
-    }).on('loginsuccess', function(e) {
+    PassportSC.on('loginfailed', function(e,data) {
+      UTILS.dom.id(ERROR_ID).innerHTML = data.msg||'登录失败';
+    }).on('loginsuccess', function(e,data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
-    }).on('needcaptcha', function(e) {
+    }).on('needcaptcha', function(e,data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
     });
   };
@@ -1323,7 +1331,55 @@
   };
 
 })(window, document);
-},{"../console":4,"../core":6,"../utils":10}],10:[function(require,module,exports){
+},{"../console":4,"../core":6,"../utils":11}],10:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * type.js
+ *
+ * changelog
+ * 2014-06-07[15:50:11]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+(function() {
+    "use strict";
+
+    var noop = function() {};
+
+    var type = {
+        noop: noop,
+        strundefined: typeof undefined,
+        strstr: typeof '',
+        strobject: typeof {},
+        strnumber: typeof 0,
+        strfunction: typeof noop,
+        isNullOrUndefined: function(obj) {
+            return undefined === obj || null === obj;
+        },
+        isInteger: function(num) {
+            return this.strnumber === typeof num && /^(\-|\+)?\d+?$/i.test(num);
+        }
+    };
+
+    var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
+    var key;
+    var createIs = function(type) {
+        return function(variable) {
+            return '[object ' + type + ']' === ({}).toString.apply(variable);
+        };
+    };
+
+    for (var i = typeKeys.length - 1; i >= 0; --i) {
+        key = 'is' + typeKeys[i];
+        type[key] = createIs(typeKeys[i]);
+    }
+
+    module.exports = type;
+})();
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1346,12 +1402,11 @@
     var Buggy = require('./buggy');
     var array = require('./array');
     var math = require('./math');
+    var type = require('./type');
 
     //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
     var whitespace = "[\\x20\\t\\r\\n\\f]";
     var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
-
-    var type = {};
 
     var dom = {
         /**
@@ -1457,7 +1512,7 @@
                 return (ele && ele.parentNode) ? ele : null;
             } else if (ele) {
                 //IE6/7
-                node = typeof ele.getAttributeNode !== 'undefined' && ele.getAttributeNode("id");
+                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
                 if (node && node.value === id) {
                     return ele;
                 }
@@ -1487,7 +1542,7 @@
          * @return {Object}      Dest
          */
         mixin: function(dest, src) {
-            if (!src || 'object' !== typeof src) {
+            if (!src || type.strobject !== typeof src) {
                 return dest;
             }
 
@@ -1545,24 +1600,28 @@
             } else {
                 return String(str).replace(rtrim, '');
             }
+        },
+        /**
+         * Freeze an object by Object.freeze,so it does not
+         * work on old browsers.
+         *
+         * This function is trying to remind developers to not 
+         * modify something.
+         * 
+         * @param  {Object} obj Object to be freezed
+         * @return {Object}    Source object
+         */
+        freeze: function(obj) {
+            if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
+                Object.freeze(obj);
+            }
+
+            return obj;
         }
     };
 
-    (function() {
-        //is***
-        var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
-        var key;
-        var createIs = function(type) {
-            return function(variable) {
-                return '[object ' + type + ']' === ({}).toString.apply(variable);
-            };
-        };
-        for (var i = types.length - 1; i >= 0; --i) {
-            key = 'is' + types[i];
-            utils[key] = type[key] = createIs(types[i]);
-        }
-    })();
+    utils.freeze(type);//we have to freeze type here
 
     module.exports = utils;
 })(window, document);
-},{"./array":1,"./buggy":2,"./math":8}]},{},[1,2,3,4,5,6,7,8,9,10])
+},{"./array":1,"./buggy":2,"./math":8,"./type":10}]},{},[1,2,3,4,5,6,7,8,9,10,11])

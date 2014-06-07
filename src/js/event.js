@@ -17,6 +17,7 @@
     var UTILS = require('./utils');
     var console = require('./console');
     var array = require('./array');
+    var type = require('./type');
 
     var EVT_TYPE_ERR = '"event" has to be a non-empty string';
     var FUN_TYPE_ERR = '"func" has to be a function';
@@ -35,10 +36,10 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
-            if (!UTILS.isFunction(func)) {
+            if (!type.isFunction(func)) {
                 throw new Error(FUN_TYPE_ERR);
             }
 
@@ -68,10 +69,10 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
-            if (func && !UTILS.isFunction(func)) {
+            if (func && !type.isFunction(func)) {
                 throw new Error(FUN_TYPE_ERR);
             }
             evtArr = UTILS.trim(event).split(/\s/);
@@ -81,7 +82,7 @@
                     return this;
                 } else {
                     objs = listeners[evt];
-                    if (UTILS.isArray(objs)) {
+                    if (type.isArray(objs)) {
                         listeners[evt] = array.filter(objs, function(obj) {
                             return obj.func !== func;
                         });
@@ -103,7 +104,7 @@
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            if (!UTILS.isString(event)||!event) {
+            if (!type.isString(event)||!event) {
                 throw new Error(EVT_TYPE_ERR);
             }
 
@@ -111,7 +112,7 @@
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];
-                if (UTILS.isArray(objs)) {
+                if (type.isArray(objs)) {
                     array.forEach(objs, function(obj) {
                         //add timestamp
                         obj.timestamp = +new Date();

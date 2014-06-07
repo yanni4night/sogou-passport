@@ -17,6 +17,7 @@
   "use strict";
 
   var UTILS = require('./utils');
+  var type = require('./type');
   var array = {};
 
   /**
@@ -70,7 +71,7 @@
   array.forEach = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!UTILS.isFunction(callbackfn)) return;
+    if (!type.isFunction(callbackfn)) return;
 
     if (Array.prototype.forEach) {
       return Array.prototype.forEach.call(arr, callbackfn, thisArg);
@@ -90,7 +91,7 @@
   array.each = array.every = function(arr, callbackfn, thisArg) {
     var i, len;
 
-    if (!arr || !UTILS.isFunction(callbackfn)) {
+    if (!arr || !type.isFunction(callbackfn)) {
       return false;
     }
 
@@ -117,7 +118,7 @@
    */
   array.some = function(arr, callbackfn, thisArg) {
     var i, len;
-    if (!arr || !UTILS.isFunction(callbackfn)) {
+    if (!arr || !type.isFunction(callbackfn)) {
       return false;
     }
 

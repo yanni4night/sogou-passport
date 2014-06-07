@@ -20,12 +20,11 @@
     var Buggy = require('./buggy');
     var array = require('./array');
     var math = require('./math');
+    var type = require('./type');
 
     //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
     var whitespace = "[\\x20\\t\\r\\n\\f]";
     var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
-
-    var type = {};
 
     var dom = {
         /**
@@ -131,7 +130,7 @@
                 return (ele && ele.parentNode) ? ele : null;
             } else if (ele) {
                 //IE6/7
-                node = typeof ele.getAttributeNode !== 'undefined' && ele.getAttributeNode("id");
+                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
                 if (node && node.value === id) {
                     return ele;
                 }
@@ -161,7 +160,7 @@
          * @return {Object}      Dest
          */
         mixin: function(dest, src) {
-            if (!src || 'object' !== typeof src) {
+            if (!src || type.strobject !== typeof src) {
                 return dest;
             }
 
@@ -219,23 +218,27 @@
             } else {
                 return String(str).replace(rtrim, '');
             }
+        },
+        /**
+         * Freeze an object by Object.freeze,so it does not
+         * work on old browsers.
+         *
+         * This function is trying to remind developers to not 
+         * modify something.
+         * 
+         * @param  {Object} obj Object to be freezed
+         * @return {Object}    Source object
+         */
+        freeze: function(obj) {
+            if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
+                Object.freeze(obj);
+            }
+
+            return obj;
         }
     };
 
-    (function() {
-        //is***
-        var types = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number".split(',');
-        var key;
-        var createIs = function(type) {
-            return function(variable) {
-                return '[object ' + type + ']' === ({}).toString.apply(variable);
-            };
-        };
-        for (var i = types.length - 1; i >= 0; --i) {
-            key = 'is' + types[i];
-            utils[key] = type[key] = createIs(types[i]);
-        }
-    })();
+    utils.freeze(type);//we have to freeze type here
 
     module.exports = utils;
 })(window, document);

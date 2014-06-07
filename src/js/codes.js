@@ -13,8 +13,11 @@
 
 (function(window, document, undefined) {
     "use strict";
+
+    //Just for freeze
+    var utils = require('./utils');
     
-    module.exports = {
+    var codes = {
         SYSTEM_ERROR: {
             code: 10001,
             info: "未知错误"
@@ -60,4 +63,9 @@
             info: "请输入通行证密码"
         }
     };
+
+    utils.freeze(codes);
+
+    module.exports = codes;
+
 })(window, document);

@@ -13,21 +13,21 @@
  * @since 0.1.0
  */
 
-(function(window, document, undefined) {
+(function(window, undefined) {
     "use strict";
 
+    var type = require('./type');
     var console = window.console;
-    var noop = function() {};
 
-    if (!console || 'object' !== typeof console) {
+    if (!console || type.strobject !== typeof console) {
         console = {};
     }
 
     var keys = 'trace,info,log,debug,warn,error'.split(',');
 
     for (var i = keys.length - 1; i >= 0; i--) {
-        console[keys[i]] = console[keys[i]] || noop;
+        console[keys[i]] = console[keys[i]] || type.noop;
     }
 
     module.exports = console;
-})(window, document);
+})(window);
