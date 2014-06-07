@@ -130,7 +130,7 @@
 
     /**
      * Passport prototype.
-     * 
+     *
      * @class
      */
     Passport.prototype = {
@@ -152,10 +152,18 @@
 
             //this._currentUname = username;
 
+            if (!username || !UTILS.isString(username)) {
+                throw new Error('"username" has to be a non-empty string');
+            }
+
+            if (!password || !UTILS.isString(password)) {
+                throw new Error('"password" has to be a non-empty string');
+            }
+
             payload = {
                 username: username,
                 password: password,
-                vcode: vcode,
+                vcode: vcode || "",
                 autoLogin: +(!!autoLogin), //:0/1
                 appid: this.opt.appid,
                 redirectUrl: this.opt.redirectUrl,
@@ -212,7 +220,7 @@
         },
         /**
          * Get options.
-         * 
+         *
          * @return {Object}
          */
         getOptions: function() {
