@@ -21,6 +21,7 @@
  * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
  * 2014-06-07[20:07:16]:reconstruction PassportSC
  * 2014-06-08[01:28:21]:third party login supported by 'login3rd'
+ * 2014-06-08[12:24:48]:hide source of functions
  *
  * @author yanni4night@gmail.com
  * @version 0.1.7
@@ -350,6 +351,12 @@
                 this.emit(EVENTS.login_failed, data);
             }
         },
+        /**
+         * Third party login callback from 'popup' window.
+         * DO NOT call it directly.
+         *
+         * It does not support callback with 'page' display.
+         */
         _logincb3rd: function() {
             if (!this.isInitialized()) {
                 console.trace('Login3rd callback received but [Passport] has not been initialized');
@@ -360,7 +367,7 @@
         /**
          * If passport has been initialized.
          *
-         * @return {Boolean}
+         * @return {Boolean} Initialized
          */
         isInitialized: function() {
             return !!gOptions;
@@ -368,7 +375,7 @@
         /**
          * Get a copy of options.
          *
-         * @return {Object}
+         * @return {Object} Options
          */
         getOptions: function() {
             var opts = {};
@@ -377,7 +384,7 @@
         /**
          * Get a copy of events which passport supports.
          *
-         * @return {Object}
+         * @return {Object} Supported events
          */
         getSupportedEvents: function() {
             var events = {};
@@ -385,7 +392,21 @@
         }
     };
 
-    //Hide source
+    /**
+     * Create toString functions.
+     *
+     * @param  {String} name
+     * @return {Function}
+     */
+    function createToString(name, source) {
+        return (function(name, source) {
+            return function() {
+                return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+            };
+        })(name, source);
+    }
+
+    //Hide implementation for beauty.
     PassportSC = function() {
         return Passport.init.apply(Passport, arguments);
     };
@@ -395,6 +416,15 @@
 
     //Make proxy an event emitter too.
     UTILS.mixin(PassportSC, new Event());
+
+    //PassportSC is shy.
+    //We do this for hiding source of its function members,
+    //which may show up in chrome console.
+    for (var e in PassportSC) {
+        if (type.isFunction(PassportSC[e])) {
+            PassportSC[e].toString = createToString(e, String(PassportSC[e]));
+        }
+    }
 
     //Sync loading supported
     if (window.PassportSC && type.strobject === typeof window.PassportSC) {
