@@ -14,7 +14,6 @@
 (function(window, document, undefined) {
     var assert = require('assert');
     var PassportCookieParser = require('../cookie').PassportCookieParser;
-    var console = require('../console');
 
     describe('Cookie', function() {
 

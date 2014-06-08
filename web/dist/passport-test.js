@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":20}],7:[function(require,module,exports){
+},{"./type":21}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":20}],8:[function(require,module,exports){
+},{"./type":21}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":21}],9:[function(require,module,exports){
+},{"./utils":22}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1368,7 +1368,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":20}],10:[function(require,module,exports){
+},{"./type":21}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1462,7 +1462,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":21}],11:[function(require,module,exports){
+},{"./utils":22}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1902,7 +1902,7 @@ process.chdir = function (dir) {
 
     module.exports = PassportSC;
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":21}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":22}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2049,7 +2049,7 @@ process.chdir = function (dir) {
     };
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":20}],13:[function(require,module,exports){
+},{"./buggy":7,"./type":21}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2168,7 +2168,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":21}],14:[function(require,module,exports){
+},{"./console":9,"./utils":22}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2535,7 +2535,6 @@ process.chdir = function (dir) {
 (function(window, document, undefined) {
     var assert = require('assert');
     var PassportCookieParser = require('../cookie').PassportCookieParser;
-    var console = require('../console');
 
     describe('Cookie', function() {
 
@@ -2547,7 +2546,43 @@ process.chdir = function (dir) {
         });
     }); //describe
 })(window, document);
-},{"../console":9,"../cookie":10,"assert":1}],17:[function(require,module,exports){
+},{"../cookie":10,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-event.js
+ *
+ * changelog
+ * 2014-06-08[17:07:12]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var Event = require('../event');
+
+    describe('Event', function() {
+
+        it('event emit', function() {
+            var e = new Event(),
+                cnt = 0,
+                evtName = 'tick';
+            var listener = function(evt, data) {
+                ++cnt;
+            };
+            e.on(evtName, listener);
+            e.emit(evtName);
+            assert.equal(1, cnt);
+            e.off(evtName, listener);
+            e.emit(evtName);
+            assert.equal(1, cnt);
+        });
+    }); //describe
+})();
+},{"../event":13,"assert":1}],18:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2576,7 +2611,7 @@ process.chdir = function (dir) {
         });
     }); //describe
 })();
-},{"../console":9,"../math":14,"assert":1}],18:[function(require,module,exports){
+},{"../console":9,"../math":14,"assert":1}],19:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2744,7 +2779,7 @@ process.chdir = function (dir) {
 
     });
 })(window, document);
-},{"../type":20,"assert":1}],19:[function(require,module,exports){
+},{"../type":21,"assert":1}],20:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2784,7 +2819,7 @@ process.chdir = function (dir) {
 
     }); //describe
 })();
-},{"../console":9,"../utils":21,"assert":1}],20:[function(require,module,exports){
+},{"../console":9,"../utils":22,"assert":1}],21:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2905,7 +2940,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -3038,4 +3073,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":20}]},{},[6,7,8,9,10,11,12,13,14,20,21,15,16,17,18,19])
+},{"./array":6,"./dom":12,"./math":14,"./type":21}]},{},[6,7,8,9,10,11,12,13,14,21,22,15,16,17,18,19,20])
