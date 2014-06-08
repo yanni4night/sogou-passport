@@ -125,13 +125,17 @@ module.exports = function(grunt) {
             }
         },
         browserify: {
-            dialog: {
-                src: [STATIC_DIR + 'js/**/*.js'],
+            plugins: {
+                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
                 dest: WEB_DIR + '/dist/passport-dialog.js'
             },
             core: {
                 src: [STATIC_DIR + 'js/*.js'],
                 dest: WEB_DIR + '/dist/passport-core.js'
+            },
+            test:{
+                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/test/*.js'],
+                dest: WEB_DIR + '/dist/passport-test.js'
             }
         },
         version: {
