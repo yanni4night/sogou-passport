@@ -132,6 +132,8 @@ loadSync('sogou.js');
             <code>PassportSC.userid();</code>
             <p>Get callback:</p>
             <code>PassportSC.on('loginsuccess loginfailed logoutsuccess',function(evt,data){});</code>
+            <p>Third party login with:</p>
+            <code>PassportSC.login3rd(provider,display,redirectUrl);</code>
             <p>
             That'a all,so far so simple.All inner functions do not export.If you try to invoke:
             <q>JSON.stringify(PassportSC)</q>,what you get will be:
@@ -149,7 +151,7 @@ PassportSC
         });
 </pre>
             <h4>Test</h4>
-            <div id="info">Try the following login,remember to permit a popup window:</div>
+            <div id="info">Try the following login:</div>
             <form action="#" id="form">
                 <fieldset>
                     <legend id="legend">Sogou Login Area</legend>
@@ -160,6 +162,11 @@ PassportSC
                     <div>
                         <label for="passport">passport:</label>
                         <input type="password" id="password" value="123456" required="required"/>
+                    </div>
+                    <div id="captcha-div" style="display:none">
+                        <label for="captcha">captcha&nbsp;:</label>
+                        <input type="text" id="captcha"/>
+                         <img src="about:blank" alt="captcha" id="captcha-img"/>
                     </div>
                     <div>
                         <button id="login" type="submit">Login</button>
@@ -173,14 +180,17 @@ PassportSC
                 <fieldset>
                     <legend id="trd-legend">Third-party Login Area</legend>
                     <div>
+                        You'd better use <q>sogou.com</q> domain and remember to permit a popup window.
+                    </div>
+                    <div>
                         <label><input type="radio" name="provider" value="qq" checked="checked"/> qq</label>
                         <label><input type="radio" name="provider" value="sina"/> sina</label>
                         <label><input type="radio" name="provider" value="renren"/> renren</label>
                     </div>
 
                     <div>
-                        <label><input type="radio" name="display" value="page"/> page</label>
-                        <label><input type="radio" name="display" value="popup" checked="checked"/> popup</label>
+                        <label><input type="radio" name="display" value="page" checked="checked"/> page</label>
+                        <label><input type="radio" name="display" value="popup"/> popup</label>
                     </div>
 
                     <div>
@@ -227,6 +237,13 @@ PassportSC
         })
         .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha 3rdlogincomplete',function(evt,data){
             $('info').innerHTML = evt.type.replace(/(log(?:in|out)|need)/,"$1 ");
+            if('needcaptcha' === evt.type){
+                $('captcha-div').style.display = 'block';
+                $('captcha-img').src = data.captchaimg;
+                $('captcha').value = '';
+            }else{
+                $('captcha-div').style.display = 'none';
+            }
         });
 
         $('logout').onclick = function(e){
@@ -235,7 +252,7 @@ PassportSC
 
         $('form').onsubmit = function(e){
             e = e || window.event;
-            PassportSC.login($('username').value,$('password').value,false);
+            PassportSC.login($('username').value,$('password').value,$('captcha').value,false);
             e.preventDefault&&e.preventDefault();
             e.returnValue = false;
             return false;
