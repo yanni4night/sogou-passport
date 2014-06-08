@@ -589,7 +589,7 @@
      * @class
      */
     var Passport = {
-        version: '0.1.7', //see 'package.json'
+        version: '0.1.8', //see 'package.json'
         /**
          * Initialize.
          * This must be called at first before

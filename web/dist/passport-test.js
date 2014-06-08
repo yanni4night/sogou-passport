@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":17}],7:[function(require,module,exports){
+},{"./type":18}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":17}],8:[function(require,module,exports){
+},{"./type":18}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":18}],9:[function(require,module,exports){
+},{"./utils":19}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1368,7 +1368,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":17}],10:[function(require,module,exports){
+},{"./type":18}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1462,7 +1462,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":18}],11:[function(require,module,exports){
+},{"./utils":19}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1638,7 +1638,7 @@ process.chdir = function (dir) {
      * @class
      */
     var Passport = {
-        version: '0.1.7', //see 'package.json'
+        version: '0.1.8', //see 'package.json'
         /**
          * Initialize.
          * This must be called at first before
@@ -1902,7 +1902,7 @@ process.chdir = function (dir) {
 
     module.exports = PassportSC;
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":18}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":19}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2049,7 +2049,7 @@ process.chdir = function (dir) {
     };
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":17}],13:[function(require,module,exports){
+},{"./buggy":7,"./type":18}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2168,7 +2168,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":18}],14:[function(require,module,exports){
+},{"./console":9,"./utils":19}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2686,7 +2686,47 @@ process.chdir = function (dir) {
 
     });
 })(window, document);
-},{"../type":17,"assert":1}],17:[function(require,module,exports){
+},{"../type":18,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-utils.js
+ *
+ * changelog
+ * 2014-06-08[16:18:43]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var utils = require('../utils');
+    var console = require('../console');
+    
+    describe('Utils', function() {
+        it('#mixin()',function(){
+            var src = {x:89},dest= {};
+            assert.equal(89,utils.mixin(dest,src).x);
+        });
+
+        it('#trim()',function(){
+            assert.equal(0,utils.trim('\x20\t\r\n\f').length);
+        });
+
+        it('#getIEVersion()',function(){
+            var version = utils.getIEVersion();
+            if(version)
+            {   
+                console.log('IE'+version);
+                assert(version>4&&version<12&&utils.type.isInteger(version));
+            }
+        });
+
+    }); //describe
+})();
+},{"../console":9,"../utils":19,"assert":1}],18:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2807,7 +2847,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2940,4 +2980,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":17}]},{},[6,7,8,9,10,11,12,13,14,17,18,15,16])
+},{"./array":6,"./dom":12,"./math":14,"./type":18}]},{},[6,7,8,9,10,11,12,13,14,18,19,15,16,17])
