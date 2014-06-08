@@ -10,6 +10,11 @@ build
 
 `grunt dist`
 
+test
+======
+
+`grunt karma`
+
 contact
 ======
  - <yanni4night@gmail.com>
