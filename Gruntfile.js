@@ -23,8 +23,8 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            check: {
-                src: STATIC_DIR + 'js/**/*.js',
+            lib: {
+                src: STATIC_DIR + 'js/*.js',
             }
         },
         uglify: {

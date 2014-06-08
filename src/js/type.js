@@ -25,13 +25,13 @@
         strnumber: typeof 0,
         strfunction: typeof noop,
         isNullOrUndefined: function(obj) {
-            return this.isNull(obj) || this.isUndefined(obj);
+            return !!(this.isNull(obj) || this.isUndefined(obj));
         },
         isNonNullOrUndefined: function(obj) {
             return !this.isNullOrUndefined(obj);
         },
         isInteger: function(num) {
-            return this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num);
+            return !!(this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num));
         },
         isNull: function(obj) {
             return null === obj;
@@ -40,19 +40,19 @@
             return undefined === obj;
         },
         /**
-         * Check if obj is a non-null object.
+         * Check if obj is a non-null and non-array object.
          *
          * @param  {Object}  obj
          * @return {Boolean}
          */
         isPlainObject: function(obj) {
-            return this.isObject(obj) && !this.isNull(obj);
+            return this.isObject(obj) && !this.isNull(obj) && !this.isArray(obj) && !this.isRegExp(obj) && !this.isDate(obj);
         },
         isNonEmptyString: function(obj) {
-            return obj && this.isString(obj);
+            return !!(obj && this.isString(obj));
         },
         isHTMLElement: function(obj) {
-            return obj && obj.childNodes && obj.tagName && obj.appendChild;
+            return !!(obj && obj.childNodes && obj.tagName && obj.appendChild);
         },
         /**
          * Check if obj is null,undefined,empty array or empty string.
@@ -63,12 +63,12 @@
         isEmpty: function(obj) {
             return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
         },
-        isGeneralizedObject: function(obj) {
-            return this.strobject === typeof obj;
+        isObject: function(obj) {
+            return type.strobject === typeof obj;
         }
     };
 
-    var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number,Object".split(',');
+    var typeKeys = "RegExp,Date,String,Array,Boolean,Function,Number".split(',');
 
     /**
      * Create is* functions.
@@ -110,7 +110,7 @@
     }
 
     //create missing asserts
-    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,GeneralizedObject".split(',');
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(',');
     for (i = assertKeys.length; i >= 0; --i) {
         type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }

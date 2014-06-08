@@ -113,7 +113,7 @@
         freeze: function(obj) {
 
             type.assertNonNullOrUndefined('obj', obj);
-            type.assertGeneralizedObject('obj', obj);
+            type.assertObject('obj', obj);
 
             if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
                 Object.freeze(obj);

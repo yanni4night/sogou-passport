@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":16}],7:[function(require,module,exports){
+},{"./type":17}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":16}],8:[function(require,module,exports){
+},{"./type":17}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":17}],9:[function(require,module,exports){
+},{"./utils":18}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1368,7 +1368,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":16}],10:[function(require,module,exports){
+},{"./type":17}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1462,7 +1462,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":17}],11:[function(require,module,exports){
+},{"./utils":18}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1902,7 +1902,7 @@ process.chdir = function (dir) {
 
     module.exports = PassportSC;
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":17}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":18}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2049,7 +2049,7 @@ process.chdir = function (dir) {
     };
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":16}],13:[function(require,module,exports){
+},{"./buggy":7,"./type":17}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2168,7 +2168,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":17}],14:[function(require,module,exports){
+},{"./console":9,"./utils":18}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2522,6 +2522,174 @@ process.chdir = function (dir) {
 /**
  * Copyright (C) 2014 yanni4night.com
  *
+ * test-type.js
+ *
+ * changelog
+ * 2014-06-08[14:05:22]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+
+    var assert = require("assert");
+    var type = require('../type');
+
+    describe('Type', function() {
+
+        var rules = {
+            "RegExp": {
+                nec: ['x', 0, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [/regexp/, new RegExp()]
+            },
+            "Date": {
+                nec: [/x/, 'x', 0, false, {},
+                    [], null, undefined, type.noop
+                ],
+                pos: [new Date()]
+            },
+            "String": {
+                nec: [/x/, 0, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: ['string', new String()]
+            },
+            "Array": {
+                nec: [/x/, 'x', 0, false, {
+                    length: 1
+                }, , null, undefined, new Date(), type.noop],
+                pos: [
+                    [], Array()
+                ]
+            },
+            "Boolean": {
+                nec: [/x/, 'x', 0, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [true, new Boolean()]
+            },
+            "Function": {
+                nec: [/x/, 'x', 0, false, {},
+                    [], null, undefined, new Date()
+                ],
+                pos: [type.noop, new Function()]
+            },
+            "Number": {
+                nec: [/x/, 'x', false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [2.3, new Number(), -9e-8, NaN, Number.MAX_VALUE, Number.POSITIVE_INFINITY]
+            },
+            "Object": {
+                nec: ['x', 1, false, undefined, type.noop],
+                pos: [
+                    [], {},
+                    new Object(), null, window, new Date(), new String, new RegExp()
+                ]
+            },
+            "Empty": {
+                nec: [/x/, 'x', 1, false, {},
+                    new Date(), type.noop
+                ],
+                pos: ['', [], null, undefined]
+            },
+            "HTMLElement": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [document.documentElement, document.createElement('p')]
+            },
+            "PlainObject": {
+                nec: ['x', 1, false, [], null, undefined, type.noop],
+                pos: [{},
+                    new Object(),
+                    window
+                ]
+            },
+            "Undefined": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], null, new Date(), type.noop
+                ],
+                pos: [undefined, this.__no]
+            },
+            "Null": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], undefined, new Date(), type.noop
+                ],
+                pos: [null]
+            },
+            "Integer": {
+                nec: [/x/, '2.2', 2e-3, 2.2, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [6, 1e2, 2.0, 0x9]
+            },
+            "NullOrUndefined": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], new Date(), type.noop
+                ],
+                pos: [null, undefined]
+            },
+            "NonNullOrUndefined": {
+                nec: [null, undefined],
+                pos: [{}, /x/, [], '', false]
+            },
+            "NonEmptyString": {
+                nec: [/x/, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: ['x', new String('y')]
+            }
+        };
+
+
+        function makeIs(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert(type['is' + e](rules[e].pos[i]));
+                };
+            }(e, i);
+        }
+
+        function makeNot(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert(!type['is' + e](rules[e].nec[i]));
+                };
+            }(e, i);
+        }
+
+        function makeAssert(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert.throws(function() {
+                        type['assert' + e](rules[e].nec[i]);
+                    });
+                };
+            }(e, i);
+        }
+
+        for (var e in rules) {
+            for (var i = 0; i < rules[e].pos.length; ++i) {
+                it('expecting ' + rules[e].pos[i] + ' to be ' + e, makeIs(e, i));
+            }
+            for (i = 0; i < rules[e].nec.length; ++i) {
+                it('unexpecting ' + rules[e].nec[i] + ' to be ' + e, makeNot(e, i));
+                it('throwing when' + rules[e].nec[i] + ' to be ' + e, makeAssert(e, i));
+            }
+
+        }
+
+    });
+})(window, document);
+},{"../type":17,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
  * type.js
  *
  * changelog
@@ -2546,13 +2714,13 @@ process.chdir = function (dir) {
         strnumber: typeof 0,
         strfunction: typeof noop,
         isNullOrUndefined: function(obj) {
-            return this.isNull(obj) || this.isUndefined(obj);
+            return !!(this.isNull(obj) || this.isUndefined(obj));
         },
         isNonNullOrUndefined: function(obj) {
             return !this.isNullOrUndefined(obj);
         },
         isInteger: function(num) {
-            return this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num);
+            return !!(this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num));
         },
         isNull: function(obj) {
             return null === obj;
@@ -2561,19 +2729,19 @@ process.chdir = function (dir) {
             return undefined === obj;
         },
         /**
-         * Check if obj is a non-null object.
+         * Check if obj is a non-null and non-array object.
          *
          * @param  {Object}  obj
          * @return {Boolean}
          */
         isPlainObject: function(obj) {
-            return this.isObject(obj) && !this.isNull(obj);
+            return this.isObject(obj) && !this.isNull(obj) && !this.isArray(obj) && !this.isRegExp(obj) && !this.isDate(obj);
         },
         isNonEmptyString: function(obj) {
-            return obj && this.isString(obj);
+            return !!(obj && this.isString(obj));
         },
         isHTMLElement: function(obj) {
-            return obj && obj.childNodes && obj.tagName && obj.appendChild;
+            return !!(obj && obj.childNodes && obj.tagName && obj.appendChild);
         },
         /**
          * Check if obj is null,undefined,empty array or empty string.
@@ -2584,12 +2752,12 @@ process.chdir = function (dir) {
         isEmpty: function(obj) {
             return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
         },
-        isGeneralizedObject: function(obj) {
-            return this.strobject === typeof obj;
+        isObject: function(obj) {
+            return type.strobject === typeof obj;
         }
     };
 
-    var typeKeys = "Arguments,RegExp,Date,String,Array,Boolean,Function,Number,Object".split(',');
+    var typeKeys = "RegExp,Date,String,Array,Boolean,Function,Number".split(',');
 
     /**
      * Create is* functions.
@@ -2631,7 +2799,7 @@ process.chdir = function (dir) {
     }
 
     //create missing asserts
-    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,GeneralizedObject".split(',');
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(',');
     for (i = assertKeys.length; i >= 0; --i) {
         type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }
@@ -2639,7 +2807,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2755,7 +2923,7 @@ process.chdir = function (dir) {
         freeze: function(obj) {
 
             type.assertNonNullOrUndefined('obj', obj);
-            type.assertGeneralizedObject('obj', obj);
+            type.assertObject('obj', obj);
 
             if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
                 Object.freeze(obj);
@@ -2772,4 +2940,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":16}]},{},[6,7,8,9,10,11,12,13,14,16,17,15])
+},{"./array":6,"./dom":12,"./math":14,"./type":17}]},{},[6,7,8,9,10,11,12,13,14,17,18,15,16])
