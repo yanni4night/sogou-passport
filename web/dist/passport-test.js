@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":18}],7:[function(require,module,exports){
+},{"./type":19}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":18}],8:[function(require,module,exports){
+},{"./type":19}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":19}],9:[function(require,module,exports){
+},{"./utils":20}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1368,7 +1368,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":18}],10:[function(require,module,exports){
+},{"./type":19}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1462,7 +1462,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":19}],11:[function(require,module,exports){
+},{"./utils":20}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1902,7 +1902,7 @@ process.chdir = function (dir) {
 
     module.exports = PassportSC;
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":19}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":20}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2049,7 +2049,7 @@ process.chdir = function (dir) {
     };
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":18}],13:[function(require,module,exports){
+},{"./buggy":7,"./type":19}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2168,7 +2168,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":19}],14:[function(require,module,exports){
+},{"./console":9,"./utils":20}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2522,6 +2522,35 @@ process.chdir = function (dir) {
 /**
  * Copyright (C) 2014 yanni4night.com
  *
+ * test-math.js
+ *
+ * changelog
+ * 2014-06-08[16:38:42]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var math = require('../math');
+    var console = require('../console');
+    
+    describe('Math', function() {
+
+        it('base64 decode', function() {
+            assert.equal(escape('搜狗passport'), math.utf8to16(math.b64_decodex('JXU2NDFDJXU3MkQ3cGFzc3BvcnQ=')));
+        });
+        it('create 32 bytes uuid', function() {
+            assert.equal(32, math.uuid().length);
+        });
+    }); //describe
+})();
+},{"../console":9,"../math":14,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
  * test-type.js
  *
  * changelog
@@ -2686,7 +2715,7 @@ process.chdir = function (dir) {
 
     });
 })(window, document);
-},{"../type":18,"assert":1}],17:[function(require,module,exports){
+},{"../type":19,"assert":1}],18:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2726,7 +2755,7 @@ process.chdir = function (dir) {
 
     }); //describe
 })();
-},{"../console":9,"../utils":19,"assert":1}],18:[function(require,module,exports){
+},{"../console":9,"../utils":20,"assert":1}],19:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2847,7 +2876,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2980,4 +3009,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":18}]},{},[6,7,8,9,10,11,12,13,14,18,19,15,16,17])
+},{"./array":6,"./dom":12,"./math":14,"./type":19}]},{},[6,7,8,9,10,11,12,13,14,19,20,15,16,17,18])
