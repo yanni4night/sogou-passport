@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":19}],7:[function(require,module,exports){
+},{"./type":20}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":19}],8:[function(require,module,exports){
+},{"./type":20}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":20}],9:[function(require,module,exports){
+},{"./utils":21}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1368,7 +1368,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":19}],10:[function(require,module,exports){
+},{"./type":20}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1462,7 +1462,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":20}],11:[function(require,module,exports){
+},{"./utils":21}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1902,7 +1902,7 @@ process.chdir = function (dir) {
 
     module.exports = PassportSC;
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":20}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":21}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2049,7 +2049,7 @@ process.chdir = function (dir) {
     };
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":19}],13:[function(require,module,exports){
+},{"./buggy":7,"./type":20}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2168,7 +2168,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":20}],14:[function(require,module,exports){
+},{"./console":9,"./utils":21}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2522,6 +2522,35 @@ process.chdir = function (dir) {
 /**
  * Copyright (C) 2014 yanni4night.com
  *
+ * test-cookie.js
+ *
+ * changelog
+ * 2014-06-08[16:55:18]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    var assert = require('assert');
+    var PassportCookieParser = require('../cookie').PassportCookieParser;
+    var console = require('../console');
+
+    describe('Cookie', function() {
+
+        it('userid parse', function() {
+            if (navigator.cookieEnabled) {
+                document.cookie = 'ppinf=2|1402199707|1403409307|bG9naW5pZDowOnx1c2VyaWQ6NDQ6QkY1NkM3NEU1MEM1Mjk1RTQ2MDBCNEE0NDRBQzMxQTBAcXEuc29odS5jb218c2VydmljZXVzZTozMDowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDB8Y3J0OjA6fGVtdDoxOjB8YXBwaWQ6NDoxMTIwfHRydXN0OjE6MXxwYXJ0bmVyaWQ6MTowfHJlbGF0aW9uOjA6fHV1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1bmlxbmFtZTo0MzpOaWdodGluZ2FsZVkxMzYxJUU1JTlDJUE4JUU2JTkwJTlDJUU3JThCJTkwfHJlZnVzZXJpZDozMjpCRjU2Qzc0RTUwQzUyOTVFNDYwMEI0QTQ0NEFDMzFBMHxyZWZuaWNrOjEzOk5pZ2h0aW5nYWxlLll8';
+                assert.equal('BF56C74E50C5295E4600B4A444AC31A0@qq.sohu.com', PassportCookieParser.parse().userid);
+            }
+        });
+    }); //describe
+})(window, document);
+},{"../console":9,"../cookie":10,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
  * test-math.js
  *
  * changelog
@@ -2547,7 +2576,7 @@ process.chdir = function (dir) {
         });
     }); //describe
 })();
-},{"../console":9,"../math":14,"assert":1}],17:[function(require,module,exports){
+},{"../console":9,"../math":14,"assert":1}],18:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2715,7 +2744,7 @@ process.chdir = function (dir) {
 
     });
 })(window, document);
-},{"../type":19,"assert":1}],18:[function(require,module,exports){
+},{"../type":20,"assert":1}],19:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2755,7 +2784,7 @@ process.chdir = function (dir) {
 
     }); //describe
 })();
-},{"../console":9,"../utils":20,"assert":1}],19:[function(require,module,exports){
+},{"../console":9,"../utils":21,"assert":1}],20:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2876,7 +2905,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -3009,4 +3038,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":19}]},{},[6,7,8,9,10,11,12,13,14,19,20,15,16,17,18])
+},{"./array":6,"./dom":12,"./math":14,"./type":20}]},{},[6,7,8,9,10,11,12,13,14,20,21,15,16,17,18,19])
