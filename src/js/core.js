@@ -392,27 +392,12 @@
         }
     };
 
-    /**
-     * Create toString functions.
-     *
-     * @param  {String} name
-     * @return {Function}
-     */
-    function createToString(name, source) {
-        return (function(name, source) {
-            return function() {
-                return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
-            };
-        })(name, source);
-    }
-
     //Hide implementation for beauty.
     PassportSC = function() {
         return Passport.init.apply(Passport, arguments);
     };
 
     UTILS.mixin(PassportSC, Passport);
-
 
     //Make proxy an event emitter too.
     UTILS.mixin(PassportSC, new Event());
@@ -422,7 +407,7 @@
     //which may show up in chrome console.
     for (var e in PassportSC) {
         if (type.isFunction(PassportSC[e])) {
-            PassportSC[e].toString = createToString(e, String(PassportSC[e]));
+            UTILS.hideSource(e,PassportSC[e]);
         }
     }
 

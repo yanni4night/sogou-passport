@@ -8,10 +8,10 @@
  * 2014-06-06[09:23:53]:getIEVersion
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
  * 2014-06-07[16:39:34]:remove 'dom' module
- *
+ * 2014-06-09[11:05:06]:define 'hideSource' function
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -120,6 +120,25 @@
             }
 
             return obj;
+        },
+        /**
+         * Hide source of a function by defining toString.
+         * 
+         * @param  {String} name Function name
+         * @param  {Function} func Function to be hide-sourced
+         * @return {Function}      'toString' function
+         */
+        hideSource: function(name, func) {
+            type.assertNonEmptyString('name', name);
+            type.assertFunction('func', func);
+
+            var source = String(func);
+
+            return func.toString = (function(name, source) {
+                return function() {
+                    return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+                };
+            })(name, source);
         }
     };
 
