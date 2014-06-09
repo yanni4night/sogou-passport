@@ -420,5 +420,19 @@
         window.PassportSC = PassportSC;
     }
 
-    module.exports = PassportSC;
+    module.exports = {
+        PassportSC: PassportSC,
+        addSupportedEvent: function(name, val) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('val', val);
+            EVENTS[name] = val;
+            return EVENTS;
+        },
+        addFixedUrl: function(name, url) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('url', url);
+            FIXED_URLS[name] = url;
+            return FIXED_URLS;
+        }
+    };
 })(window, document);

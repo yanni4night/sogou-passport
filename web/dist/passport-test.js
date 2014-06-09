@@ -1857,27 +1857,12 @@ process.chdir = function (dir) {
         }
     };
 
-    /**
-     * Create toString functions.
-     *
-     * @param  {String} name
-     * @return {Function}
-     */
-    function createToString(name, source) {
-        return (function(name, source) {
-            return function() {
-                return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
-            };
-        })(name, source);
-    }
-
     //Hide implementation for beauty.
     PassportSC = function() {
         return Passport.init.apply(Passport, arguments);
     };
 
     UTILS.mixin(PassportSC, Passport);
-
 
     //Make proxy an event emitter too.
     UTILS.mixin(PassportSC, new Event());
@@ -1887,7 +1872,7 @@ process.chdir = function (dir) {
     //which may show up in chrome console.
     for (var e in PassportSC) {
         if (type.isFunction(PassportSC[e])) {
-            PassportSC[e].toString = createToString(e, String(PassportSC[e]));
+            UTILS.hideSource(e,PassportSC[e]);
         }
     }
 
@@ -1900,7 +1885,21 @@ process.chdir = function (dir) {
         window.PassportSC = PassportSC;
     }
 
-    module.exports = PassportSC;
+    module.exports = {
+        PassportSC: PassportSC,
+        addSupportedEvent: function(name, val) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('val', val);
+            EVENTS[name] = val;
+            return EVENTS;
+        },
+        addFixedUrl: function(name, url) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('url', url);
+            FIXED_URLS[name] = url;
+            return FIXED_URLS;
+        }
+    };
 })(window, document);
 },{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":22}],12:[function(require,module,exports){
 /**
@@ -1912,16 +1911,17 @@ process.chdir = function (dir) {
  *
  * changelog
  * 2014-06-07[16:33:33]:authorized
+ * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
 
 (function(window, document, undefined) {
     "use strict";
-    
+
     var type = require('./type');
     var buggy = require('./buggy');
 
@@ -1933,25 +1933,79 @@ process.chdir = function (dir) {
         /**
          * Insert a link element
          *
-         * @param  {String} src Link url
+         * @param  {String} href Link url
+         * @param  {Function} callback Callback function
          * @return {HTMLLinkElement}
          * @throws {Error} If parameters illegal
          */
-        addLink: function(src) {
+        addLink: function(href, callback) {
 
-            type.assertNonEmptyString('src',src);
+            type.assertNonEmptyString('href', href);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
 
             var link = document.createElement('link');
             link.rel = 'stylesheet';
             link.type = 'text/css';
-            link.href = src;
             document.getElementsByTagName('head')[0].appendChild(link);
+            if (link.readyState) {
+                link.onreadystatechange = function() {
+                    if (link.readyState === "loaded" || link.readyState === "complete") {
+                        link.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                link.onload = function() {
+                    callback();
+                };
+            }
+            link.href = href;
             return link;
+        },
+        /**
+         * Insert a script element.
+         * 
+         * @param {String}   src     
+         * @param {Function} callback
+         */
+        addScript: function(src, callback) {
+            
+            type.assertNonEmptyString('src', src);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.charset = "utf-8";
+            if (script.readyState) {
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() {
+                    callback();
+                };
+            }
+            script.src = src;
+            document.getElementsByTagName("head")[0].appendChild(script);
+            return script;
         },
         addIframe: function(container, url, callback) {
 
-            type.assertHTMLElement('container',container);
-            type.assertNonEmptyString('url',url);
+            type.assertHTMLElement('container', container);
+            type.assertNonEmptyString('url', url);
 
             var iframe = document.createElement('iframe');
             iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
@@ -1983,9 +2037,9 @@ process.chdir = function (dir) {
          */
         bindEvent: function(ele, evt, func) {
 
-            type.assertHTMLElement('ele',ele);
-            type.assertNonEmptyString('evt',evt);
-            type.assertFunction('func',func);
+            type.assertHTMLElement('ele', ele);
+            type.assertNonEmptyString('evt', evt);
+            type.assertFunction('func', func);
 
             if (document.addEventListener) {
                 ele.addEventListener(evt, func, false);
@@ -2020,8 +2074,8 @@ process.chdir = function (dir) {
          * @return {HTMLElement}
          */
         id: function(id) {
-            
-            type.assertNonEmptyString('id',id);
+
+            type.assertNonEmptyString('id', id);
 
             var ele = document.getElementById(id),
                 all, node;
@@ -2797,24 +2851,34 @@ process.chdir = function (dir) {
     var assert = require('assert');
     var utils = require('../utils');
     var console = require('../console');
-    
+
     describe('Utils', function() {
-        it('#mixin()',function(){
-            var src = {x:89},dest= {};
-            assert.equal(89,utils.mixin(dest,src).x);
+        it('#mixin()', function() {
+            var src = {
+                    x: 89
+                },
+                dest = {};
+            assert.equal(89, utils.mixin(dest, src).x);
         });
 
-        it('#trim()',function(){
-            assert.equal(0,utils.trim('\x20\t\r\n\f').length);
+        it('#trim()', function() {
+            assert.equal(0, utils.trim('\x20\t\r\n\f').length);
         });
 
-        it('#getIEVersion()',function(){
+        it('#getIEVersion()', function() {
             var version = utils.getIEVersion();
-            if(version)
-            {   
-                console.log('IE'+version);
-                assert(version>4&&version<12&&utils.type.isInteger(version));
+            if (version) {
+                console.log('IE' + version);
+                assert(utils.type.isInteger(version) && version > 4 && version < 12);
             }
+        });
+
+        it('#hideSource()', function() {
+            var demo = {
+                say: function(a, b, c) {}
+            };
+            var funcstr = utils.hideSource('say', demo.say).call(demo.say);
+            assert(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(funcstr));
         });
 
     }); //describe
@@ -2951,10 +3015,10 @@ process.chdir = function (dir) {
  * 2014-06-06[09:23:53]:getIEVersion
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
  * 2014-06-07[16:39:34]:remove 'dom' module
- *
+ * 2014-06-09[11:05:06]:define 'hideSource' function
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -3063,6 +3127,27 @@ process.chdir = function (dir) {
             }
 
             return obj;
+        },
+        /**
+         * Hide source of a function by defining toString.
+         * 
+         * @param  {String} name Function name
+         * @param  {Function} func Function to be hide-sourced
+         * @return {Function}      'toString' function
+         */
+        hideSource: function(name, func) {
+            type.assertNonEmptyString('name', name);
+            type.assertFunction('func', func);
+
+            var source = String(func);
+
+            func.toString = (function(name, source) {
+                return function() {
+                    return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+                };
+            })(name, source);
+
+            return func.toString;
         }
     };
 

@@ -3,22 +3,32 @@
 <head>
 <meta charset="utf-8"/>
 <title>Test</title>
+<meta name="author" content="yanni4night@gmail.com"/>
 <style>
     body{
-    padding: 0;
-    margin: 0;
-    background: #333;
+        padding: 0;
+        margin: 0;
+        background: #333;
+    }
+    .passport-dialog{
+        width: 400px;
+        position: fixed;
+        left: 50%;
+        margin-left: -200px;
     }
 </style>
 </head>
 <body>
+    <div class="passport-dialog" id="passport-dialog"></div>
 </body>
-<script type="text/javascript" src="dist/passport-dialog.js"></script>
+<script type="text/javascript" src="dist/passport-draw.js"></script>
 <script>
-
     window.PassportSC({
         appid:1120,
         redirectUrl:location.protocol+'//'+location.host+'/jump.html'
-    }).pop();
+    }).draw({
+        container:document.getElementById('passport-dialog'),
+        style:'default'
+    });
 </script>
 </html>

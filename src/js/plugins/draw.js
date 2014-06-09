@@ -1,25 +1,27 @@
 /**
  * Copyright (C) 2014 yanni4night.com
  *
- * dialog.js
+ * draw.js
  *
  * We attempt to show a login dialog in HTML.
  *
  * changelog
  * 2014-06-04[23:14:19]:authorized
+ * 2014-06-08[21:25:34]:rename to draw.js
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function(window, document, undefined) {
   "use strict";
 
-  var PassportSC = require('../core');
+  var core = require('../core');
+  var PassportSC = core.PassportSC;
   var UTILS = require('../utils');
   var console = require('../console');
 
-  //var IE6 = UTILS.getIEVersion() == '6';
+  //var IE6 = UTILS.getIEVersion() === 6;
 
   var WRAPPER_ID = 'sogou-passport-pop';
   var FORM_ID = 'sogou-passport-form';
@@ -47,43 +49,79 @@
     '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
     '</div>' +
     '</form>';
-
-  var PassportDialog = function(options) {
-    var userid;
-    this.options = {
-      template: DEFAULT_HTML,
-      style: null
+    var gPassportCanvas = null;
+    var defaultOptions = {
+      container:null,
+      style:null,
+      template:DEFAULT_HTML
     };
+    var gOptions = null;
 
-    UTILS.mixin(this.options, options);
+    core.addSupportedEvent('draw_complete','drawcomplete');
 
-    //FIXME by style
-    //preload
-    UTILS.dom.addLink('css/skin/default.css');
+    /**
+     * Parse a link src by style parameter.
+     * 
+     * @param  {String|Function} style
+     * @return {String} Parsed link src
+     * @throws {Error} If parsed failed
+     */
+    function styleParser (style) {
+      var src;
+      switch(true){
+        case UTILS.type.isNullOrUndefined(style):
+        case 'default' === style:
+          src =  'css/skin/default.css'
+          break;
+        case UTILS.type.isNonEmptyString(style)&&/\.css$/i.test(style):
+          src = style;
+          break;
+        case UTILS.type.isFunction(style):
+          src = style.call(null);
+        default:
+          throw new Error('Unrecognized style: [' + style + ']');
+        ;
+      }
 
-    var wrapper = this.wrapper = document.createElement('div');
-    wrapper.id = wrapper.className = WRAPPER_ID;
-    wrapper.innerHTML = this.options.template;
-    document.body.appendChild(wrapper);
-
-    this.initEvent();
-
-    if (!!(userid = PassportSC.userid())) {
-      UTILS.dom.id(USER_ID).value = userid;
+      return src;
     }
 
-    PassportSC.on('loginfailed', function(e,data) {
-      UTILS.dom.id(ERROR_ID).innerHTML = data.msg||'登录失败';
-    }).on('loginsuccess', function(e,data) {
+  var PassportCanvas = function() {
+
+    PassportSC.on('loginfailed', function(e, data) {
+      UTILS.dom.id(ERROR_ID).innerHTML = data.msg || '登录失败';
+    }).on('loginsuccess', function(e, data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '登录成功';
-    }).on('needcaptcha', function(e,data) {
+    }).on('needcaptcha', function(e, data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '需要验证码';
-    }).on('3rdlogincomplete', function(e,data) {
+    }).on('3rdlogincomplete', function(e, data) {
       UTILS.dom.id(ERROR_ID).innerHTML = '第三方登录完成';
     });
+
+    this.render();
   };
 
-  PassportDialog.prototype = {
+  PassportCanvas.prototype = {
+    render:function(){
+      var self = this;
+      var userid;
+
+      var src = styleParser(gOptions.style);
+
+      UTILS.dom.addLink(src, function() {
+        var wrapper = self.wrapper = document.createElement('div');
+        wrapper.id = wrapper.className = WRAPPER_ID;
+        wrapper.innerHTML = gOptions.template;
+        gOptions.container.appendChild(wrapper);
+
+        PassportSC.emit('draw_complete');
+
+        self.initEvent();
+        if (!!(userid = PassportSC.userid())) {
+          UTILS.dom.id(USER_ID).value = userid;
+        }
+      });
+    },
     initEvent: function() {
       var self = this;
       UTILS.dom.bindEvent(UTILS.dom.id(FORM_ID), 'submit', function(e) {
@@ -114,38 +152,43 @@
         return;
       }
       if (!(pass = UTILS.trim(pass$.value))) {
-        console.trace('user empty');
+        console.trace('pass empty');
         return;
       }
 
       auto = auto$.checked;
 
       PassportSC.login(user, pass, auto);
-    },
-    show: function() {
-      this.wrapper.style.display = 'block';
-    },
-    hide: function() {
-      this.wrapper.style.display = 'none';
     }
   };
 
-  var gPassportDialog = null;
   /**
-   * [pop description]
+   * Draw a passport login canvas on a HTMLElement.
+   * 
    * @param  {Object} options
    * @return {this}
    */
-  PassportSC.pop = function(options) {
+  PassportSC.draw = function(options) {
 
     if (!this.isInitialized()) {
-      throw new Error('You have to initialize passport before pop');
+      throw new Error('You have to initialize passport before draw');
     }
 
-    if (!gPassportDialog) {
-      gPassportDialog = new PassportDialog(options);
+    if(gPassportCanvas){
+      return this;
     }
-    gPassportDialog.show();
+    gOptions = UTILS.mixin(defaultOptions,options)
+
+    UTILS.type.assertHTMLElement('options.container',options.container);
+
+    gPassportCanvas = new PassportCanvas();
+
+    return this;
   };
 
+  UTILS.hideSource('draw',PassportSC.draw);
+
+  module.exports = {
+    PassportSC:PassportSC
+  };
 })(window, document);

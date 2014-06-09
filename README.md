@@ -15,6 +15,11 @@ test
 
 `grunt karma`
 
+todo
+======
+ - XSS&validate
+ - popup warning
+
 contact
 ======
  - <yanni4night@gmail.com>

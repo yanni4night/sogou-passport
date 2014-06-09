@@ -134,11 +134,13 @@
 
             var source = String(func);
 
-            return func.toString = (function(name, source) {
+            func.toString = (function(name, source) {
                 return function() {
                     return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
                 };
             })(name, source);
+
+            return func.toString;
         }
     };
 

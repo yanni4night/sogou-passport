@@ -132,7 +132,7 @@ module.exports = function(grunt) {
         browserify: {
             plugins: {
                 src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
-                dest: WEB_DIR + '/dist/passport-dialog.js'
+                dest: WEB_DIR + '/dist/passport-draw.js'
             },
             core: {
                 src: [STATIC_DIR + 'js/*.js'],

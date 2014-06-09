@@ -7,16 +7,17 @@
  *
  * changelog
  * 2014-06-07[16:33:33]:authorized
+ * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
 
 (function(window, document, undefined) {
     "use strict";
-    
+
     var type = require('./type');
     var buggy = require('./buggy');
 
@@ -28,25 +29,79 @@
         /**
          * Insert a link element
          *
-         * @param  {String} src Link url
+         * @param  {String} href Link url
+         * @param  {Function} callback Callback function
          * @return {HTMLLinkElement}
          * @throws {Error} If parameters illegal
          */
-        addLink: function(src) {
+        addLink: function(href, callback) {
 
-            type.assertNonEmptyString('src',src);
+            type.assertNonEmptyString('href', href);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
 
             var link = document.createElement('link');
             link.rel = 'stylesheet';
             link.type = 'text/css';
-            link.href = src;
             document.getElementsByTagName('head')[0].appendChild(link);
+            if (link.readyState) {
+                link.onreadystatechange = function() {
+                    if (link.readyState === "loaded" || link.readyState === "complete") {
+                        link.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                link.onload = function() {
+                    callback();
+                };
+            }
+            link.href = href;
             return link;
+        },
+        /**
+         * Insert a script element.
+         * 
+         * @param {String}   src     
+         * @param {Function} callback
+         */
+        addScript: function(src, callback) {
+            
+            type.assertNonEmptyString('src', src);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.charset = "utf-8";
+            if (script.readyState) {
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() {
+                    callback();
+                };
+            }
+            script.src = src;
+            document.getElementsByTagName("head")[0].appendChild(script);
+            return script;
         },
         addIframe: function(container, url, callback) {
 
-            type.assertHTMLElement('container',container);
-            type.assertNonEmptyString('url',url);
+            type.assertHTMLElement('container', container);
+            type.assertNonEmptyString('url', url);
 
             var iframe = document.createElement('iframe');
             iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
@@ -78,9 +133,9 @@
          */
         bindEvent: function(ele, evt, func) {
 
-            type.assertHTMLElement('ele',ele);
-            type.assertNonEmptyString('evt',evt);
-            type.assertFunction('func',func);
+            type.assertHTMLElement('ele', ele);
+            type.assertNonEmptyString('evt', evt);
+            type.assertFunction('func', func);
 
             if (document.addEventListener) {
                 ele.addEventListener(evt, func, false);
@@ -115,8 +170,8 @@
          * @return {HTMLElement}
          */
         id: function(id) {
-            
-            type.assertNonEmptyString('id',id);
+
+            type.assertNonEmptyString('id', id);
 
             var ele = document.getElementById(id),
                 all, node;
