@@ -76,6 +76,15 @@
   core.addSupportedEvent('draw_complete', 'drawcomplete');
 
   /**
+   * Compute css url.
+   * 
+   * @param  {String} name
+   * @return {String} url
+   */
+  function getCssHref(name){
+    return(UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') +'/@version@/css/skin/'+ name+'.css';
+  }
+  /**
    * Parse a link src by style parameter.
    *
    * @param  {String|Function} style
@@ -87,7 +96,7 @@
     switch (true) {
       case UTILS.type.isNullOrUndefined(style):
       case 'default' === style:
-        src = 'css/skin/default.css'
+        src = getCssHref('default');
         break;
       case UTILS.type.isNonEmptyString(style) && /\.css/i.test(style):
         src = style;
@@ -113,30 +122,31 @@
         UTILS.dom.id(CAPTCHA_IMG_ID).src = data.captchaimg;
         UTILS.dom.id(CAPTCHA_ID).focus();
       }
-      
-      switch(e.type){
+
+      switch (e.type) {
         case 'loginfailed':
           UTILS.dom.id(PASS_ID).value = '';
           UTILS.dom.id(CAPTCHA_ID).value = '';
           UTILS.dom.id(PASS_ID).focus();
           break;
         case 'paramerror':
-          if('username' === data.name){
+          if ('username' === data.name) {
             UTILS.dom.id(USER_ID).focus();
             UTILS.dom.id(USER_ID).select();
-          }else if('password' === data.name){
+          } else if ('password' === data.name) {
             UTILS.dom.id(PASS_ID).focus();
             UTILS.dom.id(PASS_ID).select();
-          }else if('captcha' === data.name){
+          } else if ('captcha' === data.name) {
             UTILS.dom.id(CAPTCHA_ID).focus();
             UTILS.dom.id(CAPTCHA_ID).select();
           }
           break;
           break;
-        default:;
+        default:
+          ;
       }
 
-       UTILS.dom.id(ERROR_ID).innerHTML = data.msg;
+      UTILS.dom.id(ERROR_ID).innerHTML = data.msg;
     });
 
     this.render();

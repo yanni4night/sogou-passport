@@ -112,7 +112,7 @@ module.exports = function(grunt) {
             },
             html: {
                 files: ['template/**/*.html'],
-                tasks: ['copy:html']
+                tasks: ['copy:html', 'vars:html']
             },
             img: {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
                 force: true
             },
             built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"],
-            js: [WEB_DIR + 'dist']
+            js: [WEB_DIR + '**/*.js']
         },
         express: {
             test: {
@@ -158,16 +158,22 @@ module.exports = function(grunt) {
         },
         vars: {
             dist: {
-                options:{
-                    debug:false
+                options: {
+                    debug: false
                 },
-                src:[TARGET_DIR + '/js/*.js']
+                src: [TARGET_DIR + '/js/*.js']
             },
             test: {
-                options:{
-                    debug:true
+                options: {
+                    debug: true
                 },
-                src:[TARGET_DIR + '/js/*.js']
+                src: [TARGET_DIR + '/js/*.js']
+            },
+            html: {
+                options: {
+                    debug: true
+                },
+                src: [WEB_DIR + '/*.html']
             }
         }
     });
@@ -188,15 +194,15 @@ module.exports = function(grunt) {
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace('@version@', pkg.version).replace('@debug@',+!!options.debug);
+                content = content.replace(/@version@/img, pkg.version).replace(/@debug@/img, +!!options.debug);
                 grunt.file.write(src, content);
                 grunt.log.ok(src);
             });
         });
     });
 
-    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'less', 'copy', 'imagemin']);
-    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'vars:dist',/*'uglify',*/ 'less', 'copy', 'imagemin']);
-    grunt.registerTask('default',['test']);
+    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'less', 'copy', 'vars:html', 'imagemin']);
+    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'vars:dist', 'uglify', 'less', 'copy', 'vars:html', 'imagemin']);
+    grunt.registerTask('default', ['test']);
     grunt.registerTask('server', ['express']);
 };
