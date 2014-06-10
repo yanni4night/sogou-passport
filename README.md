@@ -17,7 +17,7 @@ test
 
 todo
 ======
- - XSS&validate
+ - pingback plugin
  - popup warning
 
 contact

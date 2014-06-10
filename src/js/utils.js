@@ -126,17 +126,25 @@
          * 
          * @param  {String} name Function name
          * @param  {Function} func Function to be hide-sourced
+         * @param  {String} prefix 
          * @return {Function}      'toString' function
          */
-        hideSource: function(name, func) {
+        hideSource: function(name, func, prefix) {
             type.assertNonEmptyString('name', name);
             type.assertFunction('func', func);
+
+            if(prefix)
+            {
+                type.assertNonEmptyString(prefix);
+            }else{
+                prefix = 'PassportSC.';
+            }
 
             var source = String(func);
 
             func.toString = (function(name, source) {
                 return function() {
-                    return 'PassportSC.' + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+                    return prefix + name + source.match(/\([^\{\(]+(?=\{)/)[0];
                 };
             })(name, source);
 
