@@ -19,6 +19,7 @@
     var type = {
         expando: "sogou-passport-" + (+new Date()),
         noop: noop,
+        debug:+'@debug@',
         strundefined: typeof undefined,
         strstr: typeof '',
         strobject: typeof {},

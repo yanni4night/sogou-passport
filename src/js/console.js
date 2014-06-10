@@ -7,9 +7,10 @@
  *
  * changelog
  * 2014-06-06[11:43:57]:authorized
+ * 2014-06-10[21:12:36]:define 'debug'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
@@ -17,7 +18,7 @@
     "use strict";
 
     var type = require('./type');
-    var console = window.console;
+    var console = type.debug?window.console:{};
 
     if (!console || type.strobject !== typeof console) {
         console = {};

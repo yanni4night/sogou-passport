@@ -18,8 +18,11 @@ module.exports = function(grunt) {
     "use strict";
     var STATIC_DIR = 'src/';
     var WEB_DIR = 'web/';
+    var CDN_DIR = 'dist/'
 
     var pkg = grunt.file.readJSON('package.json');
+
+    var TARGET_DIR = WEB_DIR + CDN_DIR + pkg.version;
 
     grunt.initConfig({
         jshint: {
@@ -37,24 +40,33 @@ module.exports = function(grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: WEB_DIR,
+                    cwd: TARGET_DIR,
                     src: ['**/*.js'],
-                    dest: WEB_DIR
+                    dest: TARGET_DIR
                 }]
             }
         },
         less: {
-            development: {
-                options: {
-                    strictMath: true,
-                    cleancss: true
-                },
+            options: {
+                strictMath: true,
+                cleancss: true
+            },
+            css: {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['**/*.{css,less}'],
+                    src: ['css/*.{css,less}'],
                     ext: '.css',
                     dest: WEB_DIR
+                }]
+            },
+            skin: {
+                files: [{
+                    expand: true,
+                    cwd: STATIC_DIR,
+                    src: ['css/skin/*.{css,less}'],
+                    ext: '.css',
+                    dest: TARGET_DIR
                 }]
             }
         },
@@ -92,7 +104,7 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: [STATIC_DIR + '**/*.js'],
-                tasks: ['jshint', 'browserify', 'version']
+                tasks: ['clean:js', 'jshint', 'browserify', 'vars:test']
             },
             css: {
                 files: [STATIC_DIR + '**/*.{css,less}'],
@@ -111,7 +123,8 @@ module.exports = function(grunt) {
             options: {
                 force: true
             },
-            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"]
+            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"],
+            js: [WEB_DIR + 'dist']
         },
         express: {
             test: {
@@ -131,20 +144,31 @@ module.exports = function(grunt) {
         },
         browserify: {
             plugins: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
-                dest: WEB_DIR + '/dist/passport-draw.js'
+                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
+                dest: TARGET_DIR + '/js/passport-draw.js'
             },
             core: {
                 src: [STATIC_DIR + 'js/*.js'],
-                dest: WEB_DIR + '/dist/passport-core.js'
+                dest: TARGET_DIR + '/js/passport-core.js'
             },
-            test:{
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/test/*.js'],
-                dest: WEB_DIR + '/dist/passport-test.js'
+            test: {
+                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/test/*.js'],
+                dest: TARGET_DIR + '/js/passport-test.js'
             }
         },
-        version: {
-            sogou: [WEB_DIR + 'dist/*.js']
+        vars: {
+            dist: {
+                options:{
+                    debug:false
+                },
+                src:[TARGET_DIR + '/js/*.js']
+            },
+            test: {
+                options:{
+                    debug:true
+                },
+                src:[TARGET_DIR + '/js/*.js']
+            }
         }
     });
 
@@ -159,17 +183,20 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerMultiTask('version', 'set version', function() {
+    grunt.registerMultiTask('vars', 'replace vars', function() {
+        var options = this.options({});
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace('@version@', pkg.version);
+                content = content.replace('@version@', pkg.version).replace('@debug@',+!!options.debug);
                 grunt.file.write(src, content);
+                grunt.log.ok(src);
             });
         });
     });
 
-    grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'version', 'less', 'copy', 'imagemin']);
-    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'uglify', 'version', 'less', 'copy', 'imagemin']);
+    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'less', 'copy', 'imagemin']);
+    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'vars:dist',/*'uglify',*/ 'less', 'copy', 'imagemin']);
+    grunt.registerTask('default',['test']);
     grunt.registerTask('server', ['express']);
 };

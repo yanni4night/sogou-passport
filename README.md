@@ -8,7 +8,7 @@ It's still under developing,see <http://passport.ufo.sogou-inc.com>.
 build
 ======
 
-`grunt dist`
+`grunt dist` or `grunt test`
 
 test
 ======
