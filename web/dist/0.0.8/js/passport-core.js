@@ -442,9 +442,10 @@
  * 2014-06-10[12:32:02]:get 'msg' from _logincb
  * 2014-06-10[13:30:08]:'param_error'&'notactive' supported
  * 2014-06-10[14:39:15]:merge events into 'login_failed'
+ * 2014-06-11[21:52:05]:callback default msg when third party login
  *
  * @author yanni4night@gmail.com
- * @version 0.1.8
+ * @version 0.1.9
  * @since 0.1.0
  */
 
@@ -866,7 +867,7 @@
                 console.trace('Login3rd callback received but [Passport] has not been initialized');
                 return;
             }
-            this.emit(EVENTS.third_party_login_complete);
+            this.emit(EVENTS.third_party_login_complete,{msg:'登录成功'});
         },
         /**
          * If passport has been initialized.

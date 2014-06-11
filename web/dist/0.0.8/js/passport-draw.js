@@ -442,9 +442,10 @@
  * 2014-06-10[12:32:02]:get 'msg' from _logincb
  * 2014-06-10[13:30:08]:'param_error'&'notactive' supported
  * 2014-06-10[14:39:15]:merge events into 'login_failed'
+ * 2014-06-11[21:52:05]:callback default msg when third party login
  *
  * @author yanni4night@gmail.com
- * @version 0.1.8
+ * @version 0.1.9
  * @since 0.1.0
  */
 
@@ -866,7 +867,7 @@
                 console.trace('Login3rd callback received but [Passport] has not been initialized');
                 return;
             }
-            this.emit(EVENTS.third_party_login_complete);
+            this.emit(EVENTS.third_party_login_complete,{msg:'登录成功'});
         },
         /**
          * If passport has been initialized.
@@ -1573,14 +1574,18 @@
   var ERROR_ID = 'sogou-passport-error';
 
   var DEFAULT_HTML = '' +
-    '<div class="sogou-passport-caption">搜狗帐号登录</div>' +
+    '<div class="sogou-passport-caption">搜狗帐号登录' +
+    //'<div class="ab sogou-passport-icon sogou-passport-icon-bx sogou-passport-close"></div>' +
+    '</div>' +
     '<form id="' + FORM_ID + '" action="#" autocomplete="off" type="post">' +
     '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
     '<div class="sogou-passport-row re">' +
     '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
+    '<div class="sogou-passport-icon sogou-passport-icon-user ab"></div>' +
     '</div>' +
     '<div class="sogou-passport-row re">' +
     '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" placeholder="密码"/>' +
+    '<div class="sogou-passport-icon-lock sogou-passport-icon ab"></div>' +
     '</div>' +
     '<div class="sogou-passport-row re sogou-passport-captcha-wrapper" id="' + CAPTCHA_WRAPPER_ID + '">' +
     '<input type="text" class="fl sogou-passport-input" id="' + CAPTCHA_ID + '" placeholder="验证码"/>' +
@@ -1598,14 +1603,21 @@
     '<a href="#" class="ab sogou-passport-register" target="_blank">立即注册</a>' +
     '</div>' +
     '</form>' +
-    '<div class="sogou-passport-3rd">' +
+    '<div id="sogou-passport-3rd" class="sogou-passport-3rd">' +
     '<p class="sogou-passport-3rd-title">可以使用以下方式登录</p>' +
+    '<div class="sogou-passport-3rd-icons">' +
+    '<a href="#" data-provider="qq" class="fl sogou-passport-icon sogou-passport-icon-qq" title="QQ登录"></a>' +
+    '<a href="#" data-provider="sina" class="fl sogou-passport-icon sogou-passport-icon-sina" title="微博登录"></a>' +
+    '<a href="#" data-provider="renren" class="fl sogou-passport-icon sogou-passport-icon-renren" title="人人登录"></a>' +
+    '<div class="clearfix"></div>' +
+    '</div>' +
     '</div>' +
     '';
   var gPassportCanvas = null;
   var defaultOptions = {
     container: null,
     style: null,
+    trdRedirectUrl:null,
     template: DEFAULT_HTML
   };
   var gOptions = null;
@@ -1651,6 +1663,7 @@
 
     PassportSC.on('loginfailed loginsuccess 3rdlogincomplete paramerror', function(e, data) {
 
+      data = data || {};
       var needcaptcha = !!data.captchaimg;
 
       UTILS.dom.id(CAPTCHA_WRAPPER_ID).style.display = (needcaptcha || ('paramerror' === e.type && 'captcha' === data.name) ? 'block' : 'none');
@@ -1678,6 +1691,8 @@
             UTILS.dom.id(CAPTCHA_ID).select();
           }
           break;
+        case '3rdlogincomplete':
+          data.msg = '第三方登录成功';
           break;
         default:
           ;
@@ -1705,7 +1720,7 @@
         PassportSC.emit('draw_complete');
 
         self.initEvent();
-        if (!!(userid = PassportSC.userid())) {
+        if (!!(userid = PassportSC.userid())&&/@so(?:hu|gou)\.com$/.test(userid)) {
           UTILS.dom.id(USER_ID).value = userid;
         }
       });
@@ -1719,6 +1734,20 @@
         self.doPost();
         return false;
       });
+
+      var trdLoginArea = UTILS.dom.id('sogou-passport-3rd');
+      if(trdLoginArea){
+        UTILS.dom.bindEvent(trdLoginArea,'click',function(e){
+          var dom = UTILS.dom.eventTarget(e);
+          UTILS.dom.preventDefault(e);
+          var target = UTILS.dom.eventTarget(e);
+          var provider;
+          if(target&&target.tagName === 'A' && (provider = target.getAttribute('data-provider'))){
+            return PassportSC.login3rd(provider,'popup',gOptions.trdRedirectUrl);
+          }
+        });
+      }
+
     },
     doPost: function() {
       var user$, pass$, auto$;
@@ -1768,6 +1797,7 @@
     gOptions = UTILS.mixin(defaultOptions, options)
 
     UTILS.type.assertHTMLElement('options.container', options.container);
+    UTILS.type.assertNonEmptyString('options.trdRedirectUrl', options.trdRedirectUrl);
 
     gPassportCanvas = new PassportCanvas();
 

@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     "use strict";
     var STATIC_DIR = 'src/';
     var WEB_DIR = 'web/';
-    var CDN_DIR = 'dist/'
+    var CDN_DIR = 'dist/';
 
     var pkg = grunt.file.readJSON('package.json');
 

@@ -15,6 +15,7 @@
         position: fixed;
         _position:absolute;
         left: 50%;
+        top:100px;
         margin-left: -200px;
     }
 </style>
@@ -26,10 +27,11 @@
 <script>
     window.PassportSC({
         appid:1120,
-        redirectUrl:location.protocol+'//'+location.host+'/jump.html'
+        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     }).draw({
         container:document.getElementById('passport-dialog'),
-        style:'default'
+        style:'default',
+        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
     });
 </script>
 </html>
