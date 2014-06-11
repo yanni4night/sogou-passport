@@ -1,1 +1,2099 @@
-!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);throw new Error("Cannot find module '"+g+"'")}var j=c[g]={exports:{}};b[g][0].call(j.exports,function(a){var c=b[g][1][a];return e(c?c:a)},j,j.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){!function(){"use strict";var c=a("./type"),d={};d.indexOf=function(a,b,c){var d,e;if(!a||!b)return-1;if(c=0|c,isNaN(c)&&(c=0),c>=a.length)return-1;if(0>c&&(c=a.length+c,0>c&&(c=0)),Array.prototype.indexOf)return Array.prototype.indexOf.call(a,b,c);for(d=c,e=a.length;e>d;++d)if(b===a[d])return d;return-1},d.forEach=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.forEach)return Array.prototype.forEach.call(a,b,d);for(e=0,f=a.length;f>e;++e)b.call(d,a[e],e,a)},d.each=d.every=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.every)return Array.prototype.every.call(a,b,d);for(e=0,f=a.length;f>e;++e)if(!b.call(d,a[e],e,a))return!1;return!0},d.some=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.some)return Array.prototype.some.call(a,b,d);for(e=0,f=a.length;f>e;++e)if(!0===b.call(d,a[e],e,a))return!0;return!1},d.filter=function(a,b,e){var f=[];return c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.filter?Array.prototype.filter.call(a,b,e):(d.forEach(a,function(c,d){b.call(e,c,d,a)&&f.push(c)}),f)},b.exports=d}()},{"./type":12}],2:[function(a,b){!function(c,d){"use strict";var e=a("./type").expando,f={getElementById:function(a){var b=a.createElement("div");a.documentElement.appendChild(b).setAttribute("id",e);var c=a.getElementsByName&&a.getElementsByName(e).length;return a.documentElement.removeChild(b),b=null,!!c}(d)};b.exports=f}(window,document)},{"./type":12}],3:[function(a,b){!function(){"use strict";var c=a("./utils"),d={SYSTEM_ERROR:{code:10001,info:"未知错误"},PARAM_ERROR:{code:10002,info:"参数错误"},CAPTCHA_FAILED:{code:20221,info:"验证码验证失败 "},ACCOUNT_NOT_EXIST:{code:20205,info:"帐号不存在"},ACCOUNT_NOT_EXIST_1:{code:10009,info:"帐号不存在"},ACCOUNT_NOT_ACTIVED:{code:20231,info:"登陆账号未激活"},ACCOUNT_KILLED:{code:20232,info:"登陆账号被封杀"},ACCOUNT_PWD_WRONG:{code:20206,info:"账号或密码错误"},LOGIN_TIME_OUT:{code:1e5,info:"登录超时"},NEED_USERNAME:{code:100001,info:"请输入通行证用户名"},NEED_PASSWORD:{code:100002,info:"请输入通行证密码"}};c.freeze(d),b.exports=d}(window,document)},{"./utils":13}],4:[function(a,b){!function(c){"use strict";var d=a("./type"),e=d.debug?c.console:{};e&&d.strobject===typeof e||(e={});for(var f="trace,info,log,debug,warn,error".split(","),g=f.length-1;g>=0;g--)e[f[g]]=e[f[g]]||d.noop;b.exports=e}(window)},{"./type":12}],5:[function(a,b){!function(c,d){"use strict";var e=a("./utils"),f={cookie:{},getCookie:function(){return this.cookie},parsePassportCookie:function(){var a,b,f,g;if(!0!==(c.navigator&&navigator.cookieEnabled))return this;this.cookie={};var h=d.cookie.split("; ");for(b=0;b<h.length;++b)if(g=h[b].match(/^p(?:pinf|pinfo|assport)=(.+)$/),g&&g[1]){a=g[1];break}if(!a)return this;try{f=unescape(a).split("|"),("1"==f[0]||"2"==f[0]&&f[3])&&this._parsePassportCookie(e.math.utf8to16(e.math.b64_decodex(f[3])))}catch(i){}return this},_parsePassportCookie:function(a){for(var b,c,d,e,f=0,g=a.indexOf(":",f);-1!=g&&(b=a.substring(f,g),e=a.indexOf(":",g+1),-1!=e)&&(c=parseInt(a.substring(g+1,e)),d=a.substr(e+1,c),"|"==a.charAt(e+1+c));)this.cookie[b]=d,f=e+2+c,g=a.indexOf(":",f);return this}};b.exports={PassportCookieParser:{parse:function(){return f.parsePassportCookie().getCookie()}}}}(window,document)},{"./utils":13}],6:[function(a,b){!function(c,d,e){"use strict";function f(a){var b=z;return b&&o.strobject===typeof b&&o.strundefined!==typeof b.appendChild&&b.parentNode||(b=z=d.createElement("div"),b.style.cssText=r,b.className=b.id=q,d.body.appendChild(b)),o.isFunction(a)&&a(b),b}function g(a){var b,c,d,e,f;for(f=x={},o.assertPlainObject("options",a),k.mixin(f,A),k.mixin(f,a),b=w.length-1;b>=0;--b)for(d=w[b],c=d.name.length-1;c>=0;--c)if(e=d.name[c],!d.validate(e,f[e]))throw new Error(o.strfunction===typeof d.errmsg?d.errmsg(e,f[e]):d.errmsg);f._token=k.math.uuid()}function h(a,b){return a.replace(/<%=([\w\-]+?)%>/g,function(a,c){var d=b[c];return e===d?"":d})}var i,j,k=a("./utils"),l=a("./codes"),m=a("./console"),n=a("./event"),o=k.type,p=a("./cookie").PassportCookieParser,q=o.expando,r="width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;",s={login_success:"loginsuccess",login_failed:"loginfailed",logout_success:"logoutsuccess",third_party_login_complete:"3rdlogincomplete",param_error:"paramerror"},t={login:"https://account.sogou.com/web/login",logout:"https://account.sogou.com/web/logout_js",active:"https://account.sogou.com/web/remindActivate",captcha:"https://account.sogou.com/captcha",trdparty:"http://account.sogou.com/connect/login"},u={size:{renren:[880,620],sina:[780,640],qq:[500,300]}},v='<form method="post" action="'+t.login+'" target="'+q+'"><input type="hidden" name="username" value="<%=username%>"><input type="hidden" name="password" value="<%=password%>"><input type="hidden" name="captcha" value="<%=vcode%>"><input type="hidden" name="autoLogin" value="<%=autoLogin%>"><input type="hidden" name="client_id" value="<%=appid%>"><input type="hidden" name="xd" value="<%=redirectUrl%>"><input type="hidden" name="token" value="<%=token%>"></form><iframe name="'+q+'" src="about:blank" style="'+r+'"></iframe>',w=[{name:["appid"],validate:function(a,b){return b&&(o.strstr===typeof b||o.strnumber===typeof b)},errmsg:function(a){return'"'+a+'" SHOULD be a string or a number'}},{name:["redirectUrl"],validate:function(a,b){return b&&o.strstr===typeof b&&new RegExp("^"+location.protocol+"//"+location.host,"i").test(b)},errmsg:function(a){return'"'+a+'" SHOULD be a URL which has the some domain as the current page'}}],x=null,y=null,z=null,A={appid:null,redirectUrl:null},B="Passport has not been initialized yet",C={validateUsername:function(a){return o.isNonEmptyString(a)&&/^[\w-@\.]+$/.test(a)},validatePassword:function(a){return o.isNonEmptyString(a)&&/^[\w-]{6,16}$/.test(a)},validateCaptcha:function(a){return o.isNonEmptyString(a)&&/^[a-zA-Z0-9]+$/.test(a)}};for(i in C)o.isFunction(C[i])&&k.hideSource(i,C[i],"PassportSC.tools.");var D={version:"0.0.8",tools:C,init:function(a){return this.isInitialized()?m.warn("Passport has already been initialized"):(m.trace("Initialize passport"),g(a)),c.PassportSC},login:function(a,b,c,d){if(!this.isInitialized())throw new Error(B);m.trace("logining with:"+Array.prototype.join.call(arguments));var e;return arguments.length<4&&(d=c,c=""),C.validateUsername(a)?C.validatePassword(b)?c&&!C.validateCaptcha(c)?(this.emit(s.param_error,{name:"captcha",value:c,msg:"验证码格式不正确"}),!1):(j=a,e={username:a,password:b,vcode:c||"",autoLogin:+!!d,appid:x.appid,redirectUrl:x.redirectUrl,token:x._token},f(function(a){a.innerHTML=h(v,e),a.getElementsByTagName("form")[0].submit()}),!0):(this.emit(s.param_error,{name:"password",value:b,msg:"密码格式不正确"}),!1):(this.emit(s.param_error,{name:"username",value:a,msg:"账号格式不正确"}),!1)},login3rd:function(a,b,d){if(!this.isInitialized())throw new Error(B);o.assertNonEmptyString("provider",a);var e=u.size[a];if(!e)throw new Error('provider:"'+a+'" is not supported in  third party login');"popup"===b?o.assertNonEmptyString("redirectUrl",d):o.isUndefined(b)?(b="page",d=location.href):d=d||location.href;var f=t.trdparty+"?client_id="+x.appid+"&provider="+a+"&ru="+encodeURIComponent(d);if("popup"===b){var g=(c.screen.availWidth-e[0])/2;c.open(f,"","height="+e[1]+",width="+e[0]+",top=80,left="+g+",toolbar=no,menubar=no")}else{if("page"!==b)throw new Error('display:"'+b+'" is not supported in third party login');location.href=f}return!0},logout:function(){if(!this.isInitialized())throw new Error(B);m.trace("logouting");var a=this,b=t.logout+"?client_id="+x.appid;f(function(c){k.dom.addIframe(c,b,function(){a.emit(s.logout_success)})})},userid:function(){if(!this.isInitialized())throw new Error(B);return p.parse().userid||""},_logincb:function(a){if(!this.isInitialized())return void m.trace("Login callback received but [Passport] has not been initialized");if(!a||o.strobject!==typeof a)return m.error("Nothing callback received"),a.msg="登录失败",void this.emit(s.login_failed,a);if(o.isNonEmptyString(a.msg)&&(a.msg=decodeURIComponent(a.msg)),0===+a.status)a.msg=a.msg||"登录成功",this.emit(s.login_success,a);else if(20231===+a.status)a.activeurl=t.active+"?email="+encodeURIComponent(j||"")+"&client_id="+x.appid+"&ru="+encodeURIComponent(location.href),a.msg=a.msg||"帐号未激活",this.emit(s.login_failed,a);else if(+a.needcaptcha)a.captchaimg=t.captcha+"?token="+x._token+"&t="+ +new Date,a.msg=a.msg||"需要验证码",this.emit(s.login_failed,a);else{if(!a.msg)for(var b in l)if(l[b].code==a.status){a.msg=l[b].info;break}a.msg=a.msg||"未知错误",this.emit(s.login_failed,a)}},_logincb3rd:function(){return this.isInitialized()?void this.emit(s.third_party_login_complete):void m.trace("Login3rd callback received but [Passport] has not been initialized")},isInitialized:function(){return!!x},getOptions:function(){var a={};return k.mixin(a,x)},getSupportedEvents:function(){var a={};return k.mixin(a,s)}};y=function(){return D.init.apply(D,arguments)},k.mixin(y,D),k.mixin(y,new n);for(i in y)o.isFunction(y[i])&&k.hideSource(i,y[i]);c.PassportSC&&o.isPlainObject(c.PassportSC)?(k.mixin(c.PassportSC,y),o.isFunction(c.PassportSC.onApiLoaded)&&c.PassportSC.onApiLoaded()):c.PassportSC=y,b.exports={PassportSC:c.PassportSC,addSupportedEvent:function(a,b){return o.assertNonEmptyString("name",a),o.assertNonEmptyString("val",b),s[a]=b,s},addFixedUrl:function(a,b){return o.assertNonEmptyString("name",a),o.assertNonEmptyString("url",b),t[a]=b,t}}}(window,document)},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":13}],7:[function(a,b){!function(c,d){"use strict";var e=a("./type"),f=a("./buggy");if(!c||!d||!d.documentElement||"HTML"!==d.documentElement.nodeName)throw new Error("It's only for HTML document");var g={addLink:function(a,b){e.assertNonEmptyString("href",a),b?e.assertFunction(b):b=e.noop;var c=d.createElement("link");return c.rel="stylesheet",c.type="text/css",d.getElementsByTagName("head")[0].appendChild(c),c.readyState?c.onreadystatechange=function(){("loaded"===c.readyState||"complete"===c.readyState)&&(c.onreadystatechange=null,b())}:c.onload=function(){b()},c.href=a,c},addScript:function(a,b){e.assertNonEmptyString("src",a),b?e.assertFunction(b):b=e.noop;var c=d.createElement("script");return c.type="text/javascript",c.charset="utf-8",c.readyState?c.onreadystatechange=function(){("loaded"==c.readyState||"complete"==c.readyState)&&(c.onreadystatechange=null,b())}:c.onload=function(){b()},c.src=a,d.getElementsByTagName("head")[0].appendChild(c),c},addIframe:function(a,b,c){e.assertHTMLElement("container",a),e.assertNonEmptyString("url",b);var f=d.createElement("iframe");f.style.cssText="height:1px;width:1px;visibility:hidden;",f.src=b,f.attachEvent?f.attachEvent("onload",function(){e.isFunction(c)&&c()}):f.onload=function(){e.isFunction(c)&&c()},a.appendChild(f)},bindEvent:function(a,b,c){return e.assertHTMLElement("ele",a),e.assertNonEmptyString("evt",b),e.assertFunction("func",c),d.addEventListener?a.addEventListener(b,c,!1):d.attachEvent&&a.attachEvent("on"+b,c),this},stopPropagation:function(a){a.stopPropagation?a.stopPropagation():a.cancelBubble=!0},preventDefault:function(a){a.preventDefault?a.preventDefault():a.returnValue=!1},eventTarget:function(a){return a=a||c.event,a.target||a.srcElement},id:function(a){e.assertNonEmptyString("id",a);var b,c,g=d.getElementById(a);return f.getElementById?g&&(c=typeof g.getAttributeNode!==e.strundefined&&g.getAttributeNode("id"),c&&c.value===a)?g:(b=d.getElementsByTagName("*"),array.some(b,function(b){return b&&1===b.nodeType&&b.id===a?!0:void 0}),g&&g.id===a?g:null):g&&g.parentNode?g:null}};b.exports=g}(window,document)},{"./buggy":2,"./type":12}],8:[function(a,b){!function(){"use strict";var c=a("./utils"),d=a("./console"),e=c.array,f=c.type,g=function(){var a={};this.on=function(b,d,g){var h;return f.assertNonEmptyString("event",b),f.assertFunction("func",d),h=c.trim(b).split(/\s/),e.forEach(h,function(b){a[b]=a[b]||[],a[b].push({type:b,func:d,thisArg:g})}),this},this.off=function(b,d){var g,h;return f.assertNonEmptyString("event",b),f.assertFunction("func",d),g=c.trim(b).split(/\s/),e.forEach(g,function(b){return d?(h=a[b],void(f.isArray(h)&&(a[b]=e.filter(h,function(a){return a.func!==d})))):(delete a[b],this)}),this},this.emit=function(b,g){var h,i;return f.assertNonEmptyString("event",b),h=c.trim(b).split(/\s/),e.forEach(h,function(b){i=a[b],f.isArray(i)&&e.forEach(i,function(a){a.timestamp=+new Date,a.func.call(a.thisArg||null,a,g)})}),d.trace("emitting "+h.join()),this}};b.exports=g}()},{"./console":4,"./utils":13}],9:[function(a,b){!function(){"use strict";var a=0,c=8,d={b64_423:function(a){for(var b=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9","-","_"],c="",d=0;d<a.length;d++){for(var e=0;64>e;e++)if(a.charAt(d)==b[e]){var f=e.toString(2);c+=("000000"+f).substr(f.length);break}if(64==e)return 2==d?c.substr(0,8):c.substr(0,16)}return c},b2i:function(a){for(var b=0,c=128,d=0;8>d;d++,c/=2)"1"==a.charAt(d)&&(b+=c);return String.fromCharCode(b)},b64_decodex:function(a){var b,c=[],d="";for(b=0;b<a.length;b+=4)d+=this.b64_423(a.substr(b,4));for(b=0;b<d.length;b+=8)c+=this.b2i(d.substr(b,8));return c},hex_md5:function(a){return this.binl2hex(this.core_md5(this.str2binl(a),a.length*c))},core_md5:function(a,b){a[b>>5]|=128<<b%32,a[(b+64>>>9<<4)+14]=b;for(var c=1732584193,d=-271733879,e=-1732584194,f=271733878,g=this.md5_ff,h=this.md5_gg,i=this.md5_hh,j=this.md5_ii,k=0;k<a.length;k+=16){var l=c,m=d,n=e,o=f;c=g(c,d,e,f,a[k+0],7,-680876936),f=g(f,c,d,e,a[k+1],12,-389564586),e=g(e,f,c,d,a[k+2],17,606105819),d=g(d,e,f,c,a[k+3],22,-1044525330),c=g(c,d,e,f,a[k+4],7,-176418897),f=g(f,c,d,e,a[k+5],12,1200080426),e=g(e,f,c,d,a[k+6],17,-1473231341),d=g(d,e,f,c,a[k+7],22,-45705983),c=g(c,d,e,f,a[k+8],7,1770035416),f=g(f,c,d,e,a[k+9],12,-1958414417),e=g(e,f,c,d,a[k+10],17,-42063),d=g(d,e,f,c,a[k+11],22,-1990404162),c=g(c,d,e,f,a[k+12],7,1804603682),f=g(f,c,d,e,a[k+13],12,-40341101),e=g(e,f,c,d,a[k+14],17,-1502002290),d=g(d,e,f,c,a[k+15],22,1236535329),c=h(c,d,e,f,a[k+1],5,-165796510),f=h(f,c,d,e,a[k+6],9,-1069501632),e=h(e,f,c,d,a[k+11],14,643717713),d=h(d,e,f,c,a[k+0],20,-373897302),c=h(c,d,e,f,a[k+5],5,-701558691),f=h(f,c,d,e,a[k+10],9,38016083),e=h(e,f,c,d,a[k+15],14,-660478335),d=h(d,e,f,c,a[k+4],20,-405537848),c=h(c,d,e,f,a[k+9],5,568446438),f=h(f,c,d,e,a[k+14],9,-1019803690),e=h(e,f,c,d,a[k+3],14,-187363961),d=h(d,e,f,c,a[k+8],20,1163531501),c=h(c,d,e,f,a[k+13],5,-1444681467),f=h(f,c,d,e,a[k+2],9,-51403784),e=h(e,f,c,d,a[k+7],14,1735328473),d=h(d,e,f,c,a[k+12],20,-1926607734),c=i(c,d,e,f,a[k+5],4,-378558),f=i(f,c,d,e,a[k+8],11,-2022574463),e=i(e,f,c,d,a[k+11],16,1839030562),d=i(d,e,f,c,a[k+14],23,-35309556),c=i(c,d,e,f,a[k+1],4,-1530992060),f=i(f,c,d,e,a[k+4],11,1272893353),e=i(e,f,c,d,a[k+7],16,-155497632),d=i(d,e,f,c,a[k+10],23,-1094730640),c=i(c,d,e,f,a[k+13],4,681279174),f=i(f,c,d,e,a[k+0],11,-358537222),e=i(e,f,c,d,a[k+3],16,-722521979),d=i(d,e,f,c,a[k+6],23,76029189),c=i(c,d,e,f,a[k+9],4,-640364487),f=i(f,c,d,e,a[k+12],11,-421815835),e=i(e,f,c,d,a[k+15],16,530742520),d=i(d,e,f,c,a[k+2],23,-995338651),c=j(c,d,e,f,a[k+0],6,-198630844),f=j(f,c,d,e,a[k+7],10,1126891415),e=j(e,f,c,d,a[k+14],15,-1416354905),d=j(d,e,f,c,a[k+5],21,-57434055),c=j(c,d,e,f,a[k+12],6,1700485571),f=j(f,c,d,e,a[k+3],10,-1894986606),e=j(e,f,c,d,a[k+10],15,-1051523),d=j(d,e,f,c,a[k+1],21,-2054922799),c=j(c,d,e,f,a[k+8],6,1873313359),f=j(f,c,d,e,a[k+15],10,-30611744),e=j(e,f,c,d,a[k+6],15,-1560198380),d=j(d,e,f,c,a[k+13],21,1309151649),c=j(c,d,e,f,a[k+4],6,-145523070),f=j(f,c,d,e,a[k+11],10,-1120210379),e=j(e,f,c,d,a[k+2],15,718787259),d=j(d,e,f,c,a[k+9],21,-343485551),c=this.safe_add(c,l),d=this.safe_add(d,m),e=this.safe_add(e,n),f=this.safe_add(f,o)}return[c,d,e,f]},md5_cmn:function(a,b,c,d,e,f){return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(b,a),this.safe_add(d,f)),e),c)},md5_ff:function(a,b,c,d,e,f,g){return this.md5_cmn(b&c|~b&d,a,b,e,f,g)},md5_gg:function(a,b,c,d,e,f,g){return this.md5_cmn(b&d|c&~d,a,b,e,f,g)},md5_hh:function(a,b,c,d,e,f,g){return this.md5_cmn(b^c^d,a,b,e,f,g)},md5_ii:function(a,b,c,d,e,f,g){return this.md5_cmn(c^(b|~d),a,b,e,f,g)},safe_add:function(a,b){var c=(65535&a)+(65535&b),d=(a>>16)+(b>>16)+(c>>16);return d<<16|65535&c},bit_rol:function(a,b){return a<<b|a>>>32-b},binl2hex:function(b){for(var c=a?"0123456789ABCDEF":"0123456789abcdef",d="",e=0;e<4*b.length;e++)d+=c.charAt(b[e>>2]>>e%4*8+4&15)+c.charAt(b[e>>2]>>e%4*8&15);return d},str2binl:function(a){for(var b=[],d=(1<<c)-1,e=0;e<a.length*c;e+=c)b[e>>5]|=(a.charCodeAt(e/c)&d)<<e%32;return b},utf8to16:function(a){var b,c,d,e,f,g,h,i,j;for(b=[],e=a.length,c=d=0;e>c;){switch(f=a.charCodeAt(c++),f>>4){case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:b[d++]=a.charAt(c-1);break;case 12:case 13:g=a.charCodeAt(c++),b[d++]=String.fromCharCode((31&f)<<6|63&g);break;case 14:g=a.charCodeAt(c++),h=a.charCodeAt(c++),b[d++]=String.fromCharCode((15&f)<<12|(63&g)<<6|63&h);break;case 15:switch(15&f){case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:g=a.charCodeAt(c++),h=a.charCodeAt(c++),i=a.charCodeAt(c++),j=(7&f)<<18|(63&g)<<12|(63&h)<<6|(63&i)-65536,b[d]=j>=0&&1048575>=j?String.fromCharCode(j>>>10&1023|55296,1023&j|56320):"?";break;case 8:case 9:case 10:case 11:c+=4,b[d]="?";break;case 12:case 13:c+=5,b[d]="?"}}d++}return b.join("")},s4:function(){return Math.floor(65536*(1+Math.random())).toString(16).substring(1)},uuid:function(){var a=this.s4;return a()+a()+a()+a()+a()+a()+a()+a()}};b.exports=d}()},{}],10:[function(a,b){!function(c,d){"use strict";function e(a){return(i.type.debug?"/dist":"http://s.account.sogoucdn.com/u/api")+"/0.0.8/css/skin/"+a+".css"}function f(a){var b;switch(!0){case i.type.isNullOrUndefined(a):case"default"===a:b=e("default");break;case i.type.isNonEmptyString(a)&&/\.css/i.test(a):b=a;break;case i.type.isFunction(a):b=a.call(null);default:throw new Error("Unrecognized style: ["+a+"]")}return b}var g=a("../core"),h=g.PassportSC,i=a("../utils"),j=a("../console"),k=("placeholder"in d.createElement("input"),"sogou-passport-pop"),l="sogou-passport-form",m="sogou-passport-user",n="sogou-passport-pass",o="sogou-passport-captcha-wrapper",p="sogou-passport-captchaimg",q="sogou-passport-captcha",r="sogou-passport-auto",s="sogou-passport-error",t='<div class="sogou-passport-caption">搜狗帐号登录</div><form id="'+l+'" action="#" autocomplete="off" type="post"><div id="sogou-passport-error" class="sogou-passport-error"></div><div class="sogou-passport-row re"><input type="text" class="sogou-passport-input" id="'+m+'" placeholder="手机/邮箱/用户名"/></div><div class="sogou-passport-row re"><input type="password" class="sogou-passport-input" id="'+n+'" placeholder="密码"/></div><div class="sogou-passport-row re sogou-passport-captcha-wrapper" id="'+o+'"><input type="text" class="fl sogou-passport-input" id="'+q+'" placeholder="验证码"/><img src="about:blank" id="'+p+'" alt="验证码" class="fl sogou-passport-captcha-img" border="0"/><a href="#" class="fl h-fil">换一换</a><div class="clearfix"></div></div><div class="sogou-passport-row sogou-passport-autologin"><input type="checkbox" id="'+r+'"/><label for="sogou-passport-auto">下次自动登录</label></div><div class="re sogou-passport-row sogou-passport-submitwrapper"><input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit"><a href="#" class="ab sogou-passport-findpwd" target="_blank">找回密码</a><a href="#" class="ab sogou-passport-register" target="_blank">立即注册</a></div></form><div class="sogou-passport-3rd"><p class="sogou-passport-3rd-title">可以使用以下方式登录</p></div>',u=null,v={container:null,style:null,template:t},w=null;g.addSupportedEvent("draw_complete","drawcomplete");var x=function(){h.on("loginfailed loginsuccess 3rdlogincomplete paramerror",function(a,b){var c=!!b.captchaimg;switch(i.dom.id(o).style.display=c||"paramerror"===a.type&&"captcha"===b.name?"block":"none",c&&(i.dom.id(p).src=b.captchaimg,i.dom.id(q).focus()),a.type){case"loginfailed":i.dom.id(n).value="",i.dom.id(q).value="",i.dom.id(n).focus();break;case"paramerror":"username"===b.name?(i.dom.id(m).focus(),i.dom.id(m).select()):"password"===b.name?(i.dom.id(n).focus(),i.dom.id(n).select()):"captcha"===b.name&&(i.dom.id(q).focus(),i.dom.id(q).select())}i.dom.id(s).innerHTML=b.msg}),this.render()};x.prototype={render:function(){var a,b=this,c=f(w.style);i.dom.addLink(c,function(){var c=b.wrapper=d.createElement("div");c.id=c.className=k,c.innerHTML=w.template,w.container.appendChild(c),h.emit("draw_complete"),b.initEvent(),(a=h.userid())&&(i.dom.id(m).value=a)})},initEvent:function(){var a=this;i.dom.bindEvent(i.dom.id(l),"submit",function(b){i.dom.eventTarget(b);return i.dom.preventDefault(b),j.trace("Passport form submitting"),a.doPost(),!1})},doPost:function(){var a,b,c,d,e,f;return(a=i.dom.id(m))?(b=i.dom.id(n))?(c=i.dom.id(r))?(d=i.trim(a.value))?(e=i.trim(b.value))?(f=c.checked,void h.login(d,e,i.dom.id(q).value,f)):void j.trace("pass empty"):void j.trace("user empty"):void j.error("Element[#"+r+"] does not exist"):void j.error("Element[#"+n+"] does not exist"):void j.error("Element[#"+m+"] does not exist")}},h.draw=function(a){if(!this.isInitialized())throw new Error("You have to initialize passport before draw");return u?this:(w=i.mixin(v,a),i.type.assertHTMLElement("options.container",a.container),u=new x,this)},i.hideSource("draw",h.draw),b.exports={PassportSC:h}}(window,document)},{"../console":4,"../core":6,"../utils":13}],11:[function(a,b){!function(){"use strict";var c=a("./draw"),d=a("../utils"),e=c.PassportSC;e.popup=function(a){return this.draw(a)},d.hideSource("popup",e.popup),b.exports={PassportSC:e}}(window,document)},{"../utils":13,"./draw":10}],12:[function(a,b){!function(){"use strict";function a(a){return function(a){return function(b){return"[object "+a+"]"==={}.toString.apply(b)}}(a)}function c(a){return function(a){return function(b,c){if(arguments.length<2&&(c=b,b=String(c)),!e["is"+a](c))throw new Error('"'+b+'" has to be a(n) '+a)}}(a)}for(var d=function(){},e={expando:"sogou-passport-"+ +new Date,noop:d,debug:0,strundefined:"undefined",strstr:"string",strobject:typeof{},strnumber:"number",strfunction:typeof d,isNullOrUndefined:function(a){return!(!this.isNull(a)&&!this.isUndefined(a))},isNonNullOrUndefined:function(a){return!this.isNullOrUndefined(a)},isInteger:function(a){return!(!this.isNumber(a)||!/^(\-|\+)?\d+?$/i.test(a))},isNull:function(a){return null===a},isUndefined:function(a){return void 0===a},isPlainObject:function(a){return this.isObject(a)&&!this.isNull(a)&&!this.isArray(a)&&!this.isRegExp(a)&&!this.isDate(a)},isNonEmptyString:function(a){return!(!a||!this.isString(a))},isHTMLElement:function(a){return!!(a&&a.childNodes&&a.tagName&&a.appendChild)},isEmpty:function(a){return this.isNullOrUndefined(a)||this.isArray(a)&&!a.length||""===a},isObject:function(a){return e.strobject===typeof a}},f="RegExp,Date,String,Array,Boolean,Function,Number".split(","),g=f.length-1;g>=0;--g)e["is"+f[g]]=a(f[g]),e["assert"+f[g]]=c(f[g]);var h="Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(",");for(g=h.length;g>=0;--g)e["assert"+h[g]]=c(h[g]);b.exports=e}()},{}],13:[function(a,b){!function(){"use strict";var c=a("./array"),d=a("./math"),e=a("./type"),f=a("./dom"),g="[\\x20\\t\\r\\n\\f]",h=new RegExp("^"+g+"+|((?:^|[^\\\\])(?:\\\\.)*)"+g+"+$","g"),i={math:d,array:c,dom:f,type:e,mixin:function(a,b){b=b||{},e.assertNonNullOrUndefined("dest",a);for(var c in b)b.hasOwnProperty&&b.hasOwnProperty(c)&&(a[c]=b[c]);return a},getIEVersion:function(){var a,b=navigator.userAgent,c={4:8,5:9,6:10,7:11};return a=b.match(/MSIE (\d+)/i),a&&a[1]?+a[1]:(a=b.match(/Trident\/(\d+)/i),a&&a[1]?c[a[1]]||null:null)},trim:function(a){return String.prototype.trim?String.prototype.trim.call(String(a)):String(a).replace(h,"")},freeze:function(a){return e.assertNonNullOrUndefined("obj",a),e.assertObject("obj",a),e.strundefined!==typeof Object&&e.strfunction===typeof Object.freeze&&Object.freeze(a),a},hideSource:function(a,b,c){e.assertNonEmptyString("name",a),e.assertFunction("func",b),c?e.assertNonEmptyString(c):c="PassportSC.";var d=String(b);return b.toString=function(a,b){return function(){return c+a+b.match(/\([^\{\(]+(?=\{)/)[0]}}(a,d),b.toString}};i.freeze(d),i.freeze(f),i.freeze(e),i.freeze(c),b.exports=i}()},{"./array":1,"./dom":7,"./math":9,"./type":12}]},{},[1,2,3,4,5,6,7,8,9,12,13,10,11]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * array.js
+ *
+ * Some polyfill for ES5 array.
+ *
+ * changelog
+ * 2014-06-06[14:11:09]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+  "use strict";
+
+  var type = require('./type');
+  var array = {};
+
+  /**
+   * ES5 array indexOf polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Object} ele
+   * @param  {Integer} fromIndex
+   * @return {Boolean}
+   */
+  array.indexOf = function(arr, ele, fromIndex) {
+    var i, len;
+
+    if (!arr || !ele) {
+      return -1;
+    }
+
+    fromIndex = fromIndex | 0;
+    if (isNaN(fromIndex)) {
+      fromIndex = 0;
+    }
+    if (fromIndex >= arr.length) {
+      return -1;
+    }
+    if (fromIndex < 0) {
+      fromIndex = arr.length + fromIndex;
+      if (fromIndex < 0) {
+        fromIndex = 0;
+      }
+    }
+
+    if (Array.prototype.indexOf) {
+      return Array.prototype.indexOf.call(arr, ele, fromIndex);
+    } else {
+      for (i = fromIndex, len = arr.length; i < len; ++i) {
+        if (ele === arr[i]) {
+          return i;
+        }
+      }
+    }
+
+    return -1;
+  };
+
+  /**
+   * ES5 array forEach polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Undefined}
+   */
+  array.forEach = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    if (Array.prototype.forEach) {
+      return Array.prototype.forEach.call(arr, callbackfn, thisArg);
+    }
+
+    for (i = 0, len = arr.length; i < len; ++i) {
+      callbackfn.call(thisArg, arr[i], i, arr);
+    }
+
+  };
+  /**
+   * ES5 array every polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} func
+   * @return {Boolean}
+   */
+  array.each = array.every = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    //ES5
+    if (Array.prototype.every) {
+      return Array.prototype.every.call(arr, callbackfn, thisArg);
+    } else {
+      for (i = 0, len = arr.length; i < len; ++i) {
+        if (!callbackfn.call(thisArg, arr[i], i, arr)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  /**
+   * ES5 array some polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Boolean}
+   */
+  array.some = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    //ES5
+    if (Array.prototype.some) {
+      return Array.prototype.some.call(arr, callbackfn, thisArg);
+    } else {
+      for (i = 0, len = arr.length; i < len; ++i) {
+        if (true === callbackfn.call(thisArg, arr[i], i, arr)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * ES5 array filter polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Array}
+   */
+  array.filter = function(arr, callbackfn, thisArg) {
+    var ret = [];
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+
+    if (Array.prototype.filter) {
+      return Array.prototype.filter.call(arr, callbackfn, thisArg);
+    }
+
+    array.forEach(arr, function(val, index) {
+      if (callbackfn.call(thisArg, val, index, arr)) {
+        ret.push(val);
+      }
+    });
+    return ret;
+  };
+
+  module.exports = array;
+})();
+},{"./type":12}],2:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * buggy.js
+ *
+ * changelog
+ * 2014-06-07[10:08:13]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var expando = require('./type').expando;
+
+    var Buggy = {
+        /**
+         * "getElementById" is buggy on IE6/7.
+         *
+         * @see  https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L528
+         * @property
+         */
+        getElementById: (function(document) {
+            var div = document.createElement('div');
+
+            //document.body is null here
+            document.documentElement.appendChild(div).setAttribute('id', expando);
+
+            var buggy = document.getElementsByName && document.getElementsByName(expando).length;
+
+            document.documentElement.removeChild(div);
+
+            div = null;
+
+            return !!buggy;
+        })(document)
+    };
+
+    module.exports = Buggy;
+})(window, document);
+},{"./type":12}],3:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * codes.js
+ *
+ * changelog
+ * 2014-05-24[23:06:47]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    //Just for freeze
+    var utils = require('./utils');
+    
+    var codes = {
+        SYSTEM_ERROR: {
+            code: 10001,
+            info: "未知错误"
+        },
+        PARAM_ERROR: {
+            code: 10002,
+            info: "参数错误"
+        },
+        CAPTCHA_FAILED: {
+            code: 20221,
+            info: "验证码验证失败 "
+        },
+        ACCOUNT_NOT_EXIST: {
+            code: 20205,
+            info: "帐号不存在"
+        },
+        ACCOUNT_NOT_EXIST_1: {
+            code: 10009,
+            info: "帐号不存在"
+        },
+        ACCOUNT_NOT_ACTIVED: {
+            code: 20231,
+            info: "登陆账号未激活"
+        },
+        ACCOUNT_KILLED: {
+            code: 20232,
+            info: "登陆账号被封杀"
+        },
+        ACCOUNT_PWD_WRONG: {
+            code: 20206,
+            info: "账号或密码错误"
+        },
+        LOGIN_TIME_OUT: {
+            code: 100000,
+            info: "登录超时"
+        },
+        NEED_USERNAME: {
+            code: 100001,
+            info: "请输入通行证用户名"
+        },
+        NEED_PASSWORD: {
+            code: 100002,
+            info: "请输入通行证密码"
+        }
+    };
+
+    utils.freeze(codes);
+
+    module.exports = codes;
+
+})(window, document);
+},{"./utils":13}],4:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * console.js
+ *
+ * Polyfill for console.
+ *
+ * changelog
+ * 2014-06-06[11:43:57]:authorized
+ * 2014-06-10[21:12:36]:define 'debug'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+
+(function(window, undefined) {
+    "use strict";
+
+    var type = require('./type');
+    var console = type.debug?window.console:{};
+
+    if (!console || type.strobject !== typeof console) {
+        console = {};
+    }
+
+    var keys = 'trace,info,log,debug,warn,error'.split(',');
+
+    for (var i = keys.length - 1; i >= 0; i--) {
+        console[keys[i]] = console[keys[i]] || type.noop;
+    }
+
+    module.exports = console;
+})(window);
+},{"./type":12}],5:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * cookie.js
+ *
+ * Some operations about cookie.
+ *
+ * changelog
+ * 2014-06-07[13:47:16]:authorized
+ * 2014-06-07[15:21:54]:search cookie by regexp
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+(function(window, document, undefined) {
+    "use strict";
+
+    var UTILS = require('./utils');
+
+    var PassportCookieParser = {
+        cookie:{},
+        getCookie: function() {
+            return this.cookie;
+        },
+        parsePassportCookie: function() {
+            var value, i, parsedArray,matches;
+
+            if (true !== (window.navigator && navigator.cookieEnabled)) {
+                return this;
+            }
+            //clear
+            this.cookie = {};
+
+            var cookieArray = document.cookie.split("; ");
+            for (i = 0; i < cookieArray.length; ++i) {
+                matches = cookieArray[i].match(/^p(?:pinf|pinfo|assport)=(.+)$/);
+                if(matches&&matches[1])
+                {
+                    value = matches[1];
+                    break;
+                }
+            }
+
+            //No cookie read
+            if (!value) {
+                return this;
+            }
+
+            try {
+                parsedArray = unescape(value).split("|");
+                if (parsedArray[0] == "1" || parsedArray[0] == "2" && parsedArray[3]) {
+                    this._parsePassportCookie(UTILS.math.utf8to16(UTILS.math.b64_decodex(parsedArray[3])));
+                }
+            } catch (e) {}
+
+            return this;
+        },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
+        _parsePassportCookie: function(F) {
+            var J = 0,
+                D, B, A, I, lenEnd_offset;
+            var C = F.indexOf(":", J);
+            while (C != -1) {
+                B = F.substring(J, C);
+                lenEnd_offset = F.indexOf(":", C + 1);
+                if (lenEnd_offset == -1) {
+                    break;
+                }
+                A = parseInt(F.substring(C + 1, lenEnd_offset));
+                I = F.substr(lenEnd_offset + 1, A);
+                if (F.charAt(lenEnd_offset + 1 + A) != "|") {
+                    break;
+                }
+                this.cookie[B] = I;
+                J = lenEnd_offset + 2 + A;
+                C = F.indexOf(":", J);
+            }
+
+            return this;
+        }
+    };
+
+    module.exports = {
+        PassportCookieParser: {
+            parse: function() {
+                return PassportCookieParser.parsePassportCookie().getCookie();
+            }
+        }
+    };
+})(window, document);
+},{"./utils":13}],6:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com sogou.com
+ *
+ * core.js
+ *
+ * Passport for sogou.com Ltd.
+ *
+ * Compared to previous sogou.js,we removed the
+ * HTML dialog part,and export the least number
+ * of interfaces.
+ *
+ * We plan to support HTML dialog by plugins.
+ *
+ * changelog
+ * 2014-05-24[20:43:42]:authorized
+ * 2014-05-25[10:48:30]:code matched
+ * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
+ * 2014-06-04[16:37:06]:disabled 'remindActive' action
+ * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
+ * 2014-06-07[11:03:49]:make 'getOptions' returns copy
+ * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
+ * 2014-06-07[20:07:16]:reconstruction PassportSC
+ * 2014-06-08[01:28:21]:third party login supported by 'login3rd'
+ * 2014-06-08[12:24:48]:hide source of functions
+ * 2014-06-10[12:32:02]:get 'msg' from _logincb
+ * 2014-06-10[13:30:08]:'param_error'&'notactive' supported
+ * 2014-06-10[14:39:15]:merge events into 'login_failed'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.8
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var UTILS = require('./utils');
+    var CODES = require('./codes');
+    var console = require('./console');
+    var Event = require('./event');
+    var type = UTILS.type;
+    var PassportCookieParser = require('./cookie').PassportCookieParser;
+
+    var EXPANDO = type.expando;
+    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;';
+
+    var EVENTS = {
+        login_success: 'loginsuccess',
+        login_failed: 'loginfailed',
+        logout_success: 'logoutsuccess',
+        third_party_login_complete: '3rdlogincomplete',//popup only
+        param_error: 'paramerror'
+    };
+
+    var FIXED_URLS = {
+        login: 'https://account.sogou.com/web/login',
+        logout: 'https://account.sogou.com/web/logout_js',
+        active: 'https://account.sogou.com/web/remindActivate',
+        captcha: 'https://account.sogou.com/captcha',
+        trdparty: 'http://account.sogou.com/connect/login'
+    };
+
+    var THIRD_PARTY_SIZE = {
+        size: {
+            renren: [880, 620],
+            sina: [780, 640],
+            qq: [500, 300]
+        }
+    };
+
+    var e;//for element
+    var gLastLoginName;//for not active
+
+
+    var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+
+    //For validations of options in bulk
+    var VALIDATORS = [{
+        name: ['appid'],
+        validate: function(name, value) {
+            return value && (type.strstr === typeof value || type.strnumber === typeof value);
+        },
+        errmsg: function(name, value) {
+            return '"' + name + '" SHOULD be a string or a number';
+        }
+    }, {
+        name: ['redirectUrl'],
+        validate: function(name, value) {
+            return value && type.strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+        },
+        errmsg: function(name, value) {
+            return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
+        }
+    }];
+
+    var gOptions = null;
+    var PassportSC = null;
+    var frameWrapper = null;
+    var defaultOptions = {
+        appid: null,
+        redirectUrl: null
+    };
+
+    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
+
+    /**
+     * Create frameWrapper if it not exists.
+     *
+     * @param {Function}
+     * @return {HTMLElement} frameWrapper
+     */
+    function assertFrameWrapper(callback) {
+        var c = frameWrapper;
+        if (!c || (type.strobject !== typeof c) || (type.strundefined === typeof c.appendChild) || !c.parentNode) {
+            c = frameWrapper = document.createElement('div');
+            c.style.cssText = HIDDEN_CSS;
+            c.className = c.id = EXPANDO;
+            document.body.appendChild(c);
+        }
+
+        if (type.isFunction(callback)) {
+            callback(c);
+        }
+        return c;
+    }
+
+    /**
+     * This is the inner PASSPORT constructor.
+     * As the instance could not be more then one,
+     * it may be called only once.
+     *
+     * @param {Object} options
+     * @throws {Error} If any validattion failed
+     */
+    function validateOptions(options) {
+        var i, j, validator, name, opt;
+
+        opt = gOptions = {};
+
+        type.assertPlainObject('options', options);
+
+        UTILS.mixin(opt, defaultOptions);
+        UTILS.mixin(opt, options);
+
+        for (i = VALIDATORS.length - 1; i >= 0; --i) {
+            validator = VALIDATORS[i];
+            for (j = validator.name.length - 1; j >= 0; --j) {
+                name = validator.name[j];
+                if (!validator.validate(name, opt[name])) {
+                    throw new Error(type.strfunction === typeof validator.errmsg ?
+                        validator.errmsg(name, opt[name]) : validator.errmsg
+                    );
+                }
+            }
+        }
+        //DON'T FORGET IT
+        opt._token = UTILS.math.uuid();
+    }
+
+    /**
+     * Simple template replacer.
+     *
+     * @param  {String} tpl
+     * @param  {Object} data
+     * @return {String}
+     */
+    function template(tpl, data) {
+        return tpl.replace(/<%=([\w\-]+?)%>/g, function(k, n) {
+            var key = data[n];
+            return undefined === key ? "" : key;
+        });
+    }
+
+    /**
+     * Passport tools.
+     *
+     * @class
+     */
+    var tools = {
+        /**
+         * Validate username.
+         *
+         * @param  {String} username
+         * @return {Boolean}
+         */
+        validateUsername: function(username) {
+            return type.isNonEmptyString(username) && /^[\w-@\.]+$/.test(username);
+        },
+        /**
+         * Validate password.
+         *
+         * @param  {String} password
+         * @return {Boolean}
+         */
+        validatePassword: function(password) {
+            return type.isNonEmptyString(password) && /^[\w-]{6,16}$/.test(password);
+        },
+        /**
+         * Validtae captcha.
+         * 
+         * @param  {String} captcha
+         * @return {Boolean}
+         */
+        validateCaptcha: function(captcha){
+            return type.isNonEmptyString(captcha) && /^[a-zA-Z0-9]+$/.test(captcha);
+        }
+    };
+
+    /**
+     * Hide source of tools.
+     */
+    for (e in tools) {
+        if (type.isFunction(tools[e])) {
+            UTILS.hideSource(e, tools[e], 'PassportSC.tools.');
+        }
+    }
+
+    /**
+     * Core passport object.
+     *
+     * This will be merged into PassportSC.
+     *
+     * @class
+     */
+    var Passport = {
+        version: '0.0.8', //see 'package.json'
+        tools: tools,
+        /**
+         * Initialize.
+         * This must be called at first before
+         * any other operations.
+         *
+         * The following options must be set in options:
+         * 1.appid -- Integer of ID,it depends on the product line;
+         * 2.redirectUrl -- A same domain page url for cross-domain;
+         *
+         * @param  {Obejct} options Required options
+         * @return {Object} PassportSC
+         */
+        init: function(options) {
+            if (!this.isInitialized()) {
+                console.trace('Initialize passport');
+                validateOptions(options);
+            } else {
+                console.warn('Passport has already been initialized');
+            }
+            //support both PassportSC() and PassportSC.init()
+            return window.PassportSC;
+        },
+        /**
+         * Do login action.It's an async function.
+         *
+         * @param  {String} username
+         * @param  {String} password
+         * @param  {String} vcode
+         * @param  {Boolean} autoLogin
+         * @return {Boolean} If login action is executed
+         * @throws {Error} If not initialized
+         */
+        login: function(username, password, vcode, autoLogin) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            console.trace('logining with:' + Array.prototype.join.call(arguments));
+
+            var payload;
+
+            if (arguments.length < 4) {
+                autoLogin = vcode;
+                vcode = '';
+            }
+
+            if (!tools.validateUsername(username)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'username',
+                    value: username,
+                    msg: "账号格式不正确"
+                });
+                return false;
+            } else if (!tools.validatePassword(password)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'password',
+                    value: password,
+                    msg: "密码格式不正确"
+                });
+                return false;
+            } else if (vcode && !tools.validateCaptcha(vcode)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'captcha',
+                    value: vcode,
+                    msg: "验证码格式不正确"
+                });
+                return false;
+            }
+
+            gLastLoginName = username;
+
+            payload = {
+                username: username,
+                password: password,
+                vcode: vcode || "",
+                autoLogin: +(!!autoLogin), //:0/1
+                appid: gOptions.appid,
+                redirectUrl: gOptions.redirectUrl,
+                token: gOptions._token
+            };
+
+            assertFrameWrapper(function(container) {
+                container.innerHTML = template(HTML_FRAME_LOGIN, payload);
+                container.getElementsByTagName('form')[0].submit();
+            });
+
+            return true;
+        },
+        /**
+         * Third party login.
+         *
+         * @param  {String} provider qq|sina|renren
+         * @param  {String} display page|popup
+         * @param  {String} redirectUrl
+         * @return {Boolean} True
+         * @throws {Error} If any parameter failed
+         */
+        login3rd: function(provider, display, redirectUrl) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            type.assertNonEmptyString('provider', provider);
+
+            var size = THIRD_PARTY_SIZE.size[provider];
+            if (!size) {
+                throw new Error('provider:"' + provider + '" is not supported in  third party login');
+            }
+
+            if ('popup' === display) {
+                //popup and at least 2
+                type.assertNonEmptyString('redirectUrl', redirectUrl);
+            } else if (type.isUndefined(display)) {
+                //One
+                display = 'page';
+                redirectUrl = location.href;
+            } else {
+                //At least two and not popup
+                redirectUrl = redirectUrl || location.href;
+            }
+
+            var authUrl = FIXED_URLS.trdparty + '?client_id=' + gOptions.appid + '&provider=' + provider + '&ru=' + encodeURIComponent(redirectUrl);
+
+            if ('popup' === display) {
+                var left = (window.screen.availWidth - size[0]) / 2;
+                window.open(authUrl, '', 'height=' + size[1] + ',width=' + size[0] + ',top=80,left=' + left + ',toolbar=no,menubar=no');
+            } else if ('page' === display) {
+                location.href = authUrl;
+            } else {
+                throw new Error('display:"' + display + '" is not supported in third party login');
+            }
+
+            return true;
+        },
+        /**
+         * Do logout.
+         * @return {Object} this
+         * @throws {Error} If not initialized
+         */
+        logout: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+            console.trace('logouting');
+            var self = this;
+            var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
+
+            assertFrameWrapper(function(container) {
+                UTILS.dom.addIframe(container, url, function() {
+                    self.emit(EVENTS.logout_success);
+                });
+            });
+
+        },
+        /**
+         * Get userid from cookie
+         * @return {String} userid or empty string
+         * @throws {Error} If not initialized
+         */
+        userid: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            return PassportCookieParser.parse().userid || "";
+        },
+        /**
+         * Login callback from iframe.
+         * DO NOT call it directly.
+         *
+         * @param  {Object} data login result
+         */
+        _logincb: function(data) {
+            if (!this.isInitialized()) {
+                console.trace('Login callback received but [Passport] has not been initialized');
+                return;
+            }
+
+            if (!data || type.strobject !== typeof data) {
+                console.error('Nothing callback received');
+                data.msg = '登录失败';
+                this.emit(EVENTS.login_failed, data);
+                return;
+            } else if (type.isNonEmptyString(data.msg)) {
+                data.msg = decodeURIComponent(data.msg);
+            }
+
+            if (0 === +data.status) {
+                data.msg = data.msg || '登录成功';
+                this.emit(EVENTS.login_success, data);
+            } else if (+data.status === 20231) {
+                data.activeurl = FIXED_URLS.active + '?email=' + encodeURIComponent(gLastLoginName || "") + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
+                data.msg = data.msg || '帐号未激活';
+                this.emit(EVENTS.login_failed,data);
+            } else if (+data.needcaptcha) {
+                data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
+                data.msg = data.msg || '需要验证码';
+                this.emit(EVENTS.login_failed, data);
+            } else {
+
+                if (!data.msg) {
+                    for (var e in CODES) {
+                        if (CODES[e].code == data.status) {
+                            data.msg = CODES[e].info;
+                            break;
+                        }
+                    }
+                }
+
+                data.msg = data.msg || "未知错误";
+                this.emit(EVENTS.login_failed, data);
+            }
+        },
+        /**
+         * Third party login callback from 'popup' window.
+         * DO NOT call it directly.
+         *
+         * It does not support callback with 'page' display.
+         */
+        _logincb3rd: function() {
+            if (!this.isInitialized()) {
+                console.trace('Login3rd callback received but [Passport] has not been initialized');
+                return;
+            }
+            this.emit(EVENTS.third_party_login_complete);
+        },
+        /**
+         * If passport has been initialized.
+         *
+         * @return {Boolean} Initialized
+         */
+        isInitialized: function() {
+            return !!gOptions;
+        },
+        /**
+         * Get a copy of options.
+         *
+         * @return {Object} Options
+         */
+        getOptions: function() {
+            var opts = {};
+            return UTILS.mixin(opts, gOptions);
+        },
+        /**
+         * Get a copy of events which passport supports.
+         *
+         * @return {Object} Supported events
+         */
+        getSupportedEvents: function() {
+            var events = {};
+            return UTILS.mixin(events, EVENTS);
+        }
+    };
+
+    //Hide implementation for beauty.
+    PassportSC = function() {
+        return Passport.init.apply(Passport, arguments);
+    };
+
+    UTILS.mixin(PassportSC, Passport);
+
+    //Make proxy an event emitter too.
+    UTILS.mixin(PassportSC, new Event());
+
+    //PassportSC is shy.
+    //We do this for hiding source of its function members,
+    //which may show up in chrome console.
+    for (e in PassportSC) {
+        if (type.isFunction(PassportSC[e])) {
+            UTILS.hideSource(e, PassportSC[e]);
+        }
+    }
+
+    //Sync loading supported
+    if (window.PassportSC && type.isPlainObject(window.PassportSC)) {
+        UTILS.mixin(window.PassportSC, PassportSC);
+        if (type.isFunction(window.PassportSC.onApiLoaded)) {
+            window.PassportSC.onApiLoaded();
+        }
+    } else {
+        window.PassportSC = PassportSC;
+    }
+
+    module.exports = {
+        PassportSC: window.PassportSC,
+        addSupportedEvent: function(name, val) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('val', val);
+            EVENTS[name] = val;
+            return EVENTS;
+        },
+        addFixedUrl: function(name, url) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('url', url);
+            FIXED_URLS[name] = url;
+            return FIXED_URLS;
+        }
+    };
+})(window, document);
+},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":13}],7:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * dom.js
+ *
+ * Some simple DOM operations.
+ *
+ * changelog
+ * 2014-06-07[16:33:33]:authorized
+ * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var type = require('./type');
+    var buggy = require('./buggy');
+
+    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+        throw new Error("It's only for HTML document");
+    }
+
+    var dom = {
+        /**
+         * Insert a link element
+         *
+         * @param  {String} href Link url
+         * @param  {Function} callback Callback function
+         * @return {HTMLLinkElement}
+         * @throws {Error} If parameters illegal
+         */
+        addLink: function(href, callback) {
+
+            type.assertNonEmptyString('href', href);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+            if (link.readyState) {
+                link.onreadystatechange = function() {
+                    if (link.readyState === "loaded" || link.readyState === "complete") {
+                        link.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                link.onload = function() {
+                    callback();
+                };
+            }
+            link.href = href;
+            return link;
+        },
+        /**
+         * Insert a script element.
+         * 
+         * @param {String}   src     
+         * @param {Function} callback
+         */
+        addScript: function(src, callback) {
+            
+            type.assertNonEmptyString('src', src);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.charset = "utf-8";
+            if (script.readyState) {
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() {
+                    callback();
+                };
+            }
+            script.src = src;
+            document.getElementsByTagName("head")[0].appendChild(script);
+            return script;
+        },
+        addIframe: function(container, url, callback) {
+
+            type.assertHTMLElement('container', container);
+            type.assertNonEmptyString('url', url);
+
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
+            iframe.src = url;
+
+            if (iframe.attachEvent) {
+                iframe.attachEvent("onload", function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                });
+            } else {
+                iframe.onload = function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                };
+            }
+
+            container.appendChild(iframe);
+        },
+        /**
+         * Attatch event listener to HTMLElements.
+         * @param  {HTMLElement} dom
+         * @param  {String} evt
+         * @param  {Function} func
+         * @return {this}
+         * @throws {Error} If parameters illegal
+         */
+        bindEvent: function(ele, evt, func) {
+
+            type.assertHTMLElement('ele', ele);
+            type.assertNonEmptyString('evt', evt);
+            type.assertFunction('func', func);
+
+            if (document.addEventListener) {
+                ele.addEventListener(evt, func, false);
+            } else if (document.attachEvent) {
+                ele.attachEvent('on' + evt, func);
+            }
+
+            return this;
+        },
+        stopPropagation: function(evt) {
+            if (evt.stopPropagation) {
+                evt.stopPropagation();
+            } else {
+                evt.cancelBubble = true;
+            }
+        },
+        preventDefault: function(evt) {
+            if (evt.preventDefault) {
+                evt.preventDefault();
+            } else {
+                evt.returnValue = false;
+            }
+        },
+        eventTarget: function(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        },
+        /**
+         * Get HTMLElement by id.
+         *
+         * @param  {String} id
+         * @return {HTMLElement}
+         */
+        id: function(id) {
+
+            type.assertNonEmptyString('id', id);
+
+            var ele = document.getElementById(id),
+                all, node;
+            if (!buggy.getElementById) {
+                //BlackBerry 4.6
+                //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
+                return (ele && ele.parentNode) ? ele : null;
+            } else if (ele) {
+                //IE6/7
+                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
+                if (node && node.value === id) {
+                    return ele;
+                }
+            }
+            //TODO test
+            all = document.getElementsByTagName('*');
+            array.some(all, function(ele) {
+                //ignore comment
+                if (ele && ele.nodeType === 1 && ele.id === id) {
+                    return true;
+                }
+            });
+            return (ele && ele.id === id) ? ele : null;
+        }
+    };
+    module.exports = dom;
+})(window, document);
+},{"./buggy":2,"./type":12}],8:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * event.js
+ *
+ * changelog
+ * 2014-06-06[14:02:08]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    "use strict";
+    
+    var UTILS = require('./utils');
+    var console = require('./console');
+    var array = UTILS.array;
+    var type = UTILS.type;
+
+    var EventEmitter = function() {
+
+        var listeners = {};
+
+        /**
+         * Bind event,multiple events split by space supported
+         * @param  {String} event
+         * @param  {Function} func
+         * @param  {Object} thisArg
+         * @return {EventEmitter}      This event emitter
+         */
+        this.on = function(event, func, thisArg) {
+            var evtArr;
+
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+
+            array.forEach(evtArr, function(evt) {
+                listeners[evt] = listeners[evt] || [];
+                listeners[evt].push({
+                    type: evt,
+                    func: func,
+                    thisArg: thisArg
+                });
+            });
+
+            return this;
+        };
+
+        /**
+         * Remove event,multiple events split by space supported.
+         *
+         * Empty 'func' means remove all listeners named 'event'.
+         * 
+         * @param  {String} event
+         * @param  {Function} func
+         * @return {EventEmitter}     This event emitter
+         */
+        this.off = function(event, func) {
+            var evtArr, objs;
+
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+            array.forEach(evtArr, function(evt) {
+                if (!func) {
+                    delete listeners[evt];
+                    return this;
+                } else {
+                    objs = listeners[evt];
+                    if (type.isArray(objs)) {
+                        listeners[evt] = array.filter(objs, function(obj) {
+                            return obj.func !== func;
+                        });
+                    }
+                }
+            });
+
+
+            return this;
+        };
+
+        /**
+         * Emit event(s),multiple events split by space supported.
+         * 
+         * @param  {String} event
+         * @param  {Object} data
+         * @return {EventEmitter} This event emitter
+         */
+        this.emit = function(event, data) {
+            var evtArr, objs;
+
+            type.assertNonEmptyString('event',event);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+
+            array.forEach(evtArr, function(evt) {
+                objs = listeners[evt];
+                if (type.isArray(objs)) {
+                    array.forEach(objs, function(obj) {
+                        //add timestamp
+                        obj.timestamp = +new Date();
+                        obj.func.call(obj.thisArg || null, obj, data);
+                    });
+                }
+            });
+
+            console.trace('emitting ' + evtArr.join());
+            return this;
+        };
+    };
+
+    module.exports = EventEmitter;
+})();
+},{"./console":4,"./utils":13}],9:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * math.js
+ *
+ * changelog
+ * 2014-06-07[15:36:34]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+(function() {
+    "use strict";
+
+    //They seem to be const
+    var hexcase = 0;
+    var chrsz = 8;
+    
+    var math = {
+        b64_423: function(E) {
+            var D = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"];
+            var F = '';
+            for (var C = 0; C < E.length; C++) {
+                for (var A = 0; A < 64; A++) {
+                    if (E.charAt(C) == D[A]) {
+                        var B = A.toString(2);
+                        F += ("000000" + B).substr(B.length);
+                        break;
+                    }
+                }
+                if (A == 64) {
+                    if (C == 2) {
+                        return F.substr(0, 8);
+                    } else {
+                        return F.substr(0, 16);
+                    }
+                }
+            }
+            return F;
+        },
+        b2i: function(D) {
+            var A = 0;
+            var B = 128;
+            for (var C = 0; C < 8; C++, B = B / 2) {
+                if (D.charAt(C) == "1") {
+                    A += B;
+                }
+            }
+            return String.fromCharCode(A);
+        },
+        b64_decodex: function(D) {
+            var B = [];
+            var C;
+            var A = "";
+            for (C = 0; C < D.length; C += 4) {
+                A += this.b64_423(D.substr(C, 4));
+            }
+            for (C = 0; C < A.length; C += 8) {
+                B += this.b2i(A.substr(C, 8));
+            }
+            return B;
+        },
+        hex_md5: function(A) {
+            return this.binl2hex(this.core_md5(this.str2binl(A), A.length * chrsz));
+        },
+        core_md5: function(K, F) {
+            K[F >> 5] |= 128 << ((F) % 32);
+            K[(((F + 64) >>> 9) << 4) + 14] = F;
+            var J = 1732584193;
+            var I = -271733879;
+            var H = -1732584194;
+            var G = 271733878;
+            var md5_ff = this.md5_ff;
+            var md5_gg = this.md5_gg;
+            var md5_hh = this.md5_hh;
+            var md5_ii = this.md5_ii;
+            for (var C = 0; C < K.length; C += 16) {
+                var E = J;
+                var D = I;
+                var B = H;
+                var A = G;
+                J = md5_ff(J, I, H, G, K[C + 0], 7, -680876936);
+                G = md5_ff(G, J, I, H, K[C + 1], 12, -389564586);
+                H = md5_ff(H, G, J, I, K[C + 2], 17, 606105819);
+                I = md5_ff(I, H, G, J, K[C + 3], 22, -1044525330);
+                J = md5_ff(J, I, H, G, K[C + 4], 7, -176418897);
+                G = md5_ff(G, J, I, H, K[C + 5], 12, 1200080426);
+                H = md5_ff(H, G, J, I, K[C + 6], 17, -1473231341);
+                I = md5_ff(I, H, G, J, K[C + 7], 22, -45705983);
+                J = md5_ff(J, I, H, G, K[C + 8], 7, 1770035416);
+                G = md5_ff(G, J, I, H, K[C + 9], 12, -1958414417);
+                H = md5_ff(H, G, J, I, K[C + 10], 17, -42063);
+                I = md5_ff(I, H, G, J, K[C + 11], 22, -1990404162);
+                J = md5_ff(J, I, H, G, K[C + 12], 7, 1804603682);
+                G = md5_ff(G, J, I, H, K[C + 13], 12, -40341101);
+                H = md5_ff(H, G, J, I, K[C + 14], 17, -1502002290);
+                I = md5_ff(I, H, G, J, K[C + 15], 22, 1236535329);
+                J = md5_gg(J, I, H, G, K[C + 1], 5, -165796510);
+                G = md5_gg(G, J, I, H, K[C + 6], 9, -1069501632);
+                H = md5_gg(H, G, J, I, K[C + 11], 14, 643717713);
+                I = md5_gg(I, H, G, J, K[C + 0], 20, -373897302);
+                J = md5_gg(J, I, H, G, K[C + 5], 5, -701558691);
+                G = md5_gg(G, J, I, H, K[C + 10], 9, 38016083);
+                H = md5_gg(H, G, J, I, K[C + 15], 14, -660478335);
+                I = md5_gg(I, H, G, J, K[C + 4], 20, -405537848);
+                J = md5_gg(J, I, H, G, K[C + 9], 5, 568446438);
+                G = md5_gg(G, J, I, H, K[C + 14], 9, -1019803690);
+                H = md5_gg(H, G, J, I, K[C + 3], 14, -187363961);
+                I = md5_gg(I, H, G, J, K[C + 8], 20, 1163531501);
+                J = md5_gg(J, I, H, G, K[C + 13], 5, -1444681467);
+                G = md5_gg(G, J, I, H, K[C + 2], 9, -51403784);
+                H = md5_gg(H, G, J, I, K[C + 7], 14, 1735328473);
+                I = md5_gg(I, H, G, J, K[C + 12], 20, -1926607734);
+                J = md5_hh(J, I, H, G, K[C + 5], 4, -378558);
+                G = md5_hh(G, J, I, H, K[C + 8], 11, -2022574463);
+                H = md5_hh(H, G, J, I, K[C + 11], 16, 1839030562);
+                I = md5_hh(I, H, G, J, K[C + 14], 23, -35309556);
+                J = md5_hh(J, I, H, G, K[C + 1], 4, -1530992060);
+                G = md5_hh(G, J, I, H, K[C + 4], 11, 1272893353);
+                H = md5_hh(H, G, J, I, K[C + 7], 16, -155497632);
+                I = md5_hh(I, H, G, J, K[C + 10], 23, -1094730640);
+                J = md5_hh(J, I, H, G, K[C + 13], 4, 681279174);
+                G = md5_hh(G, J, I, H, K[C + 0], 11, -358537222);
+                H = md5_hh(H, G, J, I, K[C + 3], 16, -722521979);
+                I = md5_hh(I, H, G, J, K[C + 6], 23, 76029189);
+                J = md5_hh(J, I, H, G, K[C + 9], 4, -640364487);
+                G = md5_hh(G, J, I, H, K[C + 12], 11, -421815835);
+                H = md5_hh(H, G, J, I, K[C + 15], 16, 530742520);
+                I = md5_hh(I, H, G, J, K[C + 2], 23, -995338651);
+                J = md5_ii(J, I, H, G, K[C + 0], 6, -198630844);
+                G = md5_ii(G, J, I, H, K[C + 7], 10, 1126891415);
+                H = md5_ii(H, G, J, I, K[C + 14], 15, -1416354905);
+                I = md5_ii(I, H, G, J, K[C + 5], 21, -57434055);
+                J = md5_ii(J, I, H, G, K[C + 12], 6, 1700485571);
+                G = md5_ii(G, J, I, H, K[C + 3], 10, -1894986606);
+                H = md5_ii(H, G, J, I, K[C + 10], 15, -1051523);
+                I = md5_ii(I, H, G, J, K[C + 1], 21, -2054922799);
+                J = md5_ii(J, I, H, G, K[C + 8], 6, 1873313359);
+                G = md5_ii(G, J, I, H, K[C + 15], 10, -30611744);
+                H = md5_ii(H, G, J, I, K[C + 6], 15, -1560198380);
+                I = md5_ii(I, H, G, J, K[C + 13], 21, 1309151649);
+                J = md5_ii(J, I, H, G, K[C + 4], 6, -145523070);
+                G = md5_ii(G, J, I, H, K[C + 11], 10, -1120210379);
+                H = md5_ii(H, G, J, I, K[C + 2], 15, 718787259);
+                I = md5_ii(I, H, G, J, K[C + 9], 21, -343485551);
+                J = this.safe_add(J, E);
+                I = this.safe_add(I, D);
+                H = this.safe_add(H, B);
+                G = this.safe_add(G, A);
+            }
+            return [J, I, H, G];
+        },
+        md5_cmn: function(F, C, B, A, E, D) {
+            return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(C, F), this.safe_add(A, D)), E), B);
+        },
+        md5_ff: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn((B & G) | ((~B) & F), C, B, A, E, D);
+        },
+        md5_gg: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn((B & F) | (G & (~F)), C, B, A, E, D);
+        },
+        md5_hh: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn(B ^ G ^ F, C, B, A, E, D);
+        },
+        md5_ii: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn(G ^ (B | (~F)), C, B, A, E, D);
+        },
+        safe_add: function(A, D) {
+            var C = (A & 65535) + (D & 65535);
+            var B = (A >> 16) + (D >> 16) + (C >> 16);
+            return (B << 16) | (C & 65535);
+        },
+        bit_rol: function(A, B) {
+            return (A << B) | (A >>> (32 - B));
+        },
+        binl2hex: function(C) {
+            var B = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+            var D = "";
+            for (var A = 0; A < C.length * 4; A++) {
+                D += B.charAt((C[A >> 2] >> ((A % 4) * 8 + 4)) & 15) + B.charAt((C[A >> 2] >> ((A % 4) * 8)) & 15);
+            }
+            return D;
+        },
+        str2binl: function(D) {
+            var C = [];
+            var A = (1 << chrsz) - 1;
+            for (var B = 0; B < D.length * chrsz; B += chrsz) {
+                C[B >> 5] |= (D.charCodeAt(B / chrsz) & A) << (B % 32);
+            }
+            return C;
+        },
+        utf8to16: function(I) {
+            var D, F, E, G, H, C, B, A, J;
+            D = [];
+            G = I.length;
+            F = E = 0;
+            while (F < G) {
+                H = I.charCodeAt(F++);
+                switch (H >> 4) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        D[E++] = I.charAt(F - 1);
+                        break;
+                    case 12:
+                    case 13:
+                        C = I.charCodeAt(F++);
+                        D[E++] = String.fromCharCode(((H & 31) << 6) | (C & 63));
+                        break;
+                    case 14:
+                        C = I.charCodeAt(F++);
+                        B = I.charCodeAt(F++);
+                        D[E++] = String.fromCharCode(((H & 15) << 12) | ((C & 63) << 6) | (B & 63));
+                        break;
+                    case 15:
+                        switch (H & 15) {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                            case 6:
+                            case 7:
+                                C = I.charCodeAt(F++);
+                                B = I.charCodeAt(F++);
+                                A = I.charCodeAt(F++);
+                                J = ((H & 7) << 18) | ((C & 63) << 12) | ((B & 63) << 6) | (A & 63) - 65536;
+                                if (0 <= J && J <= 1048575) {
+                                    D[E] = String.fromCharCode(((J >>> 10) & 1023) | 55296, (J & 1023) | 56320);
+                                } else {
+                                    D[E] = "?";
+                                }
+                                break;
+                            case 8:
+                            case 9:
+                            case 10:
+                            case 11:
+                                F += 4;
+                                D[E] = "?";
+                                break;
+                            case 12:
+                            case 13:
+                                F += 5;
+                                D[E] = "?";
+                                break;
+                        }
+                }
+                E++;
+            }
+            return D.join("");
+        },
+        s4: function() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        },
+        uuid: function() {
+            var s4 = this.s4;
+            return s4() + s4() + s4() + s4() +
+                s4() + s4() + s4() + s4();
+        }
+    };
+
+    module.exports = math;
+})();
+},{}],10:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * draw.js
+ *
+ * We attempt to show a login dialog in HTML.
+ *
+ * changelog
+ * 2014-06-04[23:14:19]:authorized
+ * 2014-06-08[21:25:34]:rename to draw.js
+ * 2014-06-11[21:11:06]:change skin css path
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.2
+ * @since 0.1.0
+ */
+(function(window, document, undefined) {
+  "use strict";
+
+  var core = require('../core');
+  var PassportSC = core.PassportSC;
+  var UTILS = require('../utils');
+  var console = require('../console');
+
+  var placeholderSupported = 'placeholder' in document.createElement('input');
+
+  var WRAPPER_ID = 'sogou-passport-pop';
+  var FORM_ID = 'sogou-passport-form';
+  var USER_ID = 'sogou-passport-user';
+  var PASS_ID = 'sogou-passport-pass';
+  var CAPTCHA_WRAPPER_ID = 'sogou-passport-captcha-wrapper';
+  var CAPTCHA_IMG_ID = 'sogou-passport-captchaimg';
+  var CAPTCHA_ID = 'sogou-passport-captcha';
+  var AUTO_ID = 'sogou-passport-auto';
+  var ERROR_ID = 'sogou-passport-error';
+
+  var DEFAULT_HTML = '' +
+    '<div class="sogou-passport-caption">搜狗帐号登录</div>' +
+    '<form id="' + FORM_ID + '" action="#" autocomplete="off" type="post">' +
+    '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
+    '<div class="sogou-passport-row re">' +
+    '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
+    '</div>' +
+    '<div class="sogou-passport-row re">' +
+    '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" placeholder="密码"/>' +
+    '</div>' +
+    '<div class="sogou-passport-row re sogou-passport-captcha-wrapper" id="' + CAPTCHA_WRAPPER_ID + '">' +
+    '<input type="text" class="fl sogou-passport-input" id="' + CAPTCHA_ID + '" placeholder="验证码"/>' +
+    '<img src="about:blank" id="' + CAPTCHA_IMG_ID + '" alt="验证码" class="fl sogou-passport-captcha-img" border="0"/>' +
+    '<a href="#" class="fl h-fil">换一换</a>' +
+    '<div class="clearfix"></div>' +
+    '</div>' +
+    '<div class="sogou-passport-row sogou-passport-autologin">' +
+    '<input type="checkbox" id="' + AUTO_ID + '"/>' +
+    '<label for="sogou-passport-auto">下次自动登录</label>' +
+    '</div>' +
+    '<div class="re sogou-passport-row sogou-passport-submitwrapper">' +
+    '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
+    '<a href="#" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
+    '<a href="#" class="ab sogou-passport-register" target="_blank">立即注册</a>' +
+    '</div>' +
+    '</form>' +
+    '<div class="sogou-passport-3rd">' +
+    '<p class="sogou-passport-3rd-title">可以使用以下方式登录</p>' +
+    '</div>' +
+    '';
+  var gPassportCanvas = null;
+  var defaultOptions = {
+    container: null,
+    style: null,
+    template: DEFAULT_HTML
+  };
+  var gOptions = null;
+
+  core.addSupportedEvent('draw_complete', 'drawcomplete');
+
+  /**
+   * Compute css url.
+   * 
+   * @param  {String} name
+   * @return {String} url
+   */
+  function getCssHref(name){
+    return(UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') +'/0.0.8/css/skin/'+ name+'/style.css';
+  }
+  /**
+   * Parse a link src by style parameter.
+   *
+   * @param  {String|Function} style
+   * @return {String} Parsed link src
+   * @throws {Error} If parsed failed
+   */
+  function styleParser(style) {
+    var src;
+    switch (true) {
+      case UTILS.type.isNullOrUndefined(style):
+      case 'default' === style:
+        src = getCssHref('default');
+        break;
+      case UTILS.type.isNonEmptyString(style) && /\.css/i.test(style):
+        src = style;
+        break;
+      case UTILS.type.isFunction(style):
+        src = style.call(null);
+      default:
+        throw new Error('Unrecognized style: [' + style + ']');;
+    }
+
+    return src;
+  }
+
+  var PassportCanvas = function() {
+
+    PassportSC.on('loginfailed loginsuccess 3rdlogincomplete paramerror', function(e, data) {
+
+      var needcaptcha = !!data.captchaimg;
+
+      UTILS.dom.id(CAPTCHA_WRAPPER_ID).style.display = (needcaptcha || ('paramerror' === e.type && 'captcha' === data.name) ? 'block' : 'none');
+
+      if (needcaptcha) {
+        UTILS.dom.id(CAPTCHA_IMG_ID).src = data.captchaimg;
+        UTILS.dom.id(CAPTCHA_ID).focus();
+      }
+
+      switch (e.type) {
+        case 'loginfailed':
+          UTILS.dom.id(PASS_ID).value = '';
+          UTILS.dom.id(CAPTCHA_ID).value = '';
+          UTILS.dom.id(PASS_ID).focus();
+          break;
+        case 'paramerror':
+          if ('username' === data.name) {
+            UTILS.dom.id(USER_ID).focus();
+            UTILS.dom.id(USER_ID).select();
+          } else if ('password' === data.name) {
+            UTILS.dom.id(PASS_ID).focus();
+            UTILS.dom.id(PASS_ID).select();
+          } else if ('captcha' === data.name) {
+            UTILS.dom.id(CAPTCHA_ID).focus();
+            UTILS.dom.id(CAPTCHA_ID).select();
+          }
+          break;
+          break;
+        default:
+          ;
+      }
+
+      UTILS.dom.id(ERROR_ID).innerHTML = data.msg;
+    });
+
+    this.render();
+  };
+
+  PassportCanvas.prototype = {
+    render: function() {
+      var self = this;
+      var userid;
+
+      var src = styleParser(gOptions.style);
+
+      UTILS.dom.addLink(src, function() {
+        var wrapper = self.wrapper = document.createElement('div');
+        wrapper.id = wrapper.className = WRAPPER_ID;
+        wrapper.innerHTML = gOptions.template;
+        gOptions.container.appendChild(wrapper);
+
+        PassportSC.emit('draw_complete');
+
+        self.initEvent();
+        if (!!(userid = PassportSC.userid())) {
+          UTILS.dom.id(USER_ID).value = userid;
+        }
+      });
+    },
+    initEvent: function() {
+      var self = this;
+      UTILS.dom.bindEvent(UTILS.dom.id(FORM_ID), 'submit', function(e) {
+        var dom = UTILS.dom.eventTarget(e);
+        UTILS.dom.preventDefault(e);
+        console.trace('Passport form submitting');
+        self.doPost();
+        return false;
+      });
+    },
+    doPost: function() {
+      var user$, pass$, auto$;
+      var user, pass, auto;
+      if (!(user$ = UTILS.dom.id(USER_ID))) {
+        console.error('Element[#' + USER_ID + '] does not exist');
+        return;
+      }
+      if (!(pass$ = UTILS.dom.id(PASS_ID))) {
+        console.error('Element[#' + PASS_ID + '] does not exist');
+        return;
+      }
+      if (!(auto$ = UTILS.dom.id(AUTO_ID))) {
+        console.error('Element[#' + AUTO_ID + '] does not exist');
+        return;
+      }
+      if (!(user = UTILS.trim(user$.value))) {
+        console.trace('user empty');
+        return;
+      }
+      if (!(pass = UTILS.trim(pass$.value))) {
+        console.trace('pass empty');
+        return;
+      }
+
+      auto = auto$.checked;
+
+      PassportSC.login(user, pass, UTILS.dom.id(CAPTCHA_ID).value, auto);
+    }
+  };
+
+  /**
+   * Draw a passport login canvas on a HTMLElement.
+   *
+   * @param  {Object} options
+   * @return {this}
+   */
+  PassportSC.draw = function(options) {
+
+    if (!this.isInitialized()) {
+      throw new Error('You have to initialize passport before draw');
+    }
+
+    if (gPassportCanvas) {
+      return this;
+    }
+    gOptions = UTILS.mixin(defaultOptions, options)
+
+    UTILS.type.assertHTMLElement('options.container', options.container);
+
+    gPassportCanvas = new PassportCanvas();
+
+    return this;
+  };
+
+  UTILS.hideSource('draw', PassportSC.draw);
+
+  module.exports = {
+    PassportSC: PassportSC
+  };
+})(window, document);
+},{"../console":4,"../core":6,"../utils":13}],11:[function(require,module,exports){
+/**
+  * Copyright (C) 2014 yanni4night.com
+  *
+  * draw.popup.js
+  *
+  * changelog
+  * 2014-06-09[17:24:41]:authorized
+  *
+  * @author yanni4night@gmail.com
+  * @version 0.1.0
+  * @since 0.1.0
+  */
+(function(window, document, undefined) {
+    "use strict";
+    var draw = require('./draw');
+    var UTILS = require('../utils');
+    var PassportSC = draw.PassportSC;
+    
+    //TODO:create a mask and a fixed dialog
+    
+    PassportSC.popup = function (options) {
+        //options
+        return this.draw(options);
+    };
+    
+    UTILS.hideSource('popup',PassportSC.popup);
+
+    module.exports = {
+        PassportSC : PassportSC
+    };
+})(window,document);
+},{"../utils":13,"./draw":10}],12:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * type.js
+ *
+ * changelog
+ * 2014-06-07[15:50:11]:authorized
+ * 2014-06-07[17:26:01]:asserts,customs
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+(function() {
+    "use strict";
+
+    var noop = function() {};
+
+    var type = {
+        expando: "sogou-passport-" + (+new Date()),
+        noop: noop,
+        debug:+'1',
+        strundefined: typeof undefined,
+        strstr: typeof '',
+        strobject: typeof {},
+        strnumber: typeof 0,
+        strfunction: typeof noop,
+        isNullOrUndefined: function(obj) {
+            return !!(this.isNull(obj) || this.isUndefined(obj));
+        },
+        isNonNullOrUndefined: function(obj) {
+            return !this.isNullOrUndefined(obj);
+        },
+        isInteger: function(num) {
+            return !!(this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num));
+        },
+        isNull: function(obj) {
+            return null === obj;
+        },
+        isUndefined: function(obj) {
+            return undefined === obj;
+        },
+        /**
+         * Check if obj is a non-null and non-array object.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isPlainObject: function(obj) {
+            return this.isObject(obj) && !this.isNull(obj) && !this.isArray(obj) && !this.isRegExp(obj) && !this.isDate(obj);
+        },
+        isNonEmptyString: function(obj) {
+            return !!(obj && this.isString(obj));
+        },
+        isHTMLElement: function(obj) {
+            return !!(obj && obj.childNodes && obj.tagName && obj.appendChild);
+        },
+        /**
+         * Check if obj is null,undefined,empty array or empty string.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isEmpty: function(obj) {
+            return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
+        },
+        isObject: function(obj) {
+            return type.strobject === typeof obj;
+        }
+    };
+
+    var typeKeys = "RegExp,Date,String,Array,Boolean,Function,Number".split(',');
+
+    /**
+     * Create is* functions.
+     * @param  {String} vari
+     * @return {Function}
+     */
+    function createIs(vari) {
+        return (function(vari) {
+            return function(variable) {
+                return '[object ' + vari + ']' === ({}).toString.apply(variable);
+            };
+        })(vari);
+    }
+
+    /**
+     * Create assert function.
+     * @param  {String} vari
+     * @return {Function}
+     */
+    function createAssert(vari) {
+        return (function(vari) {
+            return function(name, variable) {
+
+                if (arguments.length < 2) {
+                    variable = name;
+                    name = String(variable);
+                }
+
+                if (!type['is' + vari](variable)) {
+                    throw new Error('"' + name + '" has to be a(n) ' + vari);
+                }
+            };
+        })(vari);
+    }
+
+    for (var i = typeKeys.length - 1; i >= 0; --i) {
+        type['is' + typeKeys[i]] = createIs(typeKeys[i]);
+        type['assert' + typeKeys[i]] = createAssert(typeKeys[i]);
+    }
+
+    //create missing asserts
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(',');
+    for (i = assertKeys.length; i >= 0; --i) {
+        type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
+    }
+
+    //As type is required by utils,we cannot use utils.freeze
+    module.exports = type;
+})();
+},{}],13:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * utils.js
+ *
+ * changelog
+ * 2014-05-24[23:06:31]:authorized
+ * 2014-06-06[09:23:53]:getIEVersion
+ * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
+ * 2014-06-07[16:39:34]:remove 'dom' module
+ * 2014-06-09[11:05:06]:define 'hideSource' function
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.4
+ * @since 0.1.0
+ */
+
+(function(undefined) {
+    "use strict";
+
+    var array = require('./array');
+    var math = require('./math');
+    var type = require('./type');
+    var dom = require('./dom');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    var utils = {
+        math: math,
+        array: array,
+        dom: dom,
+        type: type,
+        /**
+         * Merge object members.
+         *
+         * @param  {Object} dest
+         * @param  {Object} src
+         * @return {Object}      Dest
+         */
+        mixin: function(dest, src) {
+
+            src = src || {};
+
+            type.assertNonNullOrUndefined('dest', dest);
+
+            for (var e in src) {
+                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
+                    dest[e] = src[e];
+                }
+            }
+            return dest;
+        },
+
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 11 supported.
+         *
+         * @return {Integer} Version in integer.
+         */
+        getIEVersion: function() {
+            var ua = navigator.userAgent,
+                matches, tridentMap = {
+                    '4': 8,
+                    '5': 9,
+                    '6': 10,
+                    '7': 11
+                };
+
+            matches = ua.match(/MSIE (\d+)/i);
+
+            if (matches && matches[1]) {
+                //find by msie
+                return +matches[1];
+            }
+
+            matches = ua.match(/Trident\/(\d+)/i);
+            if (matches && matches[1]) {
+                //find by trident
+                return tridentMap[matches[1]] || null;
+            }
+
+            //we did what we could
+            return null;
+        },
+
+        /**
+         * Trim a string.If a non-string passed in,
+         * convert it to a string.
+         *
+         * @param  {Object} str Source string
+         * @return {String}    Trimed string
+         * @version 0.1.1
+         */
+        trim: function(str) {
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
+            } else {
+                return String(str).replace(rtrim, '');
+            }
+        },
+        /**
+         * Freeze an object by Object.freeze,so it does not
+         * work on old browsers.
+         *
+         * This function is trying to remind developers to not
+         * modify something.
+         *
+         * @param  {Object} obj Object to be freezed
+         * @return {Object}    Source object
+         */
+        freeze: function(obj) {
+
+            type.assertNonNullOrUndefined('obj', obj);
+            type.assertObject('obj', obj);
+
+            if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
+                Object.freeze(obj);
+            }
+
+            return obj;
+        },
+        /**
+         * Hide source of a function by defining toString.
+         * 
+         * @param  {String} name Function name
+         * @param  {Function} func Function to be hide-sourced
+         * @param  {String} prefix 
+         * @return {Function}      'toString' function
+         */
+        hideSource: function(name, func, prefix) {
+            type.assertNonEmptyString('name', name);
+            type.assertFunction('func', func);
+
+            if(prefix)
+            {
+                type.assertNonEmptyString(prefix);
+            }else{
+                prefix = 'PassportSC.';
+            }
+
+            var source = String(func);
+
+            func.toString = (function(name, source) {
+                return function() {
+                    return prefix + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+                };
+            })(name, source);
+
+            return func.toString;
+        }
+    };
+
+    utils.freeze(math);
+    utils.freeze(dom);
+    utils.freeze(type);
+    utils.freeze(array);
+
+    module.exports = utils;
+})();
+},{"./array":1,"./dom":7,"./math":9,"./type":12}]},{},[1,2,3,4,5,6,7,8,9,12,13,10,11])

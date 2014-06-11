@@ -1,2 +1,3259 @@
-!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);throw new Error("Cannot find module '"+g+"'")}var j=c[g]={exports:{}};b[g][0].call(j.exports,function(a){var c=b[g][1][a];return e(c?c:a)},j,j.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){function c(a,b){return m.isUndefined(b)?""+b:!m.isNumber(b)||!isNaN(b)&&isFinite(b)?m.isFunction(b)||m.isRegExp(b)?b.toString():b:b.toString()}function d(a,b){return m.isString(a)?a.length<b?a:a.slice(0,b):a}function e(a){return d(JSON.stringify(a.actual,c),128)+" "+a.operator+" "+d(JSON.stringify(a.expected,c),128)}function f(a,b,c,d,e){throw new p.AssertionError({message:c,actual:a,expected:b,operator:d,stackStartFunction:e})}function g(a,b){a||f(a,!0,b,"==",p.ok)}function h(a,b){if(a===b)return!0;if(m.isBuffer(a)&&m.isBuffer(b)){if(a.length!=b.length)return!1;for(var c=0;c<a.length;c++)if(a[c]!==b[c])return!1;return!0}return m.isDate(a)&&m.isDate(b)?a.getTime()===b.getTime():m.isRegExp(a)&&m.isRegExp(b)?a.source===b.source&&a.global===b.global&&a.multiline===b.multiline&&a.lastIndex===b.lastIndex&&a.ignoreCase===b.ignoreCase:m.isObject(a)||m.isObject(b)?j(a,b):a==b}function i(a){return"[object Arguments]"==Object.prototype.toString.call(a)}function j(a,b){if(m.isNullOrUndefined(a)||m.isNullOrUndefined(b))return!1;if(a.prototype!==b.prototype)return!1;if(i(a))return i(b)?(a=n.call(a),b=n.call(b),h(a,b)):!1;try{var c,d,e=q(a),f=q(b)}catch(g){return!1}if(e.length!=f.length)return!1;for(e.sort(),f.sort(),d=e.length-1;d>=0;d--)if(e[d]!=f[d])return!1;for(d=e.length-1;d>=0;d--)if(c=e[d],!h(a[c],b[c]))return!1;return!0}function k(a,b){return a&&b?"[object RegExp]"==Object.prototype.toString.call(b)?b.test(a):a instanceof b?!0:b.call({},a)===!0?!0:!1:!1}function l(a,b,c,d){var e;m.isString(c)&&(d=c,c=null);try{b()}catch(g){e=g}if(d=(c&&c.name?" ("+c.name+").":".")+(d?" "+d:"."),a&&!e&&f(e,c,"Missing expected exception"+d),!a&&k(e,c)&&f(e,c,"Got unwanted exception"+d),a&&e&&c&&!k(e,c)||!a&&e)throw e}var m=a("util/"),n=Array.prototype.slice,o=Object.prototype.hasOwnProperty,p=b.exports=g;p.AssertionError=function(a){this.name="AssertionError",this.actual=a.actual,this.expected=a.expected,this.operator=a.operator,a.message?(this.message=a.message,this.generatedMessage=!1):(this.message=e(this),this.generatedMessage=!0);var b=a.stackStartFunction||f;if(Error.captureStackTrace)Error.captureStackTrace(this,b);else{var c=new Error;if(c.stack){var d=c.stack,g=b.name,h=d.indexOf("\n"+g);if(h>=0){var i=d.indexOf("\n",h+1);d=d.substring(i+1)}this.stack=d}}},m.inherits(p.AssertionError,Error),p.fail=f,p.ok=g,p.equal=function(a,b,c){a!=b&&f(a,b,c,"==",p.equal)},p.notEqual=function(a,b,c){a==b&&f(a,b,c,"!=",p.notEqual)},p.deepEqual=function(a,b,c){h(a,b)||f(a,b,c,"deepEqual",p.deepEqual)},p.notDeepEqual=function(a,b,c){h(a,b)&&f(a,b,c,"notDeepEqual",p.notDeepEqual)},p.strictEqual=function(a,b,c){a!==b&&f(a,b,c,"===",p.strictEqual)},p.notStrictEqual=function(a,b,c){a===b&&f(a,b,c,"!==",p.notStrictEqual)},p.throws=function(){l.apply(this,[!0].concat(n.call(arguments)))},p.doesNotThrow=function(){l.apply(this,[!1].concat(n.call(arguments)))},p.ifError=function(a){if(a)throw a};var q=Object.keys||function(a){var b=[];for(var c in a)o.call(a,c)&&b.push(c);return b}},{"util/":3}],2:[function(a,b){b.exports=function(a){return a&&"object"==typeof a&&"function"==typeof a.copy&&"function"==typeof a.fill&&"function"==typeof a.readUInt8}},{}],3:[function(a,b,c){(function(b,d){function e(a,b){var d={seen:[],stylize:g};return arguments.length>=3&&(d.depth=arguments[2]),arguments.length>=4&&(d.colors=arguments[3]),p(b)?d.showHidden=b:b&&c._extend(d,b),v(d.showHidden)&&(d.showHidden=!1),v(d.depth)&&(d.depth=2),v(d.colors)&&(d.colors=!1),v(d.customInspect)&&(d.customInspect=!0),d.colors&&(d.stylize=f),i(d,a,d.depth)}function f(a,b){var c=e.styles[b];return c?"["+e.colors[c][0]+"m"+a+"["+e.colors[c][1]+"m":a}function g(a){return a}function h(a){var b={};return a.forEach(function(a){b[a]=!0}),b}function i(a,b,d){if(a.customInspect&&b&&A(b.inspect)&&b.inspect!==c.inspect&&(!b.constructor||b.constructor.prototype!==b)){var e=b.inspect(d,a);return t(e)||(e=i(a,e,d)),e}var f=j(a,b);if(f)return f;var g=Object.keys(b),p=h(g);if(a.showHidden&&(g=Object.getOwnPropertyNames(b)),z(b)&&(g.indexOf("message")>=0||g.indexOf("description")>=0))return k(b);if(0===g.length){if(A(b)){var q=b.name?": "+b.name:"";return a.stylize("[Function"+q+"]","special")}if(w(b))return a.stylize(RegExp.prototype.toString.call(b),"regexp");if(y(b))return a.stylize(Date.prototype.toString.call(b),"date");if(z(b))return k(b)}var r="",s=!1,u=["{","}"];if(o(b)&&(s=!0,u=["[","]"]),A(b)){var v=b.name?": "+b.name:"";r=" [Function"+v+"]"}if(w(b)&&(r=" "+RegExp.prototype.toString.call(b)),y(b)&&(r=" "+Date.prototype.toUTCString.call(b)),z(b)&&(r=" "+k(b)),0===g.length&&(!s||0==b.length))return u[0]+r+u[1];if(0>d)return w(b)?a.stylize(RegExp.prototype.toString.call(b),"regexp"):a.stylize("[Object]","special");a.seen.push(b);var x;return x=s?l(a,b,d,p,g):g.map(function(c){return m(a,b,d,p,c,s)}),a.seen.pop(),n(x,r,u)}function j(a,b){if(v(b))return a.stylize("undefined","undefined");if(t(b)){var c="'"+JSON.stringify(b).replace(/^"|"$/g,"").replace(/'/g,"\\'").replace(/\\"/g,'"')+"'";return a.stylize(c,"string")}return s(b)?a.stylize(""+b,"number"):p(b)?a.stylize(""+b,"boolean"):q(b)?a.stylize("null","null"):void 0}function k(a){return"["+Error.prototype.toString.call(a)+"]"}function l(a,b,c,d,e){for(var f=[],g=0,h=b.length;h>g;++g)f.push(F(b,String(g))?m(a,b,c,d,String(g),!0):"");return e.forEach(function(e){e.match(/^\d+$/)||f.push(m(a,b,c,d,e,!0))}),f}function m(a,b,c,d,e,f){var g,h,j;if(j=Object.getOwnPropertyDescriptor(b,e)||{value:b[e]},j.get?h=j.set?a.stylize("[Getter/Setter]","special"):a.stylize("[Getter]","special"):j.set&&(h=a.stylize("[Setter]","special")),F(d,e)||(g="["+e+"]"),h||(a.seen.indexOf(j.value)<0?(h=q(c)?i(a,j.value,null):i(a,j.value,c-1),h.indexOf("\n")>-1&&(h=f?h.split("\n").map(function(a){return"  "+a}).join("\n").substr(2):"\n"+h.split("\n").map(function(a){return"   "+a}).join("\n"))):h=a.stylize("[Circular]","special")),v(g)){if(f&&e.match(/^\d+$/))return h;g=JSON.stringify(""+e),g.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)?(g=g.substr(1,g.length-2),g=a.stylize(g,"name")):(g=g.replace(/'/g,"\\'").replace(/\\"/g,'"').replace(/(^"|"$)/g,"'"),g=a.stylize(g,"string"))}return g+": "+h}function n(a,b,c){var d=0,e=a.reduce(function(a,b){return d++,b.indexOf("\n")>=0&&d++,a+b.replace(/\u001b\[\d\d?m/g,"").length+1},0);return e>60?c[0]+(""===b?"":b+"\n ")+" "+a.join(",\n  ")+" "+c[1]:c[0]+b+" "+a.join(", ")+" "+c[1]}function o(a){return Array.isArray(a)}function p(a){return"boolean"==typeof a}function q(a){return null===a}function r(a){return null==a}function s(a){return"number"==typeof a}function t(a){return"string"==typeof a}function u(a){return"symbol"==typeof a}function v(a){return void 0===a}function w(a){return x(a)&&"[object RegExp]"===C(a)}function x(a){return"object"==typeof a&&null!==a}function y(a){return x(a)&&"[object Date]"===C(a)}function z(a){return x(a)&&("[object Error]"===C(a)||a instanceof Error)}function A(a){return"function"==typeof a}function B(a){return null===a||"boolean"==typeof a||"number"==typeof a||"string"==typeof a||"symbol"==typeof a||"undefined"==typeof a}function C(a){return Object.prototype.toString.call(a)}function D(a){return 10>a?"0"+a.toString(10):a.toString(10)}function E(){var a=new Date,b=[D(a.getHours()),D(a.getMinutes()),D(a.getSeconds())].join(":");return[a.getDate(),J[a.getMonth()],b].join(" ")}function F(a,b){return Object.prototype.hasOwnProperty.call(a,b)}var G=/%[sdj%]/g;c.format=function(a){if(!t(a)){for(var b=[],c=0;c<arguments.length;c++)b.push(e(arguments[c]));return b.join(" ")}for(var c=1,d=arguments,f=d.length,g=String(a).replace(G,function(a){if("%%"===a)return"%";if(c>=f)return a;switch(a){case"%s":return String(d[c++]);case"%d":return Number(d[c++]);case"%j":try{return JSON.stringify(d[c++])}catch(b){return"[Circular]"}default:return a}}),h=d[c];f>c;h=d[++c])g+=q(h)||!x(h)?" "+h:" "+e(h);return g},c.deprecate=function(a,e){function f(){if(!g){if(b.throwDeprecation)throw new Error(e);b.traceDeprecation?console.trace(e):console.error(e),g=!0}return a.apply(this,arguments)}if(v(d.process))return function(){return c.deprecate(a,e).apply(this,arguments)};if(b.noDeprecation===!0)return a;var g=!1;return f};var H,I={};c.debuglog=function(a){if(v(H)&&(H=b.env.NODE_DEBUG||""),a=a.toUpperCase(),!I[a])if(new RegExp("\\b"+a+"\\b","i").test(H)){var d=b.pid;I[a]=function(){var b=c.format.apply(c,arguments);console.error("%s %d: %s",a,d,b)}}else I[a]=function(){};return I[a]},c.inspect=e,e.colors={bold:[1,22],italic:[3,23],underline:[4,24],inverse:[7,27],white:[37,39],grey:[90,39],black:[30,39],blue:[34,39],cyan:[36,39],green:[32,39],magenta:[35,39],red:[31,39],yellow:[33,39]},e.styles={special:"cyan",number:"yellow","boolean":"yellow",undefined:"grey","null":"bold",string:"green",date:"magenta",regexp:"red"},c.isArray=o,c.isBoolean=p,c.isNull=q,c.isNullOrUndefined=r,c.isNumber=s,c.isString=t,c.isSymbol=u,c.isUndefined=v,c.isRegExp=w,c.isObject=x,c.isDate=y,c.isError=z,c.isFunction=A,c.isPrimitive=B,c.isBuffer=a("./support/isBuffer");var J=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];c.log=function(){console.log("%s - %s",E(),c.format.apply(c,arguments))},c.inherits=a("inherits"),c._extend=function(a,b){if(!b||!x(b))return a;for(var c=Object.keys(b),d=c.length;d--;)a[c[d]]=b[c[d]];return a}}).call(this,a("FWaASH"),"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./support/isBuffer":2,FWaASH:5,inherits:4}],4:[function(a,b){b.exports="function"==typeof Object.create?function(a,b){a.super_=b,a.prototype=Object.create(b.prototype,{constructor:{value:a,enumerable:!1,writable:!0,configurable:!0}})}:function(a,b){a.super_=b;var c=function(){};c.prototype=b.prototype,a.prototype=new c,a.prototype.constructor=a}},{}],5:[function(a,b){function c(){}var d=b.exports={};d.nextTick=function(){var a="undefined"!=typeof window&&window.setImmediate,b="undefined"!=typeof window&&window.postMessage&&window.addEventListener;if(a)return function(a){return window.setImmediate(a)};if(b){var c=[];return window.addEventListener("message",function(a){var b=a.source;if((b===window||null===b)&&"process-tick"===a.data&&(a.stopPropagation(),c.length>0)){var d=c.shift();d()}},!0),function(a){c.push(a),window.postMessage("process-tick","*")}}return function(a){setTimeout(a,0)}}(),d.title="browser",d.browser=!0,d.env={},d.argv=[],d.on=c,d.addListener=c,d.once=c,d.off=c,d.removeListener=c,d.removeAllListeners=c,d.emit=c,d.binding=function(){throw new Error("process.binding is not supported")},d.cwd=function(){return"/"},d.chdir=function(){throw new Error("process.chdir is not supported")}},{}],6:[function(a,b){!function(){"use strict";var c=a("./type"),d={};d.indexOf=function(a,b,c){var d,e;if(!a||!b)return-1;if(c=0|c,isNaN(c)&&(c=0),c>=a.length)return-1;if(0>c&&(c=a.length+c,0>c&&(c=0)),Array.prototype.indexOf)return Array.prototype.indexOf.call(a,b,c);for(d=c,e=a.length;e>d;++d)if(b===a[d])return d;return-1},d.forEach=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.forEach)return Array.prototype.forEach.call(a,b,d);for(e=0,f=a.length;f>e;++e)b.call(d,a[e],e,a)},d.each=d.every=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.every)return Array.prototype.every.call(a,b,d);for(e=0,f=a.length;f>e;++e)if(!b.call(d,a[e],e,a))return!1;return!0},d.some=function(a,b,d){var e,f;if(c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.some)return Array.prototype.some.call(a,b,d);for(e=0,f=a.length;f>e;++e)if(!0===b.call(d,a[e],e,a))return!0;return!1},d.filter=function(a,b,e){var f=[];return c.assertNonNullOrUndefined("arr",a),c.assertFunction("callbackfn",b),Array.prototype.filter?Array.prototype.filter.call(a,b,e):(d.forEach(a,function(c,d){b.call(e,c,d,a)&&f.push(c)}),f)},b.exports=d}()},{"./type":21}],7:[function(a,b){!function(c,d){"use strict";var e=a("./type").expando,f={getElementById:function(a){var b=a.createElement("div");a.documentElement.appendChild(b).setAttribute("id",e);var c=a.getElementsByName&&a.getElementsByName(e).length;return a.documentElement.removeChild(b),b=null,!!c}(d)};b.exports=f}(window,document)},{"./type":21}],8:[function(a,b){!function(){"use strict";var c=a("./utils"),d={SYSTEM_ERROR:{code:10001,info:"未知错误"},PARAM_ERROR:{code:10002,info:"参数错误"},CAPTCHA_FAILED:{code:20221,info:"验证码验证失败 "},ACCOUNT_NOT_EXIST:{code:20205,info:"帐号不存在"},ACCOUNT_NOT_EXIST_1:{code:10009,info:"帐号不存在"},ACCOUNT_NOT_ACTIVED:{code:20231,info:"登陆账号未激活"},ACCOUNT_KILLED:{code:20232,info:"登陆账号被封杀"},ACCOUNT_PWD_WRONG:{code:20206,info:"账号或密码错误"},LOGIN_TIME_OUT:{code:1e5,info:"登录超时"},NEED_USERNAME:{code:100001,info:"请输入通行证用户名"},NEED_PASSWORD:{code:100002,info:"请输入通行证密码"}};c.freeze(d),b.exports=d}(window,document)},{"./utils":22}],9:[function(a,b){!function(c){"use strict";var d=a("./type"),e=d.debug?c.console:{};e&&d.strobject===typeof e||(e={});for(var f="trace,info,log,debug,warn,error".split(","),g=f.length-1;g>=0;g--)e[f[g]]=e[f[g]]||d.noop;b.exports=e}(window)},{"./type":21}],10:[function(a,b){!function(c,d){"use strict";var e=a("./utils"),f={cookie:{},getCookie:function(){return this.cookie},parsePassportCookie:function(){var a,b,f,g;if(!0!==(c.navigator&&navigator.cookieEnabled))return this;this.cookie={};var h=d.cookie.split("; ");for(b=0;b<h.length;++b)if(g=h[b].match(/^p(?:pinf|pinfo|assport)=(.+)$/),g&&g[1]){a=g[1];break}if(!a)return this;try{f=unescape(a).split("|"),("1"==f[0]||"2"==f[0]&&f[3])&&this._parsePassportCookie(e.math.utf8to16(e.math.b64_decodex(f[3])))}catch(i){}return this},_parsePassportCookie:function(a){for(var b,c,d,e,f=0,g=a.indexOf(":",f);-1!=g&&(b=a.substring(f,g),e=a.indexOf(":",g+1),-1!=e)&&(c=parseInt(a.substring(g+1,e)),d=a.substr(e+1,c),"|"==a.charAt(e+1+c));)this.cookie[b]=d,f=e+2+c,g=a.indexOf(":",f);return this}};b.exports={PassportCookieParser:{parse:function(){return f.parsePassportCookie().getCookie()}}}}(window,document)},{"./utils":22}],11:[function(a,b){!function(c,d,e){"use strict";function f(a){var b=z;return b&&o.strobject===typeof b&&o.strundefined!==typeof b.appendChild&&b.parentNode||(b=z=d.createElement("div"),b.style.cssText=r,b.className=b.id=q,d.body.appendChild(b)),o.isFunction(a)&&a(b),b}function g(a){var b,c,d,e,f;for(f=x={},o.assertPlainObject("options",a),k.mixin(f,A),k.mixin(f,a),b=w.length-1;b>=0;--b)for(d=w[b],c=d.name.length-1;c>=0;--c)if(e=d.name[c],!d.validate(e,f[e]))throw new Error(o.strfunction===typeof d.errmsg?d.errmsg(e,f[e]):d.errmsg);f._token=k.math.uuid()}function h(a,b){return a.replace(/<%=([\w\-]+?)%>/g,function(a,c){var d=b[c];return e===d?"":d})}var i,j,k=a("./utils"),l=a("./codes"),m=a("./console"),n=a("./event"),o=k.type,p=a("./cookie").PassportCookieParser,q=o.expando,r="width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;",s={login_success:"loginsuccess",login_failed:"loginfailed",logout_success:"logoutsuccess",third_party_login_complete:"3rdlogincomplete",param_error:"paramerror"},t={login:"https://account.sogou.com/web/login",logout:"https://account.sogou.com/web/logout_js",active:"https://account.sogou.com/web/remindActivate",captcha:"https://account.sogou.com/captcha",trdparty:"http://account.sogou.com/connect/login"},u={size:{renren:[880,620],sina:[780,640],qq:[500,300]}},v='<form method="post" action="'+t.login+'" target="'+q+'"><input type="hidden" name="username" value="<%=username%>"><input type="hidden" name="password" value="<%=password%>"><input type="hidden" name="captcha" value="<%=vcode%>"><input type="hidden" name="autoLogin" value="<%=autoLogin%>"><input type="hidden" name="client_id" value="<%=appid%>"><input type="hidden" name="xd" value="<%=redirectUrl%>"><input type="hidden" name="token" value="<%=token%>"></form><iframe name="'+q+'" src="about:blank" style="'+r+'"></iframe>',w=[{name:["appid"],validate:function(a,b){return b&&(o.strstr===typeof b||o.strnumber===typeof b)},errmsg:function(a){return'"'+a+'" SHOULD be a string or a number'}},{name:["redirectUrl"],validate:function(a,b){return b&&o.strstr===typeof b&&new RegExp("^"+location.protocol+"//"+location.host,"i").test(b)},errmsg:function(a){return'"'+a+'" SHOULD be a URL which has the some domain as the current page'}}],x=null,y=null,z=null,A={appid:null,redirectUrl:null},B="Passport has not been initialized yet",C={validateUsername:function(a){return o.isNonEmptyString(a)&&/^[\w-@\.]+$/.test(a)},validatePassword:function(a){return o.isNonEmptyString(a)&&/^[\w-]{6,16}$/.test(a)},validateCaptcha:function(a){return o.isNonEmptyString(a)&&/^[a-zA-Z0-9]+$/.test(a)}};for(i in C)o.isFunction(C[i])&&k.hideSource(i,C[i],"PassportSC.tools.");var D={version:"0.0.8",tools:C,init:function(a){return this.isInitialized()?m.warn("Passport has already been initialized"):(m.trace("Initialize passport"),g(a)),c.PassportSC},login:function(a,b,c,d){if(!this.isInitialized())throw new Error(B);m.trace("logining with:"+Array.prototype.join.call(arguments));var e;return arguments.length<4&&(d=c,c=""),C.validateUsername(a)?C.validatePassword(b)?c&&!C.validateCaptcha(c)?(this.emit(s.param_error,{name:"captcha",value:c,msg:"验证码格式不正确"}),!1):(j=a,e={username:a,password:b,vcode:c||"",autoLogin:+!!d,appid:x.appid,redirectUrl:x.redirectUrl,token:x._token},f(function(a){a.innerHTML=h(v,e),a.getElementsByTagName("form")[0].submit()}),!0):(this.emit(s.param_error,{name:"password",value:b,msg:"密码格式不正确"}),!1):(this.emit(s.param_error,{name:"username",value:a,msg:"账号格式不正确"}),!1)},login3rd:function(a,b,d){if(!this.isInitialized())throw new Error(B);o.assertNonEmptyString("provider",a);var e=u.size[a];if(!e)throw new Error('provider:"'+a+'" is not supported in  third party login');"popup"===b?o.assertNonEmptyString("redirectUrl",d):o.isUndefined(b)?(b="page",d=location.href):d=d||location.href;var f=t.trdparty+"?client_id="+x.appid+"&provider="+a+"&ru="+encodeURIComponent(d);if("popup"===b){var g=(c.screen.availWidth-e[0])/2;c.open(f,"","height="+e[1]+",width="+e[0]+",top=80,left="+g+",toolbar=no,menubar=no")}else{if("page"!==b)throw new Error('display:"'+b+'" is not supported in third party login');location.href=f}return!0},logout:function(){if(!this.isInitialized())throw new Error(B);m.trace("logouting");var a=this,b=t.logout+"?client_id="+x.appid;f(function(c){k.dom.addIframe(c,b,function(){a.emit(s.logout_success)})})},userid:function(){if(!this.isInitialized())throw new Error(B);return p.parse().userid||""},_logincb:function(a){if(!this.isInitialized())return void m.trace("Login callback received but [Passport] has not been initialized");if(!a||o.strobject!==typeof a)return m.error("Nothing callback received"),a.msg="登录失败",void this.emit(s.login_failed,a);if(o.isNonEmptyString(a.msg)&&(a.msg=decodeURIComponent(a.msg)),0===+a.status)a.msg=a.msg||"登录成功",this.emit(s.login_success,a);else if(20231===+a.status)a.activeurl=t.active+"?email="+encodeURIComponent(j||"")+"&client_id="+x.appid+"&ru="+encodeURIComponent(location.href),a.msg=a.msg||"帐号未激活",this.emit(s.login_failed,a);else if(+a.needcaptcha)a.captchaimg=t.captcha+"?token="+x._token+"&t="+ +new Date,a.msg=a.msg||"需要验证码",this.emit(s.login_failed,a);else{if(!a.msg)for(var b in l)if(l[b].code==a.status){a.msg=l[b].info;break}a.msg=a.msg||"未知错误",this.emit(s.login_failed,a)}},_logincb3rd:function(){return this.isInitialized()?void this.emit(s.third_party_login_complete):void m.trace("Login3rd callback received but [Passport] has not been initialized")},isInitialized:function(){return!!x},getOptions:function(){var a={};return k.mixin(a,x)},getSupportedEvents:function(){var a={};return k.mixin(a,s)}};y=function(){return D.init.apply(D,arguments)},k.mixin(y,D),k.mixin(y,new n);for(i in y)o.isFunction(y[i])&&k.hideSource(i,y[i]);c.PassportSC&&o.isPlainObject(c.PassportSC)?(k.mixin(c.PassportSC,y),o.isFunction(c.PassportSC.onApiLoaded)&&c.PassportSC.onApiLoaded()):c.PassportSC=y,b.exports={PassportSC:c.PassportSC,addSupportedEvent:function(a,b){return o.assertNonEmptyString("name",a),o.assertNonEmptyString("val",b),s[a]=b,s},addFixedUrl:function(a,b){return o.assertNonEmptyString("name",a),o.assertNonEmptyString("url",b),t[a]=b,t}}}(window,document)},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":22}],12:[function(a,b){!function(c,d){"use strict";var e=a("./type"),f=a("./buggy");if(!c||!d||!d.documentElement||"HTML"!==d.documentElement.nodeName)throw new Error("It's only for HTML document");var g={addLink:function(a,b){e.assertNonEmptyString("href",a),b?e.assertFunction(b):b=e.noop;var c=d.createElement("link");return c.rel="stylesheet",c.type="text/css",d.getElementsByTagName("head")[0].appendChild(c),c.readyState?c.onreadystatechange=function(){("loaded"===c.readyState||"complete"===c.readyState)&&(c.onreadystatechange=null,b())}:c.onload=function(){b()},c.href=a,c},addScript:function(a,b){e.assertNonEmptyString("src",a),b?e.assertFunction(b):b=e.noop;var c=d.createElement("script");return c.type="text/javascript",c.charset="utf-8",c.readyState?c.onreadystatechange=function(){("loaded"==c.readyState||"complete"==c.readyState)&&(c.onreadystatechange=null,b())}:c.onload=function(){b()},c.src=a,d.getElementsByTagName("head")[0].appendChild(c),c},addIframe:function(a,b,c){e.assertHTMLElement("container",a),e.assertNonEmptyString("url",b);var f=d.createElement("iframe");f.style.cssText="height:1px;width:1px;visibility:hidden;",f.src=b,f.attachEvent?f.attachEvent("onload",function(){e.isFunction(c)&&c()}):f.onload=function(){e.isFunction(c)&&c()},a.appendChild(f)},bindEvent:function(a,b,c){return e.assertHTMLElement("ele",a),e.assertNonEmptyString("evt",b),e.assertFunction("func",c),d.addEventListener?a.addEventListener(b,c,!1):d.attachEvent&&a.attachEvent("on"+b,c),this},stopPropagation:function(a){a.stopPropagation?a.stopPropagation():a.cancelBubble=!0},preventDefault:function(a){a.preventDefault?a.preventDefault():a.returnValue=!1},eventTarget:function(a){return a=a||c.event,a.target||a.srcElement},id:function(a){e.assertNonEmptyString("id",a);var b,c,g=d.getElementById(a);return f.getElementById?g&&(c=typeof g.getAttributeNode!==e.strundefined&&g.getAttributeNode("id"),c&&c.value===a)?g:(b=d.getElementsByTagName("*"),array.some(b,function(b){return b&&1===b.nodeType&&b.id===a?!0:void 0}),g&&g.id===a?g:null):g&&g.parentNode?g:null}};b.exports=g}(window,document)},{"./buggy":7,"./type":21}],13:[function(a,b){!function(){"use strict";var c=a("./utils"),d=a("./console"),e=c.array,f=c.type,g=function(){var a={};this.on=function(b,d,g){var h;return f.assertNonEmptyString("event",b),f.assertFunction("func",d),h=c.trim(b).split(/\s/),e.forEach(h,function(b){a[b]=a[b]||[],a[b].push({type:b,func:d,thisArg:g})}),this},this.off=function(b,d){var g,h;return f.assertNonEmptyString("event",b),f.assertFunction("func",d),g=c.trim(b).split(/\s/),e.forEach(g,function(b){return d?(h=a[b],void(f.isArray(h)&&(a[b]=e.filter(h,function(a){return a.func!==d})))):(delete a[b],this)}),this},this.emit=function(b,g){var h,i;return f.assertNonEmptyString("event",b),h=c.trim(b).split(/\s/),e.forEach(h,function(b){i=a[b],f.isArray(i)&&e.forEach(i,function(a){a.timestamp=+new Date,a.func.call(a.thisArg||null,a,g)})}),d.trace("emitting "+h.join()),this}};b.exports=g}()},{"./console":9,"./utils":22}],14:[function(a,b){!function(){"use strict";var a=0,c=8,d={b64_423:function(a){for(var b=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9","-","_"],c="",d=0;d<a.length;d++){for(var e=0;64>e;e++)if(a.charAt(d)==b[e]){var f=e.toString(2);c+=("000000"+f).substr(f.length);break}if(64==e)return 2==d?c.substr(0,8):c.substr(0,16)}return c},b2i:function(a){for(var b=0,c=128,d=0;8>d;d++,c/=2)"1"==a.charAt(d)&&(b+=c);return String.fromCharCode(b)},b64_decodex:function(a){var b,c=[],d="";for(b=0;b<a.length;b+=4)d+=this.b64_423(a.substr(b,4));for(b=0;b<d.length;b+=8)c+=this.b2i(d.substr(b,8));return c},hex_md5:function(a){return this.binl2hex(this.core_md5(this.str2binl(a),a.length*c))},core_md5:function(a,b){a[b>>5]|=128<<b%32,a[(b+64>>>9<<4)+14]=b;for(var c=1732584193,d=-271733879,e=-1732584194,f=271733878,g=this.md5_ff,h=this.md5_gg,i=this.md5_hh,j=this.md5_ii,k=0;k<a.length;k+=16){var l=c,m=d,n=e,o=f;c=g(c,d,e,f,a[k+0],7,-680876936),f=g(f,c,d,e,a[k+1],12,-389564586),e=g(e,f,c,d,a[k+2],17,606105819),d=g(d,e,f,c,a[k+3],22,-1044525330),c=g(c,d,e,f,a[k+4],7,-176418897),f=g(f,c,d,e,a[k+5],12,1200080426),e=g(e,f,c,d,a[k+6],17,-1473231341),d=g(d,e,f,c,a[k+7],22,-45705983),c=g(c,d,e,f,a[k+8],7,1770035416),f=g(f,c,d,e,a[k+9],12,-1958414417),e=g(e,f,c,d,a[k+10],17,-42063),d=g(d,e,f,c,a[k+11],22,-1990404162),c=g(c,d,e,f,a[k+12],7,1804603682),f=g(f,c,d,e,a[k+13],12,-40341101),e=g(e,f,c,d,a[k+14],17,-1502002290),d=g(d,e,f,c,a[k+15],22,1236535329),c=h(c,d,e,f,a[k+1],5,-165796510),f=h(f,c,d,e,a[k+6],9,-1069501632),e=h(e,f,c,d,a[k+11],14,643717713),d=h(d,e,f,c,a[k+0],20,-373897302),c=h(c,d,e,f,a[k+5],5,-701558691),f=h(f,c,d,e,a[k+10],9,38016083),e=h(e,f,c,d,a[k+15],14,-660478335),d=h(d,e,f,c,a[k+4],20,-405537848),c=h(c,d,e,f,a[k+9],5,568446438),f=h(f,c,d,e,a[k+14],9,-1019803690),e=h(e,f,c,d,a[k+3],14,-187363961),d=h(d,e,f,c,a[k+8],20,1163531501),c=h(c,d,e,f,a[k+13],5,-1444681467),f=h(f,c,d,e,a[k+2],9,-51403784),e=h(e,f,c,d,a[k+7],14,1735328473),d=h(d,e,f,c,a[k+12],20,-1926607734),c=i(c,d,e,f,a[k+5],4,-378558),f=i(f,c,d,e,a[k+8],11,-2022574463),e=i(e,f,c,d,a[k+11],16,1839030562),d=i(d,e,f,c,a[k+14],23,-35309556),c=i(c,d,e,f,a[k+1],4,-1530992060),f=i(f,c,d,e,a[k+4],11,1272893353),e=i(e,f,c,d,a[k+7],16,-155497632),d=i(d,e,f,c,a[k+10],23,-1094730640),c=i(c,d,e,f,a[k+13],4,681279174),f=i(f,c,d,e,a[k+0],11,-358537222),e=i(e,f,c,d,a[k+3],16,-722521979),d=i(d,e,f,c,a[k+6],23,76029189),c=i(c,d,e,f,a[k+9],4,-640364487),f=i(f,c,d,e,a[k+12],11,-421815835),e=i(e,f,c,d,a[k+15],16,530742520),d=i(d,e,f,c,a[k+2],23,-995338651),c=j(c,d,e,f,a[k+0],6,-198630844),f=j(f,c,d,e,a[k+7],10,1126891415),e=j(e,f,c,d,a[k+14],15,-1416354905),d=j(d,e,f,c,a[k+5],21,-57434055),c=j(c,d,e,f,a[k+12],6,1700485571),f=j(f,c,d,e,a[k+3],10,-1894986606),e=j(e,f,c,d,a[k+10],15,-1051523),d=j(d,e,f,c,a[k+1],21,-2054922799),c=j(c,d,e,f,a[k+8],6,1873313359),f=j(f,c,d,e,a[k+15],10,-30611744),e=j(e,f,c,d,a[k+6],15,-1560198380),d=j(d,e,f,c,a[k+13],21,1309151649),c=j(c,d,e,f,a[k+4],6,-145523070),f=j(f,c,d,e,a[k+11],10,-1120210379),e=j(e,f,c,d,a[k+2],15,718787259),d=j(d,e,f,c,a[k+9],21,-343485551),c=this.safe_add(c,l),d=this.safe_add(d,m),e=this.safe_add(e,n),f=this.safe_add(f,o)}return[c,d,e,f]},md5_cmn:function(a,b,c,d,e,f){return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(b,a),this.safe_add(d,f)),e),c)},md5_ff:function(a,b,c,d,e,f,g){return this.md5_cmn(b&c|~b&d,a,b,e,f,g)},md5_gg:function(a,b,c,d,e,f,g){return this.md5_cmn(b&d|c&~d,a,b,e,f,g)},md5_hh:function(a,b,c,d,e,f,g){return this.md5_cmn(b^c^d,a,b,e,f,g)},md5_ii:function(a,b,c,d,e,f,g){return this.md5_cmn(c^(b|~d),a,b,e,f,g)},safe_add:function(a,b){var c=(65535&a)+(65535&b),d=(a>>16)+(b>>16)+(c>>16);return d<<16|65535&c},bit_rol:function(a,b){return a<<b|a>>>32-b},binl2hex:function(b){for(var c=a?"0123456789ABCDEF":"0123456789abcdef",d="",e=0;e<4*b.length;e++)d+=c.charAt(b[e>>2]>>e%4*8+4&15)+c.charAt(b[e>>2]>>e%4*8&15);return d},str2binl:function(a){for(var b=[],d=(1<<c)-1,e=0;e<a.length*c;e+=c)b[e>>5]|=(a.charCodeAt(e/c)&d)<<e%32;return b},utf8to16:function(a){var b,c,d,e,f,g,h,i,j;for(b=[],e=a.length,c=d=0;e>c;){switch(f=a.charCodeAt(c++),f>>4){case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:b[d++]=a.charAt(c-1);break;case 12:case 13:g=a.charCodeAt(c++),b[d++]=String.fromCharCode((31&f)<<6|63&g);break;case 14:g=a.charCodeAt(c++),h=a.charCodeAt(c++),b[d++]=String.fromCharCode((15&f)<<12|(63&g)<<6|63&h);break;case 15:switch(15&f){case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:g=a.charCodeAt(c++),h=a.charCodeAt(c++),i=a.charCodeAt(c++),j=(7&f)<<18|(63&g)<<12|(63&h)<<6|(63&i)-65536,b[d]=j>=0&&1048575>=j?String.fromCharCode(j>>>10&1023|55296,1023&j|56320):"?";break;case 8:case 9:case 10:case 11:c+=4,b[d]="?";break;case 12:case 13:c+=5,b[d]="?"}}d++}return b.join("")},s4:function(){return Math.floor(65536*(1+Math.random())).toString(16).substring(1)},uuid:function(){var a=this.s4;return a()+a()+a()+a()+a()+a()+a()+a()}};b.exports=d}()},{}],15:[function(a){!function(){"use strict";var b=a("assert"),c=a("../array");describe("Array",function(){describe("#indexOf()",function(){it("should find the correct index",function(){b.equal(2,c.indexOf([1,2,3],3))}),it("should return -1 when the value is not present",function(){b.equal(-1,c.indexOf([1,2,3],5)),b.equal(-1,c.indexOf([1,2,3,4],1,1))})}),describe("#forEach()",function(){it("should for each all",function(){var a=[1,2,3,4,5,6],d=0;c.forEach(a,function(){++d}),b.equal(d,a.length)})}),describe("#every()",function(){it("should return true when all elements gt 0",function(){b.equal(!0,c.every([1,3,4,7],function(a){return a>=0}))}),it("should return false when one element lnt 1",function(){b.equal(!1,c.every([1,3,4,7],function(a){return a>1}))})}),describe("#some()",function(){it("should return true when one element lt 2",function(){b.equal(!0,c.some([1,3,4,7],function(a){return 2>a}))}),it("should return false when all element lnt 10",function(){b.equal(!1,c.some([1,3,4,7],function(a){return a>10}))})}),describe("#filter()",function(){it("should only one element left",function(){b.equal(1,c.filter([1,3,4,7],function(a){return 2>a}).length)})})})}()},{"../array":6,assert:1}],16:[function(a){!function(b,c){var d=a("assert"),e=a("../cookie").PassportCookieParser;describe("Cookie",function(){it("userid parse",function(){navigator.cookieEnabled&&(c.cookie="ppinf=2|1402199707|1403409307|bG9naW5pZDowOnx1c2VyaWQ6NDQ6QkY1NkM3NEU1MEM1Mjk1RTQ2MDBCNEE0NDRBQzMxQTBAcXEuc29odS5jb218c2VydmljZXVzZTozMDowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDB8Y3J0OjA6fGVtdDoxOjB8YXBwaWQ6NDoxMTIwfHRydXN0OjE6MXxwYXJ0bmVyaWQ6MTowfHJlbGF0aW9uOjA6fHV1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1bmlxbmFtZTo0MzpOaWdodGluZ2FsZVkxMzYxJUU1JTlDJUE4JUU2JTkwJTlDJUU3JThCJTkwfHJlZnVzZXJpZDozMjpCRjU2Qzc0RTUwQzUyOTVFNDYwMEI0QTQ0NEFDMzFBMHxyZWZuaWNrOjEzOk5pZ2h0aW5nYWxlLll8",d.equal("BF56C74E50C5295E4600B4A444AC31A0@qq.sohu.com",e.parse().userid))})})}(window,document)},{"../cookie":10,assert:1}],17:[function(a){!function(){var b=a("assert"),c=a("../event");describe("Event",function(){it("event emit",function(){var a=new c,d=0,e="tick",f=function(){++d};a.on(e,f),a.emit(e),b.equal(1,d),a.off(e,f),a.emit(e),b.equal(1,d)})})}()},{"../event":13,assert:1}],18:[function(a){!function(){{var b=a("assert"),c=a("../math");a("../console")}describe("Math",function(){it("base64 decode",function(){b.equal(escape("搜狗passport"),c.utf8to16(c.b64_decodex("JXU2NDFDJXU3MkQ3cGFzc3BvcnQ=")))}),it("create 32 bytes uuid",function(){b.equal(32,c.uuid().length)})})}()},{"../console":9,"../math":14,assert:1}],19:[function(a){!function(b,c,d){var e=a("assert"),f=a("../type");describe("Type",function(){function a(a,b){return function(a,b){return function(){e(f["is"+a](i[a].pos[b]))}}(a,b)}function g(a,b){return function(a,b){return function(){e(!f["is"+a](i[a].nec[b]))}}(a,b)}function h(a,b){return function(a,b){return function(){e.throws(function(){f["assert"+a](i[a].nec[b])})}}(a,b)}var i={RegExp:{nec:["x",0,!1,{},[],null,d,new Date,f.noop],pos:[/regexp/,new RegExp]},Date:{nec:[/x/,"x",0,!1,{},[],null,d,f.noop],pos:[new Date]},String:{nec:[/x/,0,!1,{},[],null,d,new Date,f.noop],pos:["string",new String]},Array:{nec:[/x/,"x",0,!1,{length:1},,null,d,new Date,f.noop],pos:[[],Array()]},Boolean:{nec:[/x/,"x",0,{},[],null,d,new Date,f.noop],pos:[!0,new Boolean]},Function:{nec:[/x/,"x",0,!1,{},[],null,d,new Date],pos:[f.noop,new Function]},Number:{nec:[/x/,"x",!1,{},[],null,d,new Date,f.noop],pos:[2.3,new Number,-9e-8,0/0,Number.MAX_VALUE,Number.POSITIVE_INFINITY]},Object:{nec:["x",1,!1,d,f.noop],pos:[[],{},new Object,null,b,new Date,new String,new RegExp]},Empty:{nec:[/x/,"x",1,!1,{},new Date,f.noop],pos:["",[],null,d]},HTMLElement:{nec:[/x/,"x",1,!1,{},[],null,d,new Date,f.noop],pos:[c.documentElement,c.createElement("p")]},PlainObject:{nec:["x",1,!1,[],null,d,f.noop],pos:[{},new Object,b]},Undefined:{nec:[/x/,"x",1,!1,{},[],null,new Date,f.noop],pos:[d,this.__no]},Null:{nec:[/x/,"x",1,!1,{},[],d,new Date,f.noop],pos:[null]},Integer:{nec:[/x/,"2.2",.002,2.2,!1,{},[],null,d,new Date,f.noop],pos:[6,100,2,9]},NullOrUndefined:{nec:[/x/,"x",1,!1,{},[],new Date,f.noop],pos:[null,d]},NonNullOrUndefined:{nec:[null,d],pos:[{},/x/,[],"",!1]},NonEmptyString:{nec:[/x/,!1,{},[],null,d,new Date,f.noop],pos:["x",new String("y")]}};
-for(var j in i){for(var k=0;k<i[j].pos.length;++k)it("expecting "+i[j].pos[k]+" to be "+j,a(j,k));for(k=0;k<i[j].nec.length;++k)it("unexpecting "+i[j].nec[k]+" to be "+j,g(j,k)),it("throwing when"+i[j].nec[k]+" to be "+j,h(j,k))}})}(window,document)},{"../type":21,assert:1}],20:[function(a){!function(){var b=a("assert"),c=a("../utils"),d=a("../console");describe("Utils",function(){it("#mixin()",function(){var a={x:89},d={};b.equal(89,c.mixin(d,a).x)}),it("#trim()",function(){b.equal(0,c.trim(" 	\r\n\f").length)}),it("#getIEVersion()",function(){var a=c.getIEVersion();a&&(d.log("IE"+a),b(c.type.isInteger(a)&&a>4&&12>a))}),it("#hideSource()",function(){var a={say:function(){}},d=c.hideSource("say",a.say).call(a.say);b(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(d))})})}()},{"../console":9,"../utils":22,assert:1}],21:[function(a,b){!function(){"use strict";function a(a){return function(a){return function(b){return"[object "+a+"]"==={}.toString.apply(b)}}(a)}function c(a){return function(a){return function(b,c){if(arguments.length<2&&(c=b,b=String(c)),!e["is"+a](c))throw new Error('"'+b+'" has to be a(n) '+a)}}(a)}for(var d=function(){},e={expando:"sogou-passport-"+ +new Date,noop:d,debug:0,strundefined:"undefined",strstr:"string",strobject:typeof{},strnumber:"number",strfunction:typeof d,isNullOrUndefined:function(a){return!(!this.isNull(a)&&!this.isUndefined(a))},isNonNullOrUndefined:function(a){return!this.isNullOrUndefined(a)},isInteger:function(a){return!(!this.isNumber(a)||!/^(\-|\+)?\d+?$/i.test(a))},isNull:function(a){return null===a},isUndefined:function(a){return void 0===a},isPlainObject:function(a){return this.isObject(a)&&!this.isNull(a)&&!this.isArray(a)&&!this.isRegExp(a)&&!this.isDate(a)},isNonEmptyString:function(a){return!(!a||!this.isString(a))},isHTMLElement:function(a){return!!(a&&a.childNodes&&a.tagName&&a.appendChild)},isEmpty:function(a){return this.isNullOrUndefined(a)||this.isArray(a)&&!a.length||""===a},isObject:function(a){return e.strobject===typeof a}},f="RegExp,Date,String,Array,Boolean,Function,Number".split(","),g=f.length-1;g>=0;--g)e["is"+f[g]]=a(f[g]),e["assert"+f[g]]=c(f[g]);var h="Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(",");for(g=h.length;g>=0;--g)e["assert"+h[g]]=c(h[g]);b.exports=e}()},{}],22:[function(a,b){!function(){"use strict";var c=a("./array"),d=a("./math"),e=a("./type"),f=a("./dom"),g="[\\x20\\t\\r\\n\\f]",h=new RegExp("^"+g+"+|((?:^|[^\\\\])(?:\\\\.)*)"+g+"+$","g"),i={math:d,array:c,dom:f,type:e,mixin:function(a,b){b=b||{},e.assertNonNullOrUndefined("dest",a);for(var c in b)b.hasOwnProperty&&b.hasOwnProperty(c)&&(a[c]=b[c]);return a},getIEVersion:function(){var a,b=navigator.userAgent,c={4:8,5:9,6:10,7:11};return a=b.match(/MSIE (\d+)/i),a&&a[1]?+a[1]:(a=b.match(/Trident\/(\d+)/i),a&&a[1]?c[a[1]]||null:null)},trim:function(a){return String.prototype.trim?String.prototype.trim.call(String(a)):String(a).replace(h,"")},freeze:function(a){return e.assertNonNullOrUndefined("obj",a),e.assertObject("obj",a),e.strundefined!==typeof Object&&e.strfunction===typeof Object.freeze&&Object.freeze(a),a},hideSource:function(a,b,c){e.assertNonEmptyString("name",a),e.assertFunction("func",b),c?e.assertNonEmptyString(c):c="PassportSC.";var d=String(b);return b.toString=function(a,b){return function(){return c+a+b.match(/\([^\{\(]+(?=\{)/)[0]}}(a,d),b.toString}};i.freeze(d),i.freeze(f),i.freeze(e),i.freeze(c),b.exports=i}()},{"./array":6,"./dom":12,"./math":14,"./type":21}]},{},[6,7,8,9,10,11,12,13,14,21,22,15,16,17,18,19,20]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
+//
+// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
+//
+// Originally from narwhal.js (http://narwhaljs.org)
+// Copyright (c) 2009 Thomas Robinson <280north.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the 'Software'), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// when used in node, this will actually load the util module we depend on
+// versus loading the builtin util module as happens otherwise
+// this is a bug in node module loading as far as I am concerned
+var util = require('util/');
+
+var pSlice = Array.prototype.slice;
+var hasOwn = Object.prototype.hasOwnProperty;
+
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  if (options.message) {
+    this.message = options.message;
+    this.generatedMessage = false;
+  } else {
+    this.message = getMessage(this);
+    this.generatedMessage = true;
+  }
+  var stackStartFunction = options.stackStartFunction || fail;
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  }
+  else {
+    // non v8 browsers so we can have a stacktrace
+    var err = new Error();
+    if (err.stack) {
+      var out = err.stack;
+
+      // try to strip useless frames
+      var fn_name = stackStartFunction.name;
+      var idx = out.indexOf('\n' + fn_name);
+      if (idx >= 0) {
+        // once we have located the function frame
+        // we need to strip out everything before it (and its line)
+        var next_line = out.indexOf('\n', idx + 1);
+        out = out.substring(next_line + 1);
+      }
+
+      this.stack = out;
+    }
+  }
+};
+
+// assert.AssertionError instanceof Error
+util.inherits(assert.AssertionError, Error);
+
+function replacer(key, value) {
+  if (util.isUndefined(value)) {
+    return '' + value;
+  }
+  if (util.isNumber(value) && (isNaN(value) || !isFinite(value))) {
+    return value.toString();
+  }
+  if (util.isFunction(value) || util.isRegExp(value)) {
+    return value.toString();
+  }
+  return value;
+}
+
+function truncate(s, n) {
+  if (util.isString(s)) {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+
+function getMessage(self) {
+  return truncate(JSON.stringify(self.actual, replacer), 128) + ' ' +
+         self.operator + ' ' +
+         truncate(JSON.stringify(self.expected, replacer), 128);
+}
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, !!guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+function _deepEqual(actual, expected) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+
+  } else if (util.isBuffer(actual) && util.isBuffer(expected)) {
+    if (actual.length != expected.length) return false;
+
+    for (var i = 0; i < actual.length; i++) {
+      if (actual[i] !== expected[i]) return false;
+    }
+
+    return true;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (util.isDate(actual) && util.isDate(expected)) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3 If the expected value is a RegExp object, the actual value is
+  // equivalent if it is also a RegExp object with the same source and
+  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
+  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
+    return actual.source === expected.source &&
+           actual.global === expected.global &&
+           actual.multiline === expected.multiline &&
+           actual.lastIndex === expected.lastIndex &&
+           actual.ignoreCase === expected.ignoreCase;
+
+  // 7.4. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if (!util.isObject(actual) && !util.isObject(expected)) {
+    return actual == expected;
+
+  // 7.5 For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else {
+    return objEquiv(actual, expected);
+  }
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b) {
+  if (util.isNullOrUndefined(a) || util.isNullOrUndefined(b))
+    return false;
+  // an identical 'prototype' property.
+  if (a.prototype !== b.prototype) return false;
+  //~~~I've managed to break Object.keys through screwy arguments passing.
+  //   Converting to array solves the problem.
+  if (isArguments(a)) {
+    if (!isArguments(b)) {
+      return false;
+    }
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b);
+  }
+  try {
+    var ka = objectKeys(a),
+        kb = objectKeys(b),
+        key, i;
+  } catch (e) {//happens when one is a string literal and the other isn't
+    return false;
+  }
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length != kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] != kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
+  }
+};
+
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
+
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
+};
+
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
+  }
+
+  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
+    return expected.test(actual);
+  } else if (actual instanceof expected) {
+    return true;
+  } else if (expected.call({}, actual) === true) {
+    return true;
+  }
+
+  return false;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (util.isString(expected)) {
+    message = expected;
+    expected = null;
+  }
+
+  try {
+    block();
+  } catch (e) {
+    actual = e;
+  }
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail(actual, expected, 'Missing expected exception' + message);
+  }
+
+  if (!shouldThrow && expectedException(actual, expected)) {
+    fail(actual, expected, 'Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws.apply(this, [true].concat(pSlice.call(arguments)));
+};
+
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/message) {
+  _throws.apply(this, [false].concat(pSlice.call(arguments)));
+};
+
+assert.ifError = function(err) { if (err) {throw err;}};
+
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+  for (var key in obj) {
+    if (hasOwn.call(obj, key)) keys.push(key);
+  }
+  return keys;
+};
+
+},{"util/":3}],2:[function(require,module,exports){
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+},{}],3:[function(require,module,exports){
+(function (process,global){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = require('./support/isBuffer');
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = require('inherits');
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+}).call(this,require("FWaASH"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":2,"FWaASH":5,"inherits":4}],4:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],5:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],6:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * array.js
+ *
+ * Some polyfill for ES5 array.
+ *
+ * changelog
+ * 2014-06-06[14:11:09]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+  "use strict";
+
+  var type = require('./type');
+  var array = {};
+
+  /**
+   * ES5 array indexOf polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Object} ele
+   * @param  {Integer} fromIndex
+   * @return {Boolean}
+   */
+  array.indexOf = function(arr, ele, fromIndex) {
+    var i, len;
+
+    if (!arr || !ele) {
+      return -1;
+    }
+
+    fromIndex = fromIndex | 0;
+    if (isNaN(fromIndex)) {
+      fromIndex = 0;
+    }
+    if (fromIndex >= arr.length) {
+      return -1;
+    }
+    if (fromIndex < 0) {
+      fromIndex = arr.length + fromIndex;
+      if (fromIndex < 0) {
+        fromIndex = 0;
+      }
+    }
+
+    if (Array.prototype.indexOf) {
+      return Array.prototype.indexOf.call(arr, ele, fromIndex);
+    } else {
+      for (i = fromIndex, len = arr.length; i < len; ++i) {
+        if (ele === arr[i]) {
+          return i;
+        }
+      }
+    }
+
+    return -1;
+  };
+
+  /**
+   * ES5 array forEach polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Undefined}
+   */
+  array.forEach = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    if (Array.prototype.forEach) {
+      return Array.prototype.forEach.call(arr, callbackfn, thisArg);
+    }
+
+    for (i = 0, len = arr.length; i < len; ++i) {
+      callbackfn.call(thisArg, arr[i], i, arr);
+    }
+
+  };
+  /**
+   * ES5 array every polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} func
+   * @return {Boolean}
+   */
+  array.each = array.every = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    //ES5
+    if (Array.prototype.every) {
+      return Array.prototype.every.call(arr, callbackfn, thisArg);
+    } else {
+      for (i = 0, len = arr.length; i < len; ++i) {
+        if (!callbackfn.call(thisArg, arr[i], i, arr)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  /**
+   * ES5 array some polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Boolean}
+   */
+  array.some = function(arr, callbackfn, thisArg) {
+    var i, len;
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+    //ES5
+    if (Array.prototype.some) {
+      return Array.prototype.some.call(arr, callbackfn, thisArg);
+    } else {
+      for (i = 0, len = arr.length; i < len; ++i) {
+        if (true === callbackfn.call(thisArg, arr[i], i, arr)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * ES5 array filter polyfill.
+   *
+   * @param  {Array} arr
+   * @param  {Function} callbackfn
+   * @param  {Object} thisArg
+   * @return {Array}
+   */
+  array.filter = function(arr, callbackfn, thisArg) {
+    var ret = [];
+
+    type.assertNonNullOrUndefined('arr', arr);
+    type.assertFunction('callbackfn', callbackfn);
+
+
+    if (Array.prototype.filter) {
+      return Array.prototype.filter.call(arr, callbackfn, thisArg);
+    }
+
+    array.forEach(arr, function(val, index) {
+      if (callbackfn.call(thisArg, val, index, arr)) {
+        ret.push(val);
+      }
+    });
+    return ret;
+  };
+
+  module.exports = array;
+})();
+},{"./type":21}],7:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * buggy.js
+ *
+ * changelog
+ * 2014-06-07[10:08:13]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var expando = require('./type').expando;
+
+    var Buggy = {
+        /**
+         * "getElementById" is buggy on IE6/7.
+         *
+         * @see  https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L528
+         * @property
+         */
+        getElementById: (function(document) {
+            var div = document.createElement('div');
+
+            //document.body is null here
+            document.documentElement.appendChild(div).setAttribute('id', expando);
+
+            var buggy = document.getElementsByName && document.getElementsByName(expando).length;
+
+            document.documentElement.removeChild(div);
+
+            div = null;
+
+            return !!buggy;
+        })(document)
+    };
+
+    module.exports = Buggy;
+})(window, document);
+},{"./type":21}],8:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * codes.js
+ *
+ * changelog
+ * 2014-05-24[23:06:47]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    //Just for freeze
+    var utils = require('./utils');
+    
+    var codes = {
+        SYSTEM_ERROR: {
+            code: 10001,
+            info: "未知错误"
+        },
+        PARAM_ERROR: {
+            code: 10002,
+            info: "参数错误"
+        },
+        CAPTCHA_FAILED: {
+            code: 20221,
+            info: "验证码验证失败 "
+        },
+        ACCOUNT_NOT_EXIST: {
+            code: 20205,
+            info: "帐号不存在"
+        },
+        ACCOUNT_NOT_EXIST_1: {
+            code: 10009,
+            info: "帐号不存在"
+        },
+        ACCOUNT_NOT_ACTIVED: {
+            code: 20231,
+            info: "登陆账号未激活"
+        },
+        ACCOUNT_KILLED: {
+            code: 20232,
+            info: "登陆账号被封杀"
+        },
+        ACCOUNT_PWD_WRONG: {
+            code: 20206,
+            info: "账号或密码错误"
+        },
+        LOGIN_TIME_OUT: {
+            code: 100000,
+            info: "登录超时"
+        },
+        NEED_USERNAME: {
+            code: 100001,
+            info: "请输入通行证用户名"
+        },
+        NEED_PASSWORD: {
+            code: 100002,
+            info: "请输入通行证密码"
+        }
+    };
+
+    utils.freeze(codes);
+
+    module.exports = codes;
+
+})(window, document);
+},{"./utils":22}],9:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * console.js
+ *
+ * Polyfill for console.
+ *
+ * changelog
+ * 2014-06-06[11:43:57]:authorized
+ * 2014-06-10[21:12:36]:define 'debug'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+
+(function(window, undefined) {
+    "use strict";
+
+    var type = require('./type');
+    var console = type.debug?window.console:{};
+
+    if (!console || type.strobject !== typeof console) {
+        console = {};
+    }
+
+    var keys = 'trace,info,log,debug,warn,error'.split(',');
+
+    for (var i = keys.length - 1; i >= 0; i--) {
+        console[keys[i]] = console[keys[i]] || type.noop;
+    }
+
+    module.exports = console;
+})(window);
+},{"./type":21}],10:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * cookie.js
+ *
+ * Some operations about cookie.
+ *
+ * changelog
+ * 2014-06-07[13:47:16]:authorized
+ * 2014-06-07[15:21:54]:search cookie by regexp
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+(function(window, document, undefined) {
+    "use strict";
+
+    var UTILS = require('./utils');
+
+    var PassportCookieParser = {
+        cookie:{},
+        getCookie: function() {
+            return this.cookie;
+        },
+        parsePassportCookie: function() {
+            var value, i, parsedArray,matches;
+
+            if (true !== (window.navigator && navigator.cookieEnabled)) {
+                return this;
+            }
+            //clear
+            this.cookie = {};
+
+            var cookieArray = document.cookie.split("; ");
+            for (i = 0; i < cookieArray.length; ++i) {
+                matches = cookieArray[i].match(/^p(?:pinf|pinfo|assport)=(.+)$/);
+                if(matches&&matches[1])
+                {
+                    value = matches[1];
+                    break;
+                }
+            }
+
+            //No cookie read
+            if (!value) {
+                return this;
+            }
+
+            try {
+                parsedArray = unescape(value).split("|");
+                if (parsedArray[0] == "1" || parsedArray[0] == "2" && parsedArray[3]) {
+                    this._parsePassportCookie(UTILS.math.utf8to16(UTILS.math.b64_decodex(parsedArray[3])));
+                }
+            } catch (e) {}
+
+            return this;
+        },
+        /**
+         * Legacy function,DO NOT MODIFY.
+         */
+        _parsePassportCookie: function(F) {
+            var J = 0,
+                D, B, A, I, lenEnd_offset;
+            var C = F.indexOf(":", J);
+            while (C != -1) {
+                B = F.substring(J, C);
+                lenEnd_offset = F.indexOf(":", C + 1);
+                if (lenEnd_offset == -1) {
+                    break;
+                }
+                A = parseInt(F.substring(C + 1, lenEnd_offset));
+                I = F.substr(lenEnd_offset + 1, A);
+                if (F.charAt(lenEnd_offset + 1 + A) != "|") {
+                    break;
+                }
+                this.cookie[B] = I;
+                J = lenEnd_offset + 2 + A;
+                C = F.indexOf(":", J);
+            }
+
+            return this;
+        }
+    };
+
+    module.exports = {
+        PassportCookieParser: {
+            parse: function() {
+                return PassportCookieParser.parsePassportCookie().getCookie();
+            }
+        }
+    };
+})(window, document);
+},{"./utils":22}],11:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com sogou.com
+ *
+ * core.js
+ *
+ * Passport for sogou.com Ltd.
+ *
+ * Compared to previous sogou.js,we removed the
+ * HTML dialog part,and export the least number
+ * of interfaces.
+ *
+ * We plan to support HTML dialog by plugins.
+ *
+ * changelog
+ * 2014-05-24[20:43:42]:authorized
+ * 2014-05-25[10:48:30]:code matched
+ * 2014-06-04[15:16:38]:remove 'container' parameter,we create it instead
+ * 2014-06-04[16:37:06]:disabled 'remindActive' action
+ * 2014-06-06[11:18:50]:'getOptions'&'isInitialized' added
+ * 2014-06-07[11:03:49]:make 'getOptions' returns copy
+ * 2014-06-07[12:56:24]:'NEEDCAPTCHA' event
+ * 2014-06-07[20:07:16]:reconstruction PassportSC
+ * 2014-06-08[01:28:21]:third party login supported by 'login3rd'
+ * 2014-06-08[12:24:48]:hide source of functions
+ * 2014-06-10[12:32:02]:get 'msg' from _logincb
+ * 2014-06-10[13:30:08]:'param_error'&'notactive' supported
+ * 2014-06-10[14:39:15]:merge events into 'login_failed'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.8
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var UTILS = require('./utils');
+    var CODES = require('./codes');
+    var console = require('./console');
+    var Event = require('./event');
+    var type = UTILS.type;
+    var PassportCookieParser = require('./cookie').PassportCookieParser;
+
+    var EXPANDO = type.expando;
+    var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;';
+
+    var EVENTS = {
+        login_success: 'loginsuccess',
+        login_failed: 'loginfailed',
+        logout_success: 'logoutsuccess',
+        third_party_login_complete: '3rdlogincomplete',//popup only
+        param_error: 'paramerror'
+    };
+
+    var FIXED_URLS = {
+        login: 'https://account.sogou.com/web/login',
+        logout: 'https://account.sogou.com/web/logout_js',
+        active: 'https://account.sogou.com/web/remindActivate',
+        captcha: 'https://account.sogou.com/captcha',
+        trdparty: 'http://account.sogou.com/connect/login'
+    };
+
+    var THIRD_PARTY_SIZE = {
+        size: {
+            renren: [880, 620],
+            sina: [780, 640],
+            qq: [500, 300]
+        }
+    };
+
+    var e;//for element
+    var gLastLoginName;//for not active
+
+
+    var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+
+    //For validations of options in bulk
+    var VALIDATORS = [{
+        name: ['appid'],
+        validate: function(name, value) {
+            return value && (type.strstr === typeof value || type.strnumber === typeof value);
+        },
+        errmsg: function(name, value) {
+            return '"' + name + '" SHOULD be a string or a number';
+        }
+    }, {
+        name: ['redirectUrl'],
+        validate: function(name, value) {
+            return value && type.strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+        },
+        errmsg: function(name, value) {
+            return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
+        }
+    }];
+
+    var gOptions = null;
+    var PassportSC = null;
+    var frameWrapper = null;
+    var defaultOptions = {
+        appid: null,
+        redirectUrl: null
+    };
+
+    var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
+
+    /**
+     * Create frameWrapper if it not exists.
+     *
+     * @param {Function}
+     * @return {HTMLElement} frameWrapper
+     */
+    function assertFrameWrapper(callback) {
+        var c = frameWrapper;
+        if (!c || (type.strobject !== typeof c) || (type.strundefined === typeof c.appendChild) || !c.parentNode) {
+            c = frameWrapper = document.createElement('div');
+            c.style.cssText = HIDDEN_CSS;
+            c.className = c.id = EXPANDO;
+            document.body.appendChild(c);
+        }
+
+        if (type.isFunction(callback)) {
+            callback(c);
+        }
+        return c;
+    }
+
+    /**
+     * This is the inner PASSPORT constructor.
+     * As the instance could not be more then one,
+     * it may be called only once.
+     *
+     * @param {Object} options
+     * @throws {Error} If any validattion failed
+     */
+    function validateOptions(options) {
+        var i, j, validator, name, opt;
+
+        opt = gOptions = {};
+
+        type.assertPlainObject('options', options);
+
+        UTILS.mixin(opt, defaultOptions);
+        UTILS.mixin(opt, options);
+
+        for (i = VALIDATORS.length - 1; i >= 0; --i) {
+            validator = VALIDATORS[i];
+            for (j = validator.name.length - 1; j >= 0; --j) {
+                name = validator.name[j];
+                if (!validator.validate(name, opt[name])) {
+                    throw new Error(type.strfunction === typeof validator.errmsg ?
+                        validator.errmsg(name, opt[name]) : validator.errmsg
+                    );
+                }
+            }
+        }
+        //DON'T FORGET IT
+        opt._token = UTILS.math.uuid();
+    }
+
+    /**
+     * Simple template replacer.
+     *
+     * @param  {String} tpl
+     * @param  {Object} data
+     * @return {String}
+     */
+    function template(tpl, data) {
+        return tpl.replace(/<%=([\w\-]+?)%>/g, function(k, n) {
+            var key = data[n];
+            return undefined === key ? "" : key;
+        });
+    }
+
+    /**
+     * Passport tools.
+     *
+     * @class
+     */
+    var tools = {
+        /**
+         * Validate username.
+         *
+         * @param  {String} username
+         * @return {Boolean}
+         */
+        validateUsername: function(username) {
+            return type.isNonEmptyString(username) && /^[\w-@\.]+$/.test(username);
+        },
+        /**
+         * Validate password.
+         *
+         * @param  {String} password
+         * @return {Boolean}
+         */
+        validatePassword: function(password) {
+            return type.isNonEmptyString(password) && /^[\w-]{6,16}$/.test(password);
+        },
+        /**
+         * Validtae captcha.
+         * 
+         * @param  {String} captcha
+         * @return {Boolean}
+         */
+        validateCaptcha: function(captcha){
+            return type.isNonEmptyString(captcha) && /^[a-zA-Z0-9]+$/.test(captcha);
+        }
+    };
+
+    /**
+     * Hide source of tools.
+     */
+    for (e in tools) {
+        if (type.isFunction(tools[e])) {
+            UTILS.hideSource(e, tools[e], 'PassportSC.tools.');
+        }
+    }
+
+    /**
+     * Core passport object.
+     *
+     * This will be merged into PassportSC.
+     *
+     * @class
+     */
+    var Passport = {
+        version: '0.0.8', //see 'package.json'
+        tools: tools,
+        /**
+         * Initialize.
+         * This must be called at first before
+         * any other operations.
+         *
+         * The following options must be set in options:
+         * 1.appid -- Integer of ID,it depends on the product line;
+         * 2.redirectUrl -- A same domain page url for cross-domain;
+         *
+         * @param  {Obejct} options Required options
+         * @return {Object} PassportSC
+         */
+        init: function(options) {
+            if (!this.isInitialized()) {
+                console.trace('Initialize passport');
+                validateOptions(options);
+            } else {
+                console.warn('Passport has already been initialized');
+            }
+            //support both PassportSC() and PassportSC.init()
+            return window.PassportSC;
+        },
+        /**
+         * Do login action.It's an async function.
+         *
+         * @param  {String} username
+         * @param  {String} password
+         * @param  {String} vcode
+         * @param  {Boolean} autoLogin
+         * @return {Boolean} If login action is executed
+         * @throws {Error} If not initialized
+         */
+        login: function(username, password, vcode, autoLogin) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            console.trace('logining with:' + Array.prototype.join.call(arguments));
+
+            var payload;
+
+            if (arguments.length < 4) {
+                autoLogin = vcode;
+                vcode = '';
+            }
+
+            if (!tools.validateUsername(username)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'username',
+                    value: username,
+                    msg: "账号格式不正确"
+                });
+                return false;
+            } else if (!tools.validatePassword(password)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'password',
+                    value: password,
+                    msg: "密码格式不正确"
+                });
+                return false;
+            } else if (vcode && !tools.validateCaptcha(vcode)) {
+                this.emit(EVENTS.param_error, {
+                    name: 'captcha',
+                    value: vcode,
+                    msg: "验证码格式不正确"
+                });
+                return false;
+            }
+
+            gLastLoginName = username;
+
+            payload = {
+                username: username,
+                password: password,
+                vcode: vcode || "",
+                autoLogin: +(!!autoLogin), //:0/1
+                appid: gOptions.appid,
+                redirectUrl: gOptions.redirectUrl,
+                token: gOptions._token
+            };
+
+            assertFrameWrapper(function(container) {
+                container.innerHTML = template(HTML_FRAME_LOGIN, payload);
+                container.getElementsByTagName('form')[0].submit();
+            });
+
+            return true;
+        },
+        /**
+         * Third party login.
+         *
+         * @param  {String} provider qq|sina|renren
+         * @param  {String} display page|popup
+         * @param  {String} redirectUrl
+         * @return {Boolean} True
+         * @throws {Error} If any parameter failed
+         */
+        login3rd: function(provider, display, redirectUrl) {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            type.assertNonEmptyString('provider', provider);
+
+            var size = THIRD_PARTY_SIZE.size[provider];
+            if (!size) {
+                throw new Error('provider:"' + provider + '" is not supported in  third party login');
+            }
+
+            if ('popup' === display) {
+                //popup and at least 2
+                type.assertNonEmptyString('redirectUrl', redirectUrl);
+            } else if (type.isUndefined(display)) {
+                //One
+                display = 'page';
+                redirectUrl = location.href;
+            } else {
+                //At least two and not popup
+                redirectUrl = redirectUrl || location.href;
+            }
+
+            var authUrl = FIXED_URLS.trdparty + '?client_id=' + gOptions.appid + '&provider=' + provider + '&ru=' + encodeURIComponent(redirectUrl);
+
+            if ('popup' === display) {
+                var left = (window.screen.availWidth - size[0]) / 2;
+                window.open(authUrl, '', 'height=' + size[1] + ',width=' + size[0] + ',top=80,left=' + left + ',toolbar=no,menubar=no');
+            } else if ('page' === display) {
+                location.href = authUrl;
+            } else {
+                throw new Error('display:"' + display + '" is not supported in third party login');
+            }
+
+            return true;
+        },
+        /**
+         * Do logout.
+         * @return {Object} this
+         * @throws {Error} If not initialized
+         */
+        logout: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+            console.trace('logouting');
+            var self = this;
+            var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
+
+            assertFrameWrapper(function(container) {
+                UTILS.dom.addIframe(container, url, function() {
+                    self.emit(EVENTS.logout_success);
+                });
+            });
+
+        },
+        /**
+         * Get userid from cookie
+         * @return {String} userid or empty string
+         * @throws {Error} If not initialized
+         */
+        userid: function() {
+            if (!this.isInitialized()) {
+                throw new Error(NOT_INITIALIZED_ERROR);
+            }
+
+            return PassportCookieParser.parse().userid || "";
+        },
+        /**
+         * Login callback from iframe.
+         * DO NOT call it directly.
+         *
+         * @param  {Object} data login result
+         */
+        _logincb: function(data) {
+            if (!this.isInitialized()) {
+                console.trace('Login callback received but [Passport] has not been initialized');
+                return;
+            }
+
+            if (!data || type.strobject !== typeof data) {
+                console.error('Nothing callback received');
+                data.msg = '登录失败';
+                this.emit(EVENTS.login_failed, data);
+                return;
+            } else if (type.isNonEmptyString(data.msg)) {
+                data.msg = decodeURIComponent(data.msg);
+            }
+
+            if (0 === +data.status) {
+                data.msg = data.msg || '登录成功';
+                this.emit(EVENTS.login_success, data);
+            } else if (+data.status === 20231) {
+                data.activeurl = FIXED_URLS.active + '?email=' + encodeURIComponent(gLastLoginName || "") + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
+                data.msg = data.msg || '帐号未激活';
+                this.emit(EVENTS.login_failed,data);
+            } else if (+data.needcaptcha) {
+                data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
+                data.msg = data.msg || '需要验证码';
+                this.emit(EVENTS.login_failed, data);
+            } else {
+
+                if (!data.msg) {
+                    for (var e in CODES) {
+                        if (CODES[e].code == data.status) {
+                            data.msg = CODES[e].info;
+                            break;
+                        }
+                    }
+                }
+
+                data.msg = data.msg || "未知错误";
+                this.emit(EVENTS.login_failed, data);
+            }
+        },
+        /**
+         * Third party login callback from 'popup' window.
+         * DO NOT call it directly.
+         *
+         * It does not support callback with 'page' display.
+         */
+        _logincb3rd: function() {
+            if (!this.isInitialized()) {
+                console.trace('Login3rd callback received but [Passport] has not been initialized');
+                return;
+            }
+            this.emit(EVENTS.third_party_login_complete);
+        },
+        /**
+         * If passport has been initialized.
+         *
+         * @return {Boolean} Initialized
+         */
+        isInitialized: function() {
+            return !!gOptions;
+        },
+        /**
+         * Get a copy of options.
+         *
+         * @return {Object} Options
+         */
+        getOptions: function() {
+            var opts = {};
+            return UTILS.mixin(opts, gOptions);
+        },
+        /**
+         * Get a copy of events which passport supports.
+         *
+         * @return {Object} Supported events
+         */
+        getSupportedEvents: function() {
+            var events = {};
+            return UTILS.mixin(events, EVENTS);
+        }
+    };
+
+    //Hide implementation for beauty.
+    PassportSC = function() {
+        return Passport.init.apply(Passport, arguments);
+    };
+
+    UTILS.mixin(PassportSC, Passport);
+
+    //Make proxy an event emitter too.
+    UTILS.mixin(PassportSC, new Event());
+
+    //PassportSC is shy.
+    //We do this for hiding source of its function members,
+    //which may show up in chrome console.
+    for (e in PassportSC) {
+        if (type.isFunction(PassportSC[e])) {
+            UTILS.hideSource(e, PassportSC[e]);
+        }
+    }
+
+    //Sync loading supported
+    if (window.PassportSC && type.isPlainObject(window.PassportSC)) {
+        UTILS.mixin(window.PassportSC, PassportSC);
+        if (type.isFunction(window.PassportSC.onApiLoaded)) {
+            window.PassportSC.onApiLoaded();
+        }
+    } else {
+        window.PassportSC = PassportSC;
+    }
+
+    module.exports = {
+        PassportSC: window.PassportSC,
+        addSupportedEvent: function(name, val) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('val', val);
+            EVENTS[name] = val;
+            return EVENTS;
+        },
+        addFixedUrl: function(name, url) {
+            type.assertNonEmptyString('name', name);
+            type.assertNonEmptyString('url', url);
+            FIXED_URLS[name] = url;
+            return FIXED_URLS;
+        }
+    };
+})(window, document);
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":22}],12:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * dom.js
+ *
+ * Some simple DOM operations.
+ *
+ * changelog
+ * 2014-06-07[16:33:33]:authorized
+ * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+
+
+(function(window, document, undefined) {
+    "use strict";
+
+    var type = require('./type');
+    var buggy = require('./buggy');
+
+    if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+        throw new Error("It's only for HTML document");
+    }
+
+    var dom = {
+        /**
+         * Insert a link element
+         *
+         * @param  {String} href Link url
+         * @param  {Function} callback Callback function
+         * @return {HTMLLinkElement}
+         * @throws {Error} If parameters illegal
+         */
+        addLink: function(href, callback) {
+
+            type.assertNonEmptyString('href', href);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+            if (link.readyState) {
+                link.onreadystatechange = function() {
+                    if (link.readyState === "loaded" || link.readyState === "complete") {
+                        link.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                link.onload = function() {
+                    callback();
+                };
+            }
+            link.href = href;
+            return link;
+        },
+        /**
+         * Insert a script element.
+         * 
+         * @param {String}   src     
+         * @param {Function} callback
+         */
+        addScript: function(src, callback) {
+            
+            type.assertNonEmptyString('src', src);
+
+            if (callback) {
+                type.assertFunction(callback);
+            } else {
+                callback = type.noop;
+            }
+
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.charset = "utf-8";
+            if (script.readyState) {
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() {
+                    callback();
+                };
+            }
+            script.src = src;
+            document.getElementsByTagName("head")[0].appendChild(script);
+            return script;
+        },
+        addIframe: function(container, url, callback) {
+
+            type.assertHTMLElement('container', container);
+            type.assertNonEmptyString('url', url);
+
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
+            iframe.src = url;
+
+            if (iframe.attachEvent) {
+                iframe.attachEvent("onload", function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                });
+            } else {
+                iframe.onload = function() {
+                    if (type.isFunction(callback)) {
+                        callback();
+                    }
+                };
+            }
+
+            container.appendChild(iframe);
+        },
+        /**
+         * Attatch event listener to HTMLElements.
+         * @param  {HTMLElement} dom
+         * @param  {String} evt
+         * @param  {Function} func
+         * @return {this}
+         * @throws {Error} If parameters illegal
+         */
+        bindEvent: function(ele, evt, func) {
+
+            type.assertHTMLElement('ele', ele);
+            type.assertNonEmptyString('evt', evt);
+            type.assertFunction('func', func);
+
+            if (document.addEventListener) {
+                ele.addEventListener(evt, func, false);
+            } else if (document.attachEvent) {
+                ele.attachEvent('on' + evt, func);
+            }
+
+            return this;
+        },
+        stopPropagation: function(evt) {
+            if (evt.stopPropagation) {
+                evt.stopPropagation();
+            } else {
+                evt.cancelBubble = true;
+            }
+        },
+        preventDefault: function(evt) {
+            if (evt.preventDefault) {
+                evt.preventDefault();
+            } else {
+                evt.returnValue = false;
+            }
+        },
+        eventTarget: function(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        },
+        /**
+         * Get HTMLElement by id.
+         *
+         * @param  {String} id
+         * @return {HTMLElement}
+         */
+        id: function(id) {
+
+            type.assertNonEmptyString('id', id);
+
+            var ele = document.getElementById(id),
+                all, node;
+            if (!buggy.getElementById) {
+                //BlackBerry 4.6
+                //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L538
+                return (ele && ele.parentNode) ? ele : null;
+            } else if (ele) {
+                //IE6/7
+                node = typeof ele.getAttributeNode !== type.strundefined && ele.getAttributeNode("id");
+                if (node && node.value === id) {
+                    return ele;
+                }
+            }
+            //TODO test
+            all = document.getElementsByTagName('*');
+            array.some(all, function(ele) {
+                //ignore comment
+                if (ele && ele.nodeType === 1 && ele.id === id) {
+                    return true;
+                }
+            });
+            return (ele && ele.id === id) ? ele : null;
+        }
+    };
+    module.exports = dom;
+})(window, document);
+},{"./buggy":7,"./type":21}],13:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * event.js
+ *
+ * changelog
+ * 2014-06-06[14:02:08]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    "use strict";
+    
+    var UTILS = require('./utils');
+    var console = require('./console');
+    var array = UTILS.array;
+    var type = UTILS.type;
+
+    var EventEmitter = function() {
+
+        var listeners = {};
+
+        /**
+         * Bind event,multiple events split by space supported
+         * @param  {String} event
+         * @param  {Function} func
+         * @param  {Object} thisArg
+         * @return {EventEmitter}      This event emitter
+         */
+        this.on = function(event, func, thisArg) {
+            var evtArr;
+
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+
+            array.forEach(evtArr, function(evt) {
+                listeners[evt] = listeners[evt] || [];
+                listeners[evt].push({
+                    type: evt,
+                    func: func,
+                    thisArg: thisArg
+                });
+            });
+
+            return this;
+        };
+
+        /**
+         * Remove event,multiple events split by space supported.
+         *
+         * Empty 'func' means remove all listeners named 'event'.
+         * 
+         * @param  {String} event
+         * @param  {Function} func
+         * @return {EventEmitter}     This event emitter
+         */
+        this.off = function(event, func) {
+            var evtArr, objs;
+
+            type.assertNonEmptyString('event',event);
+            type.assertFunction('func',func);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+            array.forEach(evtArr, function(evt) {
+                if (!func) {
+                    delete listeners[evt];
+                    return this;
+                } else {
+                    objs = listeners[evt];
+                    if (type.isArray(objs)) {
+                        listeners[evt] = array.filter(objs, function(obj) {
+                            return obj.func !== func;
+                        });
+                    }
+                }
+            });
+
+
+            return this;
+        };
+
+        /**
+         * Emit event(s),multiple events split by space supported.
+         * 
+         * @param  {String} event
+         * @param  {Object} data
+         * @return {EventEmitter} This event emitter
+         */
+        this.emit = function(event, data) {
+            var evtArr, objs;
+
+            type.assertNonEmptyString('event',event);
+
+            evtArr = UTILS.trim(event).split(/\s/);
+
+            array.forEach(evtArr, function(evt) {
+                objs = listeners[evt];
+                if (type.isArray(objs)) {
+                    array.forEach(objs, function(obj) {
+                        //add timestamp
+                        obj.timestamp = +new Date();
+                        obj.func.call(obj.thisArg || null, obj, data);
+                    });
+                }
+            });
+
+            console.trace('emitting ' + evtArr.join());
+            return this;
+        };
+    };
+
+    module.exports = EventEmitter;
+})();
+},{"./console":9,"./utils":22}],14:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * math.js
+ *
+ * changelog
+ * 2014-06-07[15:36:34]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+(function() {
+    "use strict";
+
+    //They seem to be const
+    var hexcase = 0;
+    var chrsz = 8;
+    
+    var math = {
+        b64_423: function(E) {
+            var D = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"];
+            var F = '';
+            for (var C = 0; C < E.length; C++) {
+                for (var A = 0; A < 64; A++) {
+                    if (E.charAt(C) == D[A]) {
+                        var B = A.toString(2);
+                        F += ("000000" + B).substr(B.length);
+                        break;
+                    }
+                }
+                if (A == 64) {
+                    if (C == 2) {
+                        return F.substr(0, 8);
+                    } else {
+                        return F.substr(0, 16);
+                    }
+                }
+            }
+            return F;
+        },
+        b2i: function(D) {
+            var A = 0;
+            var B = 128;
+            for (var C = 0; C < 8; C++, B = B / 2) {
+                if (D.charAt(C) == "1") {
+                    A += B;
+                }
+            }
+            return String.fromCharCode(A);
+        },
+        b64_decodex: function(D) {
+            var B = [];
+            var C;
+            var A = "";
+            for (C = 0; C < D.length; C += 4) {
+                A += this.b64_423(D.substr(C, 4));
+            }
+            for (C = 0; C < A.length; C += 8) {
+                B += this.b2i(A.substr(C, 8));
+            }
+            return B;
+        },
+        hex_md5: function(A) {
+            return this.binl2hex(this.core_md5(this.str2binl(A), A.length * chrsz));
+        },
+        core_md5: function(K, F) {
+            K[F >> 5] |= 128 << ((F) % 32);
+            K[(((F + 64) >>> 9) << 4) + 14] = F;
+            var J = 1732584193;
+            var I = -271733879;
+            var H = -1732584194;
+            var G = 271733878;
+            var md5_ff = this.md5_ff;
+            var md5_gg = this.md5_gg;
+            var md5_hh = this.md5_hh;
+            var md5_ii = this.md5_ii;
+            for (var C = 0; C < K.length; C += 16) {
+                var E = J;
+                var D = I;
+                var B = H;
+                var A = G;
+                J = md5_ff(J, I, H, G, K[C + 0], 7, -680876936);
+                G = md5_ff(G, J, I, H, K[C + 1], 12, -389564586);
+                H = md5_ff(H, G, J, I, K[C + 2], 17, 606105819);
+                I = md5_ff(I, H, G, J, K[C + 3], 22, -1044525330);
+                J = md5_ff(J, I, H, G, K[C + 4], 7, -176418897);
+                G = md5_ff(G, J, I, H, K[C + 5], 12, 1200080426);
+                H = md5_ff(H, G, J, I, K[C + 6], 17, -1473231341);
+                I = md5_ff(I, H, G, J, K[C + 7], 22, -45705983);
+                J = md5_ff(J, I, H, G, K[C + 8], 7, 1770035416);
+                G = md5_ff(G, J, I, H, K[C + 9], 12, -1958414417);
+                H = md5_ff(H, G, J, I, K[C + 10], 17, -42063);
+                I = md5_ff(I, H, G, J, K[C + 11], 22, -1990404162);
+                J = md5_ff(J, I, H, G, K[C + 12], 7, 1804603682);
+                G = md5_ff(G, J, I, H, K[C + 13], 12, -40341101);
+                H = md5_ff(H, G, J, I, K[C + 14], 17, -1502002290);
+                I = md5_ff(I, H, G, J, K[C + 15], 22, 1236535329);
+                J = md5_gg(J, I, H, G, K[C + 1], 5, -165796510);
+                G = md5_gg(G, J, I, H, K[C + 6], 9, -1069501632);
+                H = md5_gg(H, G, J, I, K[C + 11], 14, 643717713);
+                I = md5_gg(I, H, G, J, K[C + 0], 20, -373897302);
+                J = md5_gg(J, I, H, G, K[C + 5], 5, -701558691);
+                G = md5_gg(G, J, I, H, K[C + 10], 9, 38016083);
+                H = md5_gg(H, G, J, I, K[C + 15], 14, -660478335);
+                I = md5_gg(I, H, G, J, K[C + 4], 20, -405537848);
+                J = md5_gg(J, I, H, G, K[C + 9], 5, 568446438);
+                G = md5_gg(G, J, I, H, K[C + 14], 9, -1019803690);
+                H = md5_gg(H, G, J, I, K[C + 3], 14, -187363961);
+                I = md5_gg(I, H, G, J, K[C + 8], 20, 1163531501);
+                J = md5_gg(J, I, H, G, K[C + 13], 5, -1444681467);
+                G = md5_gg(G, J, I, H, K[C + 2], 9, -51403784);
+                H = md5_gg(H, G, J, I, K[C + 7], 14, 1735328473);
+                I = md5_gg(I, H, G, J, K[C + 12], 20, -1926607734);
+                J = md5_hh(J, I, H, G, K[C + 5], 4, -378558);
+                G = md5_hh(G, J, I, H, K[C + 8], 11, -2022574463);
+                H = md5_hh(H, G, J, I, K[C + 11], 16, 1839030562);
+                I = md5_hh(I, H, G, J, K[C + 14], 23, -35309556);
+                J = md5_hh(J, I, H, G, K[C + 1], 4, -1530992060);
+                G = md5_hh(G, J, I, H, K[C + 4], 11, 1272893353);
+                H = md5_hh(H, G, J, I, K[C + 7], 16, -155497632);
+                I = md5_hh(I, H, G, J, K[C + 10], 23, -1094730640);
+                J = md5_hh(J, I, H, G, K[C + 13], 4, 681279174);
+                G = md5_hh(G, J, I, H, K[C + 0], 11, -358537222);
+                H = md5_hh(H, G, J, I, K[C + 3], 16, -722521979);
+                I = md5_hh(I, H, G, J, K[C + 6], 23, 76029189);
+                J = md5_hh(J, I, H, G, K[C + 9], 4, -640364487);
+                G = md5_hh(G, J, I, H, K[C + 12], 11, -421815835);
+                H = md5_hh(H, G, J, I, K[C + 15], 16, 530742520);
+                I = md5_hh(I, H, G, J, K[C + 2], 23, -995338651);
+                J = md5_ii(J, I, H, G, K[C + 0], 6, -198630844);
+                G = md5_ii(G, J, I, H, K[C + 7], 10, 1126891415);
+                H = md5_ii(H, G, J, I, K[C + 14], 15, -1416354905);
+                I = md5_ii(I, H, G, J, K[C + 5], 21, -57434055);
+                J = md5_ii(J, I, H, G, K[C + 12], 6, 1700485571);
+                G = md5_ii(G, J, I, H, K[C + 3], 10, -1894986606);
+                H = md5_ii(H, G, J, I, K[C + 10], 15, -1051523);
+                I = md5_ii(I, H, G, J, K[C + 1], 21, -2054922799);
+                J = md5_ii(J, I, H, G, K[C + 8], 6, 1873313359);
+                G = md5_ii(G, J, I, H, K[C + 15], 10, -30611744);
+                H = md5_ii(H, G, J, I, K[C + 6], 15, -1560198380);
+                I = md5_ii(I, H, G, J, K[C + 13], 21, 1309151649);
+                J = md5_ii(J, I, H, G, K[C + 4], 6, -145523070);
+                G = md5_ii(G, J, I, H, K[C + 11], 10, -1120210379);
+                H = md5_ii(H, G, J, I, K[C + 2], 15, 718787259);
+                I = md5_ii(I, H, G, J, K[C + 9], 21, -343485551);
+                J = this.safe_add(J, E);
+                I = this.safe_add(I, D);
+                H = this.safe_add(H, B);
+                G = this.safe_add(G, A);
+            }
+            return [J, I, H, G];
+        },
+        md5_cmn: function(F, C, B, A, E, D) {
+            return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(C, F), this.safe_add(A, D)), E), B);
+        },
+        md5_ff: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn((B & G) | ((~B) & F), C, B, A, E, D);
+        },
+        md5_gg: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn((B & F) | (G & (~F)), C, B, A, E, D);
+        },
+        md5_hh: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn(B ^ G ^ F, C, B, A, E, D);
+        },
+        md5_ii: function(C, B, G, F, A, E, D) {
+            return this.md5_cmn(G ^ (B | (~F)), C, B, A, E, D);
+        },
+        safe_add: function(A, D) {
+            var C = (A & 65535) + (D & 65535);
+            var B = (A >> 16) + (D >> 16) + (C >> 16);
+            return (B << 16) | (C & 65535);
+        },
+        bit_rol: function(A, B) {
+            return (A << B) | (A >>> (32 - B));
+        },
+        binl2hex: function(C) {
+            var B = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+            var D = "";
+            for (var A = 0; A < C.length * 4; A++) {
+                D += B.charAt((C[A >> 2] >> ((A % 4) * 8 + 4)) & 15) + B.charAt((C[A >> 2] >> ((A % 4) * 8)) & 15);
+            }
+            return D;
+        },
+        str2binl: function(D) {
+            var C = [];
+            var A = (1 << chrsz) - 1;
+            for (var B = 0; B < D.length * chrsz; B += chrsz) {
+                C[B >> 5] |= (D.charCodeAt(B / chrsz) & A) << (B % 32);
+            }
+            return C;
+        },
+        utf8to16: function(I) {
+            var D, F, E, G, H, C, B, A, J;
+            D = [];
+            G = I.length;
+            F = E = 0;
+            while (F < G) {
+                H = I.charCodeAt(F++);
+                switch (H >> 4) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        D[E++] = I.charAt(F - 1);
+                        break;
+                    case 12:
+                    case 13:
+                        C = I.charCodeAt(F++);
+                        D[E++] = String.fromCharCode(((H & 31) << 6) | (C & 63));
+                        break;
+                    case 14:
+                        C = I.charCodeAt(F++);
+                        B = I.charCodeAt(F++);
+                        D[E++] = String.fromCharCode(((H & 15) << 12) | ((C & 63) << 6) | (B & 63));
+                        break;
+                    case 15:
+                        switch (H & 15) {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                            case 6:
+                            case 7:
+                                C = I.charCodeAt(F++);
+                                B = I.charCodeAt(F++);
+                                A = I.charCodeAt(F++);
+                                J = ((H & 7) << 18) | ((C & 63) << 12) | ((B & 63) << 6) | (A & 63) - 65536;
+                                if (0 <= J && J <= 1048575) {
+                                    D[E] = String.fromCharCode(((J >>> 10) & 1023) | 55296, (J & 1023) | 56320);
+                                } else {
+                                    D[E] = "?";
+                                }
+                                break;
+                            case 8:
+                            case 9:
+                            case 10:
+                            case 11:
+                                F += 4;
+                                D[E] = "?";
+                                break;
+                            case 12:
+                            case 13:
+                                F += 5;
+                                D[E] = "?";
+                                break;
+                        }
+                }
+                E++;
+            }
+            return D.join("");
+        },
+        s4: function() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        },
+        uuid: function() {
+            var s4 = this.s4;
+            return s4() + s4() + s4() + s4() +
+                s4() + s4() + s4() + s4();
+        }
+    };
+
+    module.exports = math;
+})();
+},{}],15:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-array.js
+ *
+ * changelog
+ * 2014-06-08[13:27:08]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    "use strict";
+    var assert = require("assert");
+    var array = require('../array');
+    describe('Array', function() {
+        describe('#indexOf()', function() {
+            it('should find the correct index', function() {
+                assert.equal(2, array.indexOf([1, 2, 3], 3));
+            });
+            it('should return -1 when the value is not present', function() {
+                assert.equal(-1, array.indexOf([1, 2, 3], 5));
+                assert.equal(-1, array.indexOf([1, 2, 3, 4], 1, 1));
+            });
+        });
+
+        describe('#forEach()', function() {
+            it('should for each all', function() {
+                var arr = [1, 2, 3, 4, 5, 6],
+                    i = 0;
+                array.forEach(arr, function() {
+                    ++i;
+                });
+                assert.equal(i, arr.length);
+            });
+        });
+
+        describe('#every()', function() {
+            it('should return true when all elements gt 0', function() {
+                assert.equal(true, array.every([1, 3, 4, 7], function(e) {
+                    return e >= 0;
+                }));
+            });
+
+            it('should return false when one element lnt 1', function() {
+                assert.equal(false, array.every([1, 3, 4, 7], function(e) {
+                    return e > 1;
+                }));
+            });
+        });
+
+        describe('#some()', function() {
+            it('should return true when one element lt 2', function() {
+                assert.equal(true, array.some([1, 3, 4, 7], function(e) {
+                    return e < 2;
+                }));
+            });
+
+            it('should return false when all element lnt 10', function() {
+                assert.equal(false, array.some([1, 3, 4, 7], function(e) {
+                    return e > 10;
+                }));
+            });
+        });
+
+        describe('#filter()', function() {
+            it('should only one element left', function() {
+                assert.equal(1, array.filter([1, 3, 4, 7], function(e) {
+                    return e < 2;
+                }).length);
+            });
+        });
+    });
+})();
+},{"../array":6,"assert":1}],16:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-cookie.js
+ *
+ * changelog
+ * 2014-06-08[16:55:18]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+    var assert = require('assert');
+    var PassportCookieParser = require('../cookie').PassportCookieParser;
+
+    describe('Cookie', function() {
+
+        it('userid parse', function() {
+            if (navigator.cookieEnabled) {
+                document.cookie = 'ppinf=2|1402199707|1403409307|bG9naW5pZDowOnx1c2VyaWQ6NDQ6QkY1NkM3NEU1MEM1Mjk1RTQ2MDBCNEE0NDRBQzMxQTBAcXEuc29odS5jb218c2VydmljZXVzZTozMDowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDB8Y3J0OjA6fGVtdDoxOjB8YXBwaWQ6NDoxMTIwfHRydXN0OjE6MXxwYXJ0bmVyaWQ6MTowfHJlbGF0aW9uOjA6fHV1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1bmlxbmFtZTo0MzpOaWdodGluZ2FsZVkxMzYxJUU1JTlDJUE4JUU2JTkwJTlDJUU3JThCJTkwfHJlZnVzZXJpZDozMjpCRjU2Qzc0RTUwQzUyOTVFNDYwMEI0QTQ0NEFDMzFBMHxyZWZuaWNrOjEzOk5pZ2h0aW5nYWxlLll8';
+                assert.equal('BF56C74E50C5295E4600B4A444AC31A0@qq.sohu.com', PassportCookieParser.parse().userid);
+            }
+        });
+    }); //describe
+})(window, document);
+},{"../cookie":10,"assert":1}],17:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-event.js
+ *
+ * changelog
+ * 2014-06-08[17:07:12]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var Event = require('../event');
+
+    describe('Event', function() {
+
+        it('event emit', function() {
+            var e = new Event(),
+                cnt = 0,
+                evtName = 'tick';
+            var listener = function(evt, data) {
+                ++cnt;
+            };
+            e.on(evtName, listener);
+            e.emit(evtName);
+            assert.equal(1, cnt);
+            e.off(evtName, listener);
+            e.emit(evtName);
+            assert.equal(1, cnt);
+        });
+    }); //describe
+})();
+},{"../event":13,"assert":1}],18:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-math.js
+ *
+ * changelog
+ * 2014-06-08[16:38:42]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var math = require('../math');
+    var console = require('../console');
+    
+    describe('Math', function() {
+
+        it('base64 decode', function() {
+            assert.equal(escape('搜狗passport'), math.utf8to16(math.b64_decodex('JXU2NDFDJXU3MkQ3cGFzc3BvcnQ=')));
+        });
+        it('create 32 bytes uuid', function() {
+            assert.equal(32, math.uuid().length);
+        });
+    }); //describe
+})();
+},{"../console":9,"../math":14,"assert":1}],19:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-type.js
+ *
+ * changelog
+ * 2014-06-08[14:05:22]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function(window, document, undefined) {
+
+    var assert = require("assert");
+    var type = require('../type');
+
+    describe('Type', function() {
+
+        var rules = {
+            "RegExp": {
+                nec: ['x', 0, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [/regexp/, new RegExp()]
+            },
+            "Date": {
+                nec: [/x/, 'x', 0, false, {},
+                    [], null, undefined, type.noop
+                ],
+                pos: [new Date()]
+            },
+            "String": {
+                nec: [/x/, 0, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: ['string', new String()]
+            },
+            "Array": {
+                nec: [/x/, 'x', 0, false, {
+                    length: 1
+                }, , null, undefined, new Date(), type.noop],
+                pos: [
+                    [], Array()
+                ]
+            },
+            "Boolean": {
+                nec: [/x/, 'x', 0, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [true, new Boolean()]
+            },
+            "Function": {
+                nec: [/x/, 'x', 0, false, {},
+                    [], null, undefined, new Date()
+                ],
+                pos: [type.noop, new Function()]
+            },
+            "Number": {
+                nec: [/x/, 'x', false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [2.3, new Number(), -9e-8, NaN, Number.MAX_VALUE, Number.POSITIVE_INFINITY]
+            },
+            "Object": {
+                nec: ['x', 1, false, undefined, type.noop],
+                pos: [
+                    [], {},
+                    new Object(), null, window, new Date(), new String, new RegExp()
+                ]
+            },
+            "Empty": {
+                nec: [/x/, 'x', 1, false, {},
+                    new Date(), type.noop
+                ],
+                pos: ['', [], null, undefined]
+            },
+            "HTMLElement": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [document.documentElement, document.createElement('p')]
+            },
+            "PlainObject": {
+                nec: ['x', 1, false, [], null, undefined, type.noop],
+                pos: [{},
+                    new Object(),
+                    window
+                ]
+            },
+            "Undefined": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], null, new Date(), type.noop
+                ],
+                pos: [undefined, this.__no]
+            },
+            "Null": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], undefined, new Date(), type.noop
+                ],
+                pos: [null]
+            },
+            "Integer": {
+                nec: [/x/, '2.2', 2e-3, 2.2, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: [6, 1e2, 2.0, 0x9]
+            },
+            "NullOrUndefined": {
+                nec: [/x/, 'x', 1, false, {},
+                    [], new Date(), type.noop
+                ],
+                pos: [null, undefined]
+            },
+            "NonNullOrUndefined": {
+                nec: [null, undefined],
+                pos: [{}, /x/, [], '', false]
+            },
+            "NonEmptyString": {
+                nec: [/x/, false, {},
+                    [], null, undefined, new Date(), type.noop
+                ],
+                pos: ['x', new String('y')]
+            }
+        };
+
+
+        function makeIs(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert(type['is' + e](rules[e].pos[i]));
+                };
+            }(e, i);
+        }
+
+        function makeNot(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert(!type['is' + e](rules[e].nec[i]));
+                };
+            }(e, i);
+        }
+
+        function makeAssert(e, i) {
+            return function(e, i) {
+                return function() {
+                    assert.throws(function() {
+                        type['assert' + e](rules[e].nec[i]);
+                    });
+                };
+            }(e, i);
+        }
+
+        for (var e in rules) {
+            for (var i = 0; i < rules[e].pos.length; ++i) {
+                it('expecting ' + rules[e].pos[i] + ' to be ' + e, makeIs(e, i));
+            }
+            for (i = 0; i < rules[e].nec.length; ++i) {
+                it('unexpecting ' + rules[e].nec[i] + ' to be ' + e, makeNot(e, i));
+                it('throwing when' + rules[e].nec[i] + ' to be ' + e, makeAssert(e, i));
+            }
+
+        }
+
+    });
+})(window, document);
+},{"../type":21,"assert":1}],20:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-utils.js
+ *
+ * changelog
+ * 2014-06-08[16:18:43]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    var assert = require('assert');
+    var utils = require('../utils');
+    var console = require('../console');
+
+    describe('Utils', function() {
+        it('#mixin()', function() {
+            var src = {
+                    x: 89
+                },
+                dest = {};
+            assert.equal(89, utils.mixin(dest, src).x);
+        });
+
+        it('#trim()', function() {
+            assert.equal(0, utils.trim('\x20\t\r\n\f').length);
+        });
+
+        it('#getIEVersion()', function() {
+            var version = utils.getIEVersion();
+            if (version) {
+                console.log('IE' + version);
+                assert(utils.type.isInteger(version) && version > 4 && version < 12);
+            }
+        });
+
+        it('#hideSource()', function() {
+            var demo = {
+                say: function(a, b, c) {}
+            };
+            var funcstr = utils.hideSource('say', demo.say).call(demo.say);
+            assert(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(funcstr));
+        });
+
+    }); //describe
+})();
+},{"../console":9,"../utils":22,"assert":1}],21:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * type.js
+ *
+ * changelog
+ * 2014-06-07[15:50:11]:authorized
+ * 2014-06-07[17:26:01]:asserts,customs
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.1
+ * @since 0.1.0
+ */
+(function() {
+    "use strict";
+
+    var noop = function() {};
+
+    var type = {
+        expando: "sogou-passport-" + (+new Date()),
+        noop: noop,
+        debug:+'1',
+        strundefined: typeof undefined,
+        strstr: typeof '',
+        strobject: typeof {},
+        strnumber: typeof 0,
+        strfunction: typeof noop,
+        isNullOrUndefined: function(obj) {
+            return !!(this.isNull(obj) || this.isUndefined(obj));
+        },
+        isNonNullOrUndefined: function(obj) {
+            return !this.isNullOrUndefined(obj);
+        },
+        isInteger: function(num) {
+            return !!(this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num));
+        },
+        isNull: function(obj) {
+            return null === obj;
+        },
+        isUndefined: function(obj) {
+            return undefined === obj;
+        },
+        /**
+         * Check if obj is a non-null and non-array object.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isPlainObject: function(obj) {
+            return this.isObject(obj) && !this.isNull(obj) && !this.isArray(obj) && !this.isRegExp(obj) && !this.isDate(obj);
+        },
+        isNonEmptyString: function(obj) {
+            return !!(obj && this.isString(obj));
+        },
+        isHTMLElement: function(obj) {
+            return !!(obj && obj.childNodes && obj.tagName && obj.appendChild);
+        },
+        /**
+         * Check if obj is null,undefined,empty array or empty string.
+         *
+         * @param  {Object}  obj
+         * @return {Boolean}
+         */
+        isEmpty: function(obj) {
+            return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
+        },
+        isObject: function(obj) {
+            return type.strobject === typeof obj;
+        }
+    };
+
+    var typeKeys = "RegExp,Date,String,Array,Boolean,Function,Number".split(',');
+
+    /**
+     * Create is* functions.
+     * @param  {String} vari
+     * @return {Function}
+     */
+    function createIs(vari) {
+        return (function(vari) {
+            return function(variable) {
+                return '[object ' + vari + ']' === ({}).toString.apply(variable);
+            };
+        })(vari);
+    }
+
+    /**
+     * Create assert function.
+     * @param  {String} vari
+     * @return {Function}
+     */
+    function createAssert(vari) {
+        return (function(vari) {
+            return function(name, variable) {
+
+                if (arguments.length < 2) {
+                    variable = name;
+                    name = String(variable);
+                }
+
+                if (!type['is' + vari](variable)) {
+                    throw new Error('"' + name + '" has to be a(n) ' + vari);
+                }
+            };
+        })(vari);
+    }
+
+    for (var i = typeKeys.length - 1; i >= 0; --i) {
+        type['is' + typeKeys[i]] = createIs(typeKeys[i]);
+        type['assert' + typeKeys[i]] = createAssert(typeKeys[i]);
+    }
+
+    //create missing asserts
+    var assertKeys = "Empty,HTMLElement,PlainObject,Undefined,Null,Integer,NullOrUndefined,NonNullOrUndefined,NonEmptyString,Object".split(',');
+    for (i = assertKeys.length; i >= 0; --i) {
+        type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
+    }
+
+    //As type is required by utils,we cannot use utils.freeze
+    module.exports = type;
+})();
+},{}],22:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * utils.js
+ *
+ * changelog
+ * 2014-05-24[23:06:31]:authorized
+ * 2014-06-06[09:23:53]:getIEVersion
+ * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
+ * 2014-06-07[16:39:34]:remove 'dom' module
+ * 2014-06-09[11:05:06]:define 'hideSource' function
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.4
+ * @since 0.1.0
+ */
+
+(function(undefined) {
+    "use strict";
+
+    var array = require('./array');
+    var math = require('./math');
+    var type = require('./type');
+    var dom = require('./dom');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    var utils = {
+        math: math,
+        array: array,
+        dom: dom,
+        type: type,
+        /**
+         * Merge object members.
+         *
+         * @param  {Object} dest
+         * @param  {Object} src
+         * @return {Object}      Dest
+         */
+        mixin: function(dest, src) {
+
+            src = src || {};
+
+            type.assertNonNullOrUndefined('dest', dest);
+
+            for (var e in src) {
+                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
+                    dest[e] = src[e];
+                }
+            }
+            return dest;
+        },
+
+        /**
+         * Get version of Internet Explorer by user agent.
+         * IE 11 supported.
+         *
+         * @return {Integer} Version in integer.
+         */
+        getIEVersion: function() {
+            var ua = navigator.userAgent,
+                matches, tridentMap = {
+                    '4': 8,
+                    '5': 9,
+                    '6': 10,
+                    '7': 11
+                };
+
+            matches = ua.match(/MSIE (\d+)/i);
+
+            if (matches && matches[1]) {
+                //find by msie
+                return +matches[1];
+            }
+
+            matches = ua.match(/Trident\/(\d+)/i);
+            if (matches && matches[1]) {
+                //find by trident
+                return tridentMap[matches[1]] || null;
+            }
+
+            //we did what we could
+            return null;
+        },
+
+        /**
+         * Trim a string.If a non-string passed in,
+         * convert it to a string.
+         *
+         * @param  {Object} str Source string
+         * @return {String}    Trimed string
+         * @version 0.1.1
+         */
+        trim: function(str) {
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
+            } else {
+                return String(str).replace(rtrim, '');
+            }
+        },
+        /**
+         * Freeze an object by Object.freeze,so it does not
+         * work on old browsers.
+         *
+         * This function is trying to remind developers to not
+         * modify something.
+         *
+         * @param  {Object} obj Object to be freezed
+         * @return {Object}    Source object
+         */
+        freeze: function(obj) {
+
+            type.assertNonNullOrUndefined('obj', obj);
+            type.assertObject('obj', obj);
+
+            if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
+                Object.freeze(obj);
+            }
+
+            return obj;
+        },
+        /**
+         * Hide source of a function by defining toString.
+         * 
+         * @param  {String} name Function name
+         * @param  {Function} func Function to be hide-sourced
+         * @param  {String} prefix 
+         * @return {Function}      'toString' function
+         */
+        hideSource: function(name, func, prefix) {
+            type.assertNonEmptyString('name', name);
+            type.assertFunction('func', func);
+
+            if(prefix)
+            {
+                type.assertNonEmptyString(prefix);
+            }else{
+                prefix = 'PassportSC.';
+            }
+
+            var source = String(func);
+
+            func.toString = (function(name, source) {
+                return function() {
+                    return prefix + name + source.match(/\([^\{\(]+(?=\{)/)[0];
+                };
+            })(name, source);
+
+            return func.toString;
+        }
+    };
+
+    utils.freeze(math);
+    utils.freeze(dom);
+    utils.freeze(type);
+    utils.freeze(array);
+
+    module.exports = utils;
+})();
+},{"./array":6,"./dom":12,"./math":14,"./type":21}]},{},[6,7,8,9,10,11,12,13,14,21,22,15,16,17,18,19,20])

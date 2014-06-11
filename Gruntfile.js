@@ -6,10 +6,11 @@
  * changelog
  * 2014-05-24[20:41:37]:authorized
  * 2014-05-25[11:31:17]:clean
+ * 2014-06-11[21:10:44]:skin images
  *
  * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 
@@ -64,7 +65,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['css/skin/*.{css,less}'],
+                    src: ['css/skin/**/*.{css,less}'],
                     ext: '.css',
                     dest: TARGET_DIR
                 }]
@@ -79,7 +80,7 @@ module.exports = function(grunt) {
                     dest: WEB_DIR
                 }]
             },
-            img: {
+            ico: {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
@@ -96,8 +97,16 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['**/*.{jpg,png,gif}'],
+                    src: ['img/*.{jpg,png,gif}'],
                     dest: WEB_DIR
+                }]
+            },
+            skin:{
+                files:[{
+                    expand:true,
+                    cwd:STATIC_DIR,
+                    src:'css/skin/**/*.{jpg,png,gif}',
+                    dest:TARGET_DIR
                 }]
             }
         },

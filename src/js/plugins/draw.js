@@ -8,9 +8,10 @@
  * changelog
  * 2014-06-04[23:14:19]:authorized
  * 2014-06-08[21:25:34]:rename to draw.js
+ * 2014-06-11[21:11:06]:change skin css path
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 (function(window, document, undefined) {
@@ -21,8 +22,6 @@
   var UTILS = require('../utils');
   var console = require('../console');
 
-  //var IE6 = UTILS.getIEVersion() === 6;
-  //
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
   var WRAPPER_ID = 'sogou-passport-pop';
@@ -82,7 +81,7 @@
    * @return {String} url
    */
   function getCssHref(name){
-    return(UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') +'/@version@/css/skin/'+ name+'.css';
+    return(UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') +'/@version@/css/skin/'+ name+'/style.css';
   }
   /**
    * Parse a link src by style parameter.
