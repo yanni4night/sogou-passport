@@ -443,9 +443,10 @@
  * 2014-06-10[13:30:08]:'param_error'&'notactive' supported
  * 2014-06-10[14:39:15]:merge events into 'login_failed'
  * 2014-06-11[21:52:05]:callback default msg when third party login
+ * 2014-06-12[13:24:21]:exports 'getFixedUrl'&'getSupportedEvents'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.9
+ * @version 0.1.10
  * @since 0.1.0
  */
 
@@ -466,7 +467,7 @@
         login_success: 'loginsuccess',
         login_failed: 'loginfailed',
         logout_success: 'logoutsuccess',
-        third_party_login_complete: '3rdlogincomplete',//popup only
+        third_party_login_complete: '3rdlogincomplete', //popup only
         param_error: 'paramerror'
     };
 
@@ -486,8 +487,8 @@
         }
     };
 
-    var e;//for element
-    var gLastLoginName;//for not active
+    var e; //for element
+    var gLastLoginName; //for not active
 
 
     var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
@@ -615,11 +616,11 @@
         },
         /**
          * Validtae captcha.
-         * 
+         *
          * @param  {String} captcha
          * @return {Boolean}
          */
-        validateCaptcha: function(captcha){
+        validateCaptcha: function(captcha) {
             return type.isNonEmptyString(captcha) && /^[a-zA-Z0-9]+$/.test(captcha);
         }
     };
@@ -836,7 +837,7 @@
             } else if (+data.status === 20231) {
                 data.activeurl = FIXED_URLS.active + '?email=' + encodeURIComponent(gLastLoginName || "") + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
                 data.msg = data.msg || '帐号未激活';
-                this.emit(EVENTS.login_failed,data);
+                this.emit(EVENTS.login_failed, data);
             } else if (+data.needcaptcha) {
                 data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
                 data.msg = data.msg || '需要验证码';
@@ -867,7 +868,9 @@
                 console.trace('Login3rd callback received but [Passport] has not been initialized');
                 return;
             }
-            this.emit(EVENTS.third_party_login_complete,{msg:'登录成功'});
+            this.emit(EVENTS.third_party_login_complete, {
+                msg: '登录成功'
+            });
         },
         /**
          * If passport has been initialized.
@@ -939,6 +942,12 @@
             type.assertNonEmptyString('url', url);
             FIXED_URLS[name] = url;
             return FIXED_URLS;
+        },
+        getFixedUrls: function() {
+            return FIXED_URLS;
+        },
+        getSupportedEvents: function() {
+            return EVENTS;
         }
     };
 })(window, document);
