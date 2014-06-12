@@ -1218,7 +1218,7 @@ process.chdir = function (dir) {
 
   module.exports = array;
 })();
-},{"./type":21}],7:[function(require,module,exports){
+},{"./type":24}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1262,7 +1262,7 @@ process.chdir = function (dir) {
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":21}],8:[function(require,module,exports){
+},{"./type":24}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1334,7 +1334,7 @@ process.chdir = function (dir) {
     module.exports = codes;
 
 })(window, document);
-},{"./utils":22}],9:[function(require,module,exports){
+},{"./utils":25}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1369,7 +1369,7 @@ process.chdir = function (dir) {
 
     module.exports = console;
 })(window);
-},{"./type":21}],10:[function(require,module,exports){
+},{"./type":24}],10:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1463,7 +1463,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./utils":22}],11:[function(require,module,exports){
+},{"./utils":25}],11:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -1991,7 +1991,7 @@ process.chdir = function (dir) {
         }
     };
 })(window, document);
-},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":22}],12:[function(require,module,exports){
+},{"./codes":8,"./console":9,"./cookie":10,"./event":13,"./utils":25}],12:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2002,9 +2002,10 @@ process.chdir = function (dir) {
  * changelog
  * 2014-06-07[16:33:33]:authorized
  * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
+ * 2014-06-12[09:28:41]:add 'addClass'/'hasClass'/'removeClass' functions
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 
@@ -2013,6 +2014,8 @@ process.chdir = function (dir) {
     "use strict";
 
     var type = require('./type');
+    var array = require('./array');
+    var string = require('./string');
     var buggy = require('./buggy');
 
     if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
@@ -2059,12 +2062,12 @@ process.chdir = function (dir) {
         },
         /**
          * Insert a script element.
-         * 
-         * @param {String}   src     
+         *
+         * @param {String}   src
          * @param {Function} callback
          */
         addScript: function(src, callback) {
-            
+
             type.assertNonEmptyString('src', src);
 
             if (callback) {
@@ -2189,11 +2192,206 @@ process.chdir = function (dir) {
                 }
             });
             return (ele && ele.id === id) ? ele : null;
+        },
+        /**
+         * [hasClass description]
+         * @param  {[type]}  ele        [description]
+         * @param  {[type]}  classnames [description]
+         * @return {Boolean}            [description]
+         */
+        hasClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return false;
+            }
+
+            if (!type.isNullOrUndefined(ele.classList) && ele.classList.contains) {
+                return array.every(Array.prototype.slice.call(arguments, 1), function(cz) {
+                    return ele.classList.contains(cz);
+                });
+            }
+
+            var myClass = ele.className;
+
+            for (var i = arguments.length - 1; i > 0; --i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    return false;
+                }
+
+                cn = string.trim(cn);
+
+                if (new RegExp('\\b' + cn + '\\b').test(myClass)) {
+                    //Exist
+                    return true;
+                }
+
+            } //for arguments
+
+
+            return false;
+        },
+        /**
+         * Add a class to an element.
+         * @param {HTMLElement} ele
+         * @param {String} classnames
+         * @return {O}
+         */
+        addClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            var classAttr = string.trim(ele.className) || '';
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace));
+
+            for (var i = 1, len = arguments.length; i < len; ++i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    continue;
+                }
+
+                cn = string.trim(cn);
+
+                //FIXME
+                if (!/^[\w\-]+$/.test(cn)) {
+                    //Illegal class name
+                    continue;
+                }
+
+                if (new RegExp('\\b' + cn + '\\b').test(classAttr)) {
+                    //Exist
+                    continue;
+                }
+
+                classAttrArr.push(cn);
+
+            } //for arguments
+
+            ele.className = string.trim(classAttrArr.join(' '));
+
+            return this;
+        },
+
+        /**
+         * Remove classes from an element.
+         * @param  {HTMLElement} ele
+         * @param  {String|Function} classnames
+         * @return {O}
+         */
+        removeClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            classnames = Array.prototype.slice.call(arguments, 1);
+
+            var classAttr = string.trim(ele.className) || "";
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace, ''));
+
+            var newAttrArray = array.filter(classAttrArr, function(classn, index) {
+                classn = string.trim(classn);
+                if (array.some(classnames, function(filter) {
+                    if (type.isString(filter)) {
+                        return filter === classn;
+                    } else if (type.isFunction(filter)) {
+                        return !!filter(classn);
+                    } else
+                        return false;
+                })) {
+                    classAttrArr.splice(index, 1);
+                    return false;
+                }
+
+                return true;
+            });
+
+            ele.className = string.trim(newAttrArray.join(' '));
+
+            return this;
+        },
+        /**
+         * Judge if a HTMLElement matches the selector.
+         *
+         * The selector could include tagName(case ignored),id or class name,
+         * like "li.clazz#id".
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {Boolean}
+         */
+        matches: function(ele, selector) {
+
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+
+            selector = string.trim(selector);
+
+            var segs = selector.match(/([\w-]+)|(\.[\w-]+)|(#[\w-]+)/mg);
+            var pattern;
+
+            if (!segs || !segs.length) {
+                return false;
+            }
+
+            segs = array.filter(segs, function(n) {
+                return !!n;
+            });
+
+            for (var i = segs.length - 1; i >= 0; --i) {
+                pattern = segs[i];
+                if (string.startsWith(pattern, '.')) {
+                    if (!this.hasClass(ele, pattern.slice(1)))
+                        return false;
+                } else if (string.startsWith(pattern, '#')) {
+                    if (ele.id !== pattern.slice(1))
+                        return false;
+                } else {
+                    if (ele.tagName.toLowerCase() !== pattern.toLowerCase()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        },
+        /**
+         * Find a parent which mathes the selector.
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {HTMLElement}
+         */
+        parents: function(ele, selector) {
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+            selector = string.trim(selector);
+            var current = ele,
+                parent;
+            while (!!(parent = current.parentNode)) {
+                if (this.matches(parent, selector)) {
+                    return parent;
+                }
+                current = parent;
+            }
+
+            return null;
         }
     };
+
     module.exports = dom;
 })(window, document);
-},{"./buggy":7,"./type":21}],13:[function(require,module,exports){
+},{"./array":6,"./buggy":7,"./string":15,"./type":24}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2232,7 +2430,7 @@ process.chdir = function (dir) {
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 listeners[evt] = listeners[evt] || [];
@@ -2261,7 +2459,7 @@ process.chdir = function (dir) {
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
                     delete listeners[evt];
@@ -2292,7 +2490,7 @@ process.chdir = function (dir) {
 
             type.assertNonEmptyString('event',event);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];
@@ -2312,7 +2510,7 @@ process.chdir = function (dir) {
 
     module.exports = EventEmitter;
 })();
-},{"./console":9,"./utils":22}],14:[function(require,module,exports){
+},{"./console":9,"./utils":25}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2589,6 +2787,112 @@ process.chdir = function (dir) {
 /**
  * Copyright (C) 2014 yanni4night.com
  *
+ * string.js
+ *
+ * changelog
+ * 2014-06-12[09:18:30]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    "use strict";
+
+    var type = require('./type');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    module.exports = {
+        whitespace: whitespace,
+        trim: function(str) {
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
+            } else {
+                return String(str).replace(rtrim, '');
+            }
+        },
+        /**
+         *
+         * 
+         * 
+         * @param  {[type]} source  [description]
+         * @param  {[type]} pattern [description]
+         * @return {[type]}         [description]
+         */
+        startsWith: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            if (pattern.length > source.length) {
+                return false;
+            }
+            var t = pattern.length;
+            while (--t >= 0) {
+                if (source.charAt(t) !== pattern.charAt(t)) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        /**
+         *
+         * 
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
+         */
+        startsWithIgnoreCase: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            return this.startsWith(source.toLowerCase(), pattern.toLowerCase());
+        },
+        /**
+         *
+         * 
+         * @param  {[type]} source  [description]
+         * @param  {[type]} pattern [description]
+         * @return {[type]}         [description]
+         */
+        endsWith: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+            var t = pattern.length;
+            var diff = source.length - t;
+            if (diff < 0) {
+                return false;
+            }
+
+            while (--t >= 0) {
+                if (source.charAt(diff + t) !== pattern.charAt(t)) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+        /**
+         *
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
+         */
+        endsWithIgnoreCase: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            return this.endsWith(source.toLowerCase(), pattern.toLowerCase());
+        }
+    };
+})();
+},{"./type":24}],16:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
  * test-array.js
  *
  * changelog
@@ -2662,7 +2966,7 @@ process.chdir = function (dir) {
         });
     });
 })();
-},{"../array":6,"assert":1}],16:[function(require,module,exports){
+},{"../array":6,"assert":1}],17:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2690,7 +2994,100 @@ process.chdir = function (dir) {
         });
     }); //describe
 })(window, document);
-},{"../cookie":10,"assert":1}],17:[function(require,module,exports){
+},{"../cookie":10,"assert":1}],18:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * test-dom.js
+ *
+ * changelog
+ * 2014-06-12[09:05:27]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+(function(window, document, undefined) {
+    var assert = require('assert');
+    var dom = require('../dom');
+    var console = require('../console');
+
+    describe('Dom', function() {
+        describe('find by id', function() {
+            var expando = 'sogou-passport-dom-test' + (+new Date());
+            var input = document.createElement('input');
+            input.name = expando;
+            document.body.appendChild(input);
+            var div = document.createElement('div');
+            div.id = expando;
+            document.body.appendChild(div);
+
+            it('should find div by id', function() {
+                var ta = dom.id(expando);
+                assert(!!ta && ta.tagName === 'DIV');
+            });
+
+        });
+
+        describe('#hasClass()', function() {
+            var div = document.createElement('div');
+            document.body.appendChild(div);
+            var clazz = div.className = 'sogou-passport-dom-test-has-' + (+new Date());
+
+            it('should has the class', function() {
+                assert(dom.hasClass(div, clazz));
+            });
+
+        });
+
+        describe('#addClass()', function() {
+            var div = document.createElement('div');
+            document.body.appendChild(div);
+            var clazz = 'sogou-passport-dom-test-add-' + (+new Date());
+
+            dom.addClass(div, clazz);
+
+            it('should has the class after adding', function() {
+                assert(dom.hasClass(div, clazz));
+            });
+        });
+
+        describe('#removeClass()', function() {
+            var div = document.createElement('div');
+            document.body.appendChild(div);
+            var clazz = div.className = 'sogou-passport-dom-test-remove-' + (+new Date());
+
+            dom.removeClass(div, clazz);
+
+            it('should has no class after removing', function() {
+                assert(!dom.hasClass(div, clazz));
+            });
+        });
+
+        describe('#matches()', function() {
+            var div = document.createElement('div');
+            document.body.appendChild(div);
+            var expando = div.className = div.id = 'sogou-passport-dom-test-matches-' + (+new Date());
+
+            it('should matches', function() {
+                assert(dom.matches(div, 'div.' + expando + '#' + expando));
+            });
+        });
+
+        describe('#parents()', function() {
+            var div = document.createElement('div');
+            var expando = div.className = div.id = 'sogou-passport-dom-test-parents-' + (+new Date());
+            div.innerHTML = '<div class="mx"><div class="mk"><span></span></div></div>';
+            document.body.appendChild(div);
+
+            it('should find the parent', function() {
+                assert(!!dom.parents(div.getElementsByTagName('span')[0], 'div.' + expando + '#' + expando));
+            });
+        });
+    });
+
+})(window, document);
+},{"../console":9,"../dom":12,"assert":1}],19:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2726,7 +3123,7 @@ process.chdir = function (dir) {
         });
     }); //describe
 })();
-},{"../event":13,"assert":1}],18:[function(require,module,exports){
+},{"../event":13,"assert":1}],20:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2755,7 +3152,53 @@ process.chdir = function (dir) {
         });
     }); //describe
 })();
-},{"../console":9,"../math":14,"assert":1}],19:[function(require,module,exports){
+},{"../console":9,"../math":14,"assert":1}],21:[function(require,module,exports){
+/**
+  * Copyright (C) 2014 yanni4night.com
+  *
+  * test-string.js
+  *
+  * changelog
+  * 2014-06-12[11:14:05]:authorized
+  *
+  * @author yanni4night@gmail.com
+  * @version 0.1.0
+  * @since 0.1.0
+  */
+(function(){
+    var assert = require('assert');
+    var string = require('../string');
+
+    describe('String',function(){
+
+        describe('#startsWith()',function(){
+            it('should return true if startsWith',function(){
+                assert(string.startsWith('String','Str'));
+            });
+            it('should return false if not startsWith',function(){
+                assert(!string.startsWith('String','Std'));
+            });
+        });
+
+        describe('#endsWith()',function(){
+            it('should return true if endsWith',function(){
+                assert(string.endsWith('String','ing'));
+            });
+            it('should return false if not endsWith',function(){
+                assert(!string.endsWith('String','xng'));
+            });
+        });
+
+        describe('#trim()',function(){
+            it('should return 0 if all empty', function() {
+                assert.equal(0, string.trim('\x20\t\r\n\f').length);
+            });
+        });
+
+    });
+
+})();
+},{"../string":15,"assert":1}],22:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2923,7 +3366,7 @@ process.chdir = function (dir) {
 
     });
 })(window, document);
-},{"../type":21,"assert":1}],20:[function(require,module,exports){
+},{"../type":24,"assert":1}],23:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -2943,37 +3386,39 @@ process.chdir = function (dir) {
     var console = require('../console');
 
     describe('Utils', function() {
-        it('#mixin()', function() {
-            var src = {
-                    x: 89
-                },
-                dest = {};
-            assert.equal(89, utils.mixin(dest, src).x);
+        describe('#mixin()', function() {
+            it('should mixin', function() {
+                var src = {
+                        x: 89
+                    },
+                    dest = {};
+                assert.equal(89, utils.mixin(dest, src).x);
+            })
         });
 
-        it('#trim()', function() {
-            assert.equal(0, utils.trim('\x20\t\r\n\f').length);
+        describe('#getIEVersion()', function() {
+            it('should get the version under Internet Explorer user agent', function() {
+                var version = utils.getIEVersion();
+                if (version) {
+                    console.log('IE' + version);
+                    assert(utils.type.isInteger(version) && version > 4 && version < 12);
+                }
+            })
         });
 
-        it('#getIEVersion()', function() {
-            var version = utils.getIEVersion();
-            if (version) {
-                console.log('IE' + version);
-                assert(utils.type.isInteger(version) && version > 4 && version < 12);
-            }
-        });
-
-        it('#hideSource()', function() {
-            var demo = {
-                say: function(a, b, c) {}
-            };
-            var funcstr = utils.hideSource('say', demo.say).call(demo.say);
-            assert(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(funcstr));
+        describe('#hideSource()', function() {
+            it('should modify function source', function() {
+                var demo = {
+                    say: function(a, b, c) {}
+                };
+                var funcstr = utils.hideSource('say', demo.say).call(demo.say);
+                assert(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(funcstr));
+            });
         });
 
     }); //describe
 })();
-},{"../console":9,"../utils":22,"assert":1}],21:[function(require,module,exports){
+},{"../console":9,"../utils":25,"assert":1}],24:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -3095,7 +3540,7 @@ process.chdir = function (dir) {
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],22:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -3107,9 +3552,10 @@ process.chdir = function (dir) {
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
  * 2014-06-07[16:39:34]:remove 'dom' module
  * 2014-06-09[11:05:06]:define 'hideSource' function
+ * 2014-06-12[09:23:30]:remove 'trim'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.4
+ * @version 0.1.5
  * @since 0.1.0
  */
 
@@ -3120,16 +3566,14 @@ process.chdir = function (dir) {
     var math = require('./math');
     var type = require('./type');
     var dom = require('./dom');
-
-    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-    var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+    var string = require('./string');
 
     var utils = {
         math: math,
         array: array,
         dom: dom,
         type: type,
+        string: string,
         /**
          * Merge object members.
          *
@@ -3181,22 +3625,6 @@ process.chdir = function (dir) {
 
             //we did what we could
             return null;
-        },
-
-        /**
-         * Trim a string.If a non-string passed in,
-         * convert it to a string.
-         *
-         * @param  {Object} str Source string
-         * @return {String}    Trimed string
-         * @version 0.1.1
-         */
-        trim: function(str) {
-            if (String.prototype.trim) {
-                return String.prototype.trim.call(String(str));
-            } else {
-                return String(str).replace(rtrim, '');
-            }
         },
         /**
          * Freeze an object by Object.freeze,so it does not
@@ -3257,4 +3685,4 @@ process.chdir = function (dir) {
 
     module.exports = utils;
 })();
-},{"./array":6,"./dom":12,"./math":14,"./type":21}]},{},[6,7,8,9,10,11,12,13,14,21,22,15,16,17,18,19,20])
+},{"./array":6,"./dom":12,"./math":14,"./string":15,"./type":24}]},{},[6,7,8,9,10,11,12,13,14,15,24,25,16,17,18,19,20,21,22,23])

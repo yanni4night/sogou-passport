@@ -8,9 +8,10 @@
  * changelog
  * 2014-06-07[16:33:33]:authorized
  * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
+ * 2014-06-12[09:28:41]:add 'addClass'/'hasClass'/'removeClass' functions
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 
@@ -19,6 +20,8 @@
     "use strict";
 
     var type = require('./type');
+    var array = require('./array');
+    var string = require('./string');
     var buggy = require('./buggy');
 
     if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
@@ -65,12 +68,12 @@
         },
         /**
          * Insert a script element.
-         * 
-         * @param {String}   src     
+         *
+         * @param {String}   src
          * @param {Function} callback
          */
         addScript: function(src, callback) {
-            
+
             type.assertNonEmptyString('src', src);
 
             if (callback) {
@@ -195,7 +198,202 @@
                 }
             });
             return (ele && ele.id === id) ? ele : null;
+        },
+        /**
+         * [hasClass description]
+         * @param  {[type]}  ele        [description]
+         * @param  {[type]}  classnames [description]
+         * @return {Boolean}            [description]
+         */
+        hasClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return false;
+            }
+
+            if (!type.isNullOrUndefined(ele.classList) && ele.classList.contains) {
+                return array.every(Array.prototype.slice.call(arguments, 1), function(cz) {
+                    return ele.classList.contains(cz);
+                });
+            }
+
+            var myClass = ele.className;
+
+            for (var i = arguments.length - 1; i > 0; --i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    return false;
+                }
+
+                cn = string.trim(cn);
+
+                if (new RegExp('\\b' + cn + '\\b').test(myClass)) {
+                    //Exist
+                    return true;
+                }
+
+            } //for arguments
+
+
+            return false;
+        },
+        /**
+         * Add a class to an element.
+         * @param {HTMLElement} ele
+         * @param {String} classnames
+         * @return {O}
+         */
+        addClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            var classAttr = string.trim(ele.className) || '';
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace));
+
+            for (var i = 1, len = arguments.length; i < len; ++i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    continue;
+                }
+
+                cn = string.trim(cn);
+
+                //FIXME
+                if (!/^[\w\-]+$/.test(cn)) {
+                    //Illegal class name
+                    continue;
+                }
+
+                if (new RegExp('\\b' + cn + '\\b').test(classAttr)) {
+                    //Exist
+                    continue;
+                }
+
+                classAttrArr.push(cn);
+
+            } //for arguments
+
+            ele.className = string.trim(classAttrArr.join(' '));
+
+            return this;
+        },
+
+        /**
+         * Remove classes from an element.
+         * @param  {HTMLElement} ele
+         * @param  {String|Function} classnames
+         * @return {O}
+         */
+        removeClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            classnames = Array.prototype.slice.call(arguments, 1);
+
+            var classAttr = string.trim(ele.className) || "";
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace, ''));
+
+            var newAttrArray = array.filter(classAttrArr, function(classn, index) {
+                classn = string.trim(classn);
+                if (array.some(classnames, function(filter) {
+                    if (type.isString(filter)) {
+                        return filter === classn;
+                    } else if (type.isFunction(filter)) {
+                        return !!filter(classn);
+                    } else
+                        return false;
+                })) {
+                    classAttrArr.splice(index, 1);
+                    return false;
+                }
+
+                return true;
+            });
+
+            ele.className = string.trim(newAttrArray.join(' '));
+
+            return this;
+        },
+        /**
+         * Judge if a HTMLElement matches the selector.
+         *
+         * The selector could include tagName(case ignored),id or class name,
+         * like "li.clazz#id".
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {Boolean}
+         */
+        matches: function(ele, selector) {
+
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+
+            selector = string.trim(selector);
+
+            var segs = selector.match(/([\w-]+)|(\.[\w-]+)|(#[\w-]+)/mg);
+            var pattern;
+
+            if (!segs || !segs.length) {
+                return false;
+            }
+
+            segs = array.filter(segs, function(n) {
+                return !!n;
+            });
+
+            for (var i = segs.length - 1; i >= 0; --i) {
+                pattern = segs[i];
+                if (string.startsWith(pattern, '.')) {
+                    if (!this.hasClass(ele, pattern.slice(1)))
+                        return false;
+                } else if (string.startsWith(pattern, '#')) {
+                    if (ele.id !== pattern.slice(1))
+                        return false;
+                } else {
+                    if (ele.tagName.toLowerCase() !== pattern.toLowerCase()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        },
+        /**
+         * Find a parent which mathes the selector.
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {HTMLElement}
+         */
+        parents: function(ele, selector) {
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+            selector = string.trim(selector);
+            var current = ele,
+                parent;
+            while (!!(parent = current.parentNode)) {
+                if (this.matches(parent, selector)) {
+                    return parent;
+                }
+                current = parent;
+            }
+
+            return null;
         }
     };
+
     module.exports = dom;
 })(window, document);

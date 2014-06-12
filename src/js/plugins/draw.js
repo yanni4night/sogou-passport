@@ -225,11 +225,11 @@
         console.error('Element[#' + AUTO_ID + '] does not exist');
         return;
       }
-      if (!(user = UTILS.trim(user$.value))) {
+      if (!(user = UTILS.string.trim(user$.value))) {
         console.trace('user empty');
         return;
       }
-      if (!(pass = UTILS.trim(pass$.value))) {
+      if (!(pass = UTILS.string.trim(pass$.value))) {
         console.trace('pass empty');
         return;
       }

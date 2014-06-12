@@ -169,7 +169,7 @@
 
   module.exports = array;
 })();
-},{"./type":12}],2:[function(require,module,exports){
+},{"./type":13}],2:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -213,7 +213,7 @@
 
     module.exports = Buggy;
 })(window, document);
-},{"./type":12}],3:[function(require,module,exports){
+},{"./type":13}],3:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -285,7 +285,7 @@
     module.exports = codes;
 
 })(window, document);
-},{"./utils":13}],4:[function(require,module,exports){
+},{"./utils":14}],4:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -320,7 +320,7 @@
 
     module.exports = console;
 })(window);
-},{"./type":12}],5:[function(require,module,exports){
+},{"./type":13}],5:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -414,7 +414,7 @@
         }
     };
 })(window, document);
-},{"./utils":13}],6:[function(require,module,exports){
+},{"./utils":14}],6:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com sogou.com
  *
@@ -942,7 +942,7 @@
         }
     };
 })(window, document);
-},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":13}],7:[function(require,module,exports){
+},{"./codes":3,"./console":4,"./cookie":5,"./event":8,"./utils":14}],7:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -953,9 +953,10 @@
  * changelog
  * 2014-06-07[16:33:33]:authorized
  * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
+ * 2014-06-12[09:28:41]:add 'addClass'/'hasClass'/'removeClass' functions
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 
@@ -964,6 +965,8 @@
     "use strict";
 
     var type = require('./type');
+    var array = require('./array');
+    var string = require('./string');
     var buggy = require('./buggy');
 
     if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
@@ -1010,12 +1013,12 @@
         },
         /**
          * Insert a script element.
-         * 
-         * @param {String}   src     
+         *
+         * @param {String}   src
          * @param {Function} callback
          */
         addScript: function(src, callback) {
-            
+
             type.assertNonEmptyString('src', src);
 
             if (callback) {
@@ -1140,11 +1143,206 @@
                 }
             });
             return (ele && ele.id === id) ? ele : null;
+        },
+        /**
+         * [hasClass description]
+         * @param  {[type]}  ele        [description]
+         * @param  {[type]}  classnames [description]
+         * @return {Boolean}            [description]
+         */
+        hasClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return false;
+            }
+
+            if (!type.isNullOrUndefined(ele.classList) && ele.classList.contains) {
+                return array.every(Array.prototype.slice.call(arguments, 1), function(cz) {
+                    return ele.classList.contains(cz);
+                });
+            }
+
+            var myClass = ele.className;
+
+            for (var i = arguments.length - 1; i > 0; --i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    return false;
+                }
+
+                cn = string.trim(cn);
+
+                if (new RegExp('\\b' + cn + '\\b').test(myClass)) {
+                    //Exist
+                    return true;
+                }
+
+            } //for arguments
+
+
+            return false;
+        },
+        /**
+         * Add a class to an element.
+         * @param {HTMLElement} ele
+         * @param {String} classnames
+         * @return {O}
+         */
+        addClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            var classAttr = string.trim(ele.className) || '';
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace));
+
+            for (var i = 1, len = arguments.length; i < len; ++i) {
+                var cn = arguments[i];
+                if (!type.isString(cn)) {
+                    //non-string
+                    continue;
+                }
+
+                cn = string.trim(cn);
+
+                //FIXME
+                if (!/^[\w\-]+$/.test(cn)) {
+                    //Illegal class name
+                    continue;
+                }
+
+                if (new RegExp('\\b' + cn + '\\b').test(classAttr)) {
+                    //Exist
+                    continue;
+                }
+
+                classAttrArr.push(cn);
+
+            } //for arguments
+
+            ele.className = string.trim(classAttrArr.join(' '));
+
+            return this;
+        },
+
+        /**
+         * Remove classes from an element.
+         * @param  {HTMLElement} ele
+         * @param  {String|Function} classnames
+         * @return {O}
+         */
+        removeClass: function(ele, classnames) {
+
+            type.assertHTMLElement('ele', ele);
+
+            if (arguments.length < 2) {
+                return this;
+            }
+
+            classnames = Array.prototype.slice.call(arguments, 1);
+
+            var classAttr = string.trim(ele.className) || "";
+            var classAttrArr = classAttr.split(new RegExp(string.whitespace, ''));
+
+            var newAttrArray = array.filter(classAttrArr, function(classn, index) {
+                classn = string.trim(classn);
+                if (array.some(classnames, function(filter) {
+                    if (type.isString(filter)) {
+                        return filter === classn;
+                    } else if (type.isFunction(filter)) {
+                        return !!filter(classn);
+                    } else
+                        return false;
+                })) {
+                    classAttrArr.splice(index, 1);
+                    return false;
+                }
+
+                return true;
+            });
+
+            ele.className = string.trim(newAttrArray.join(' '));
+
+            return this;
+        },
+        /**
+         * Judge if a HTMLElement matches the selector.
+         *
+         * The selector could include tagName(case ignored),id or class name,
+         * like "li.clazz#id".
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {Boolean}
+         */
+        matches: function(ele, selector) {
+
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+
+            selector = string.trim(selector);
+
+            var segs = selector.match(/([\w-]+)|(\.[\w-]+)|(#[\w-]+)/mg);
+            var pattern;
+
+            if (!segs || !segs.length) {
+                return false;
+            }
+
+            segs = array.filter(segs, function(n) {
+                return !!n;
+            });
+
+            for (var i = segs.length - 1; i >= 0; --i) {
+                pattern = segs[i];
+                if (string.startsWith(pattern, '.')) {
+                    if (!this.hasClass(ele, pattern.slice(1)))
+                        return false;
+                } else if (string.startsWith(pattern, '#')) {
+                    if (ele.id !== pattern.slice(1))
+                        return false;
+                } else {
+                    if (ele.tagName.toLowerCase() !== pattern.toLowerCase()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        },
+        /**
+         * Find a parent which mathes the selector.
+         *
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {HTMLElement}
+         */
+        parents: function(ele, selector) {
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+            selector = string.trim(selector);
+            var current = ele,
+                parent;
+            while (!!(parent = current.parentNode)) {
+                if (this.matches(parent, selector)) {
+                    return parent;
+                }
+                current = parent;
+            }
+
+            return null;
         }
     };
+
     module.exports = dom;
 })(window, document);
-},{"./buggy":2,"./type":12}],8:[function(require,module,exports){
+},{"./array":1,"./buggy":2,"./string":12,"./type":13}],8:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1183,7 +1381,7 @@
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 listeners[evt] = listeners[evt] || [];
@@ -1212,7 +1410,7 @@
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
                     delete listeners[evt];
@@ -1243,7 +1441,7 @@
 
             type.assertNonEmptyString('event',event);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];
@@ -1263,7 +1461,7 @@
 
     module.exports = EventEmitter;
 })();
-},{"./console":4,"./utils":13}],9:[function(require,module,exports){
+},{"./console":4,"./utils":14}],9:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1764,11 +1962,11 @@
         console.error('Element[#' + AUTO_ID + '] does not exist');
         return;
       }
-      if (!(user = UTILS.trim(user$.value))) {
+      if (!(user = UTILS.string.trim(user$.value))) {
         console.trace('user empty');
         return;
       }
-      if (!(pass = UTILS.trim(pass$.value))) {
+      if (!(pass = UTILS.string.trim(pass$.value))) {
         console.trace('pass empty');
         return;
       }
@@ -1810,7 +2008,7 @@
     PassportSC: PassportSC
   };
 })(window, document);
-},{"../console":4,"../core":6,"../utils":13}],11:[function(require,module,exports){
+},{"../console":4,"../core":6,"../utils":14}],11:[function(require,module,exports){
 /**
   * Copyright (C) 2014 yanni4night.com
   *
@@ -1842,7 +2040,113 @@
         PassportSC : PassportSC
     };
 })(window,document);
-},{"../utils":13,"./draw":10}],12:[function(require,module,exports){
+},{"../utils":14,"./draw":10}],12:[function(require,module,exports){
+/**
+ * Copyright (C) 2014 yanni4night.com
+ *
+ * string.js
+ *
+ * changelog
+ * 2014-06-12[09:18:30]:authorized
+ *
+ * @author yanni4night@gmail.com
+ * @version 0.1.0
+ * @since 0.1.0
+ */
+
+(function() {
+    "use strict";
+
+    var type = require('./type');
+
+    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+
+    module.exports = {
+        whitespace: whitespace,
+        trim: function(str) {
+            if (String.prototype.trim) {
+                return String.prototype.trim.call(String(str));
+            } else {
+                return String(str).replace(rtrim, '');
+            }
+        },
+        /**
+         *
+         * 
+         * 
+         * @param  {[type]} source  [description]
+         * @param  {[type]} pattern [description]
+         * @return {[type]}         [description]
+         */
+        startsWith: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            if (pattern.length > source.length) {
+                return false;
+            }
+            var t = pattern.length;
+            while (--t >= 0) {
+                if (source.charAt(t) !== pattern.charAt(t)) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        /**
+         *
+         * 
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
+         */
+        startsWithIgnoreCase: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            return this.startsWith(source.toLowerCase(), pattern.toLowerCase());
+        },
+        /**
+         *
+         * 
+         * @param  {[type]} source  [description]
+         * @param  {[type]} pattern [description]
+         * @return {[type]}         [description]
+         */
+        endsWith: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+            var t = pattern.length;
+            var diff = source.length - t;
+            if (diff < 0) {
+                return false;
+            }
+
+            while (--t >= 0) {
+                if (source.charAt(diff + t) !== pattern.charAt(t)) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+        /**
+         *
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
+         */
+        endsWithIgnoreCase: function(source, pattern) {
+            type.assertString('source', source);
+            type.assertString('pattern', pattern);
+
+            return this.endsWith(source.toLowerCase(), pattern.toLowerCase());
+        }
+    };
+})();
+},{"./type":13}],13:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1964,7 +2268,7 @@
     //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * Copyright (C) 2014 yanni4night.com
  *
@@ -1976,9 +2280,10 @@
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
  * 2014-06-07[16:39:34]:remove 'dom' module
  * 2014-06-09[11:05:06]:define 'hideSource' function
+ * 2014-06-12[09:23:30]:remove 'trim'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.4
+ * @version 0.1.5
  * @since 0.1.0
  */
 
@@ -1989,16 +2294,14 @@
     var math = require('./math');
     var type = require('./type');
     var dom = require('./dom');
-
-    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-    var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+    var string = require('./string');
 
     var utils = {
         math: math,
         array: array,
         dom: dom,
         type: type,
+        string: string,
         /**
          * Merge object members.
          *
@@ -2050,22 +2353,6 @@
 
             //we did what we could
             return null;
-        },
-
-        /**
-         * Trim a string.If a non-string passed in,
-         * convert it to a string.
-         *
-         * @param  {Object} str Source string
-         * @return {String}    Trimed string
-         * @version 0.1.1
-         */
-        trim: function(str) {
-            if (String.prototype.trim) {
-                return String.prototype.trim.call(String(str));
-            } else {
-                return String(str).replace(rtrim, '');
-            }
         },
         /**
          * Freeze an object by Object.freeze,so it does not
@@ -2126,4 +2413,4 @@
 
     module.exports = utils;
 })();
-},{"./array":1,"./dom":7,"./math":9,"./type":12}]},{},[1,2,3,4,5,6,7,8,9,12,13,10,11])
+},{"./array":1,"./dom":7,"./math":9,"./string":12,"./type":13}]},{},[1,2,3,4,5,6,7,8,9,12,13,14,10,11])

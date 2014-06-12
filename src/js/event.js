@@ -36,7 +36,7 @@
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 listeners[evt] = listeners[evt] || [];
@@ -65,7 +65,7 @@
             type.assertNonEmptyString('event',event);
             type.assertFunction('func',func);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
                     delete listeners[evt];
@@ -96,7 +96,7 @@
 
             type.assertNonEmptyString('event',event);
 
-            evtArr = UTILS.trim(event).split(/\s/);
+            evtArr = UTILS.string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];

@@ -9,9 +9,10 @@
  * 2014-06-07[15:30:38]:clean by split in 'math','dom' etc
  * 2014-06-07[16:39:34]:remove 'dom' module
  * 2014-06-09[11:05:06]:define 'hideSource' function
+ * 2014-06-12[09:23:30]:remove 'trim'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.4
+ * @version 0.1.5
  * @since 0.1.0
  */
 
@@ -22,16 +23,14 @@
     var math = require('./math');
     var type = require('./type');
     var dom = require('./dom');
-
-    //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-    var whitespace = "[\\x20\\t\\r\\n\\f]";
-    var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+    var string = require('./string');
 
     var utils = {
         math: math,
         array: array,
         dom: dom,
         type: type,
+        string: string,
         /**
          * Merge object members.
          *
@@ -83,22 +82,6 @@
 
             //we did what we could
             return null;
-        },
-
-        /**
-         * Trim a string.If a non-string passed in,
-         * convert it to a string.
-         *
-         * @param  {Object} str Source string
-         * @return {String}    Trimed string
-         * @version 0.1.1
-         */
-        trim: function(str) {
-            if (String.prototype.trim) {
-                return String.prototype.trim.call(String(str));
-            } else {
-                return String(str).replace(rtrim, '');
-            }
         },
         /**
          * Freeze an object by Object.freeze,so it does not
