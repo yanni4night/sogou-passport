@@ -7,9 +7,10 @@
  * 2014-05-24[20:41:37]:authorized
  * 2014-05-25[11:31:17]:clean
  * 2014-06-11[21:10:44]:skin images
+ * 2014-06-13[14:18:04]:reorder
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.3
  * @since 0.1.0
  */
 
@@ -34,11 +35,19 @@ module.exports = function(grunt) {
             options: {
                 sourceMap: false
             },
-            compress: {
+            libjs: {
                 files: [{
                     expand: true,
                     cwd: TARGET_DIR,
-                    src: ['**/*.js'],
+                    src: ['**/passport-*.js'],
+                    dest: TARGET_DIR
+                }]
+            },
+            skin: {
+                files: [{
+                    expand: true,
+                    cwd: STATIC_DIR,
+                    src: ['skin/js/*.js'],
                     dest: TARGET_DIR
                 }]
             }
@@ -61,7 +70,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['css/skin/**/*.{css,less}'],
+                    src: ['skin/**/*.{css,less}'],
                     ext: '.css',
                     dest: TARGET_DIR
                 }]
@@ -97,39 +106,42 @@ module.exports = function(grunt) {
                     dest: WEB_DIR
                 }]
             },
-            skin:{
-                files:[{
-                    expand:true,
-                    cwd:STATIC_DIR,
-                    src:'css/skin/**/*.{jpg,png,gif}',
-                    dest:TARGET_DIR
+            skin: {
+                files: [{
+                    expand: true,
+                    cwd: STATIC_DIR,
+                    src: 'skin/**/*.{jpg,png,gif}',
+                    dest: TARGET_DIR
                 }]
             }
         },
         watch: {
-            js: {
-                files: [STATIC_DIR + '**/*.js'],
-                tasks: ['clean:js', 'jshint', 'browserify', 'vars:test']
+            libjs: {
+                files: [STATIC_DIR + 'js/**/*.js'],
+                tasks: ['libjs-test']
             },
             css: {
-                files: [STATIC_DIR + '**/*.{css,less}'],
-                tasks: ['less']
+                files: [STATIC_DIR + 'css/**/*.{css,less}'],
+                tasks: ['less:css']
             },
             html: {
                 files: ['template/**/*.html'],
-                tasks: ['copy:html', 'vars:html']
+                tasks: ['official']
             },
             img: {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
-                tasks: ['imagemin', 'copy:img']
+                tasks: ['official']
+            },
+            skin: {
+                files: [STATIC_DIR + "skin/**/*"],
+                tasks: ['skin']
             }
         },
         clean: {
             options: {
                 force: true
             },
-            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"],
-            js: [WEB_DIR + '**/*.js']
+            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"]
         },
         express: {
             test: {
@@ -206,8 +218,14 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'uglify','less', 'copy', 'vars:html', 'imagemin']);
-    grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'vars:dist', 'uglify', 'less', 'copy', 'vars:html', 'imagemin']);
+    grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
+    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs']);
+    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test', 'uglify:libjs']);
+    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static']);
+
+
+    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official']);
+    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('server', ['express']);
 };

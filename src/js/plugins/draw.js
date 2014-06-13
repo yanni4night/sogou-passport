@@ -101,7 +101,7 @@
    * @return {String} url
    */
   function getCssHref(name) {
-    return (UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') + '/@version@/css/skin/' + name + '/style.css';
+    return (UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') + '/@version@/skin/css/' + name + '/style.css';
   }
   /**
    * Parse a link src by style parameter.
