@@ -19,7 +19,7 @@
     var type = {
         expando: "sogou-passport-" + (+new Date()),
         noop: noop,
-        debug:+'@debug@',
+        debug:+'@debug@',//This has to be replaced with 1 or 0 to indicate a boolean value
         strundefined: typeof undefined,
         strstr: typeof '',
         strobject: typeof {},
@@ -116,6 +116,5 @@
         type['assert' + assertKeys[i]] = createAssert(assertKeys[i]);
     }
 
-    //As type is required by utils,we cannot use utils.freeze
     module.exports = type;
 })();

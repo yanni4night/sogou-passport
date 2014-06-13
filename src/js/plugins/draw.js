@@ -21,11 +21,11 @@
   var PassportSC = core.PassportSC;
   var UTILS = require('../utils');
   var console = require('../console');
+  var cookie = require('../cookie');
 
   var placeholderSupported = 'placeholder' in document.createElement('input');
   var domainList = ["sohu.com", "chinaren.com", "sogou.com", "vip.sohu.com", "17173.com", "focus.cn", "game.sohu.com", "37wanwan.com"];
   var WRAPPER_ID = 'sogou-passport-pop';
-  var FORM_ID = 'sogou-passport-form';
   var USER_ID = 'sogou-passport-user';
   var PASS_ID = 'sogou-passport-pass';
   var CAPTCHA_WRAPPER_ID = 'sogou-passport-captcha-wrapper';
@@ -33,16 +33,32 @@
   var CAPTCHA_ID = 'sogou-passport-captcha';
   var AUTO_ID = 'sogou-passport-auto';
   var ERROR_ID = 'sogou-passport-error';
+
   core.addSupportedEvent('draw_complete', 'drawcomplete');
   core.addFixedUrl('register', 'https://account.sogou.com/web/reg/email'); //ru&client_id
   core.addFixedUrl('recover', 'https://passport.sohu.com/web/RecoverPwdInput.action'); //ru
 
+  var gPassportCanvas = null;
+  //default options
+  var defaultOptions = {
+    container: null,
+    style: null,
+    trdRedirectUrl: null,
+    template: null
+  };
+
+  var gOptions = null;
+
+  /**
+   * Split dialog html.
+   *
+   * @return {String}
+   */
   function getDefaultHTML() {
-    return '' +
-      '<div class="sogou-passport-caption">搜狗帐号登录' +
+    var captionHTML = '<div class="sogou-passport-caption">搜狗帐号登录' +
       '<a href="#" class="ab sogou-passport-icon sogou-passport-icon-bx sogou-passport-close"></a>' +
-      '</div>' +
-      '<form id="' + FORM_ID + '" action="#" autocomplete="off" type="post">' +
+      '</div>';
+    var formHTML = '<form action="#" autocomplete="off" type="post">' +
       '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
       '<div class="sogou-passport-row re">' +
       '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
@@ -64,11 +80,11 @@
       '</div>' +
       '<div class="re sogou-passport-row sogou-passport-submitwrapper">' +
       '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
-      '<a href="' + core.getFixedUrls().recover + "?ru=" + encodeURIComponent(location.href) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
+      '<a href="' + (core.getFixedUrls().recover + "?ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
       '<a href="' + (core.getFixedUrls().register + "?ru=" + encodeURIComponent(location.href) + '&client_id=' + PassportSC.getOptions().appid) + '" class="ab sogou-passport-register" target="_blank">立即注册</a>' +
       '</div>' +
-      '</form>' +
-      '<div id="sogou-passport-3rd" class="sogou-passport-3rd">' +
+      '</form>';
+    var trdHTML = '<div id="sogou-passport-3rd" class="sogou-passport-3rd">' +
       '<p class="sogou-passport-3rd-title">可以使用以下方式登录</p>' +
       '<div class="sogou-passport-3rd-icons">' +
       '<a href="#" data-provider="qq" class="fl sogou-passport-icon3rd sogou-passport-icon3rd-qq" title="QQ登录"></a>' +
@@ -76,16 +92,8 @@
       '<a href="#" data-provider="renren" class="fl sogou-passport-icon3rd sogou-passport-icon3rd-renren" title="人人登录"></a>' +
       '</div>' +
       '</div>';
+    return captionHTML + formHTML + trdHTML;
   }
-  var gPassportCanvas = null;
-  var defaultOptions = {
-    container: null,
-    style: null,
-    trdRedirectUrl: null,
-    template: null
-  };
-  var gOptions = null;
-
   /**
    * Compute css url.
    *
@@ -125,6 +133,7 @@
 
     var events = core.getSupportedEvents();
 
+    //listen
     PassportSC.on([events.login_failed, events.login_success, events.third_party_login_complete, events.param_error].join(' '), function(e, data) {
 
       data = data || {};
@@ -160,7 +169,7 @@
           }
           break;
         case events.third_party_login_complete:
-          data.msg = data.msg || '第三方登录成功';
+          data.msg = data.msg;
           break;
         default:
           ;
@@ -187,14 +196,19 @@
 
         self.initEvent();
         PassportSC.emit('draw_complete');
-        if (!!(userid = PassportSC.userid()) && /@so(?:hu|gou)\.com$/.test(userid)) {
+
+        userid = PassportSC.userid() || cookie.cookie('email');
+
+        if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
           UTILS.dom.id(USER_ID).value = userid;
         }
       });
     },
     initEvent: function() {
       var self = this;
-      UTILS.dom.bindEvent(UTILS.dom.id(FORM_ID), 'submit', function(e) {
+      var $form = self.wrapper.getElementsByTagName('form')[0];
+      //listen form submit
+      UTILS.dom.bindEvent($form, 'submit', function(e) {
         var dom = UTILS.dom.eventTarget(e);
         UTILS.dom.preventDefault(e);
         console.trace('Passport form submitting');
@@ -284,6 +298,7 @@
     if (gPassportCanvas) {
       return this;
     }
+
     gOptions = UTILS.mixin(defaultOptions, options)
 
     UTILS.type.assertHTMLElement('options.container', gOptions.container);

@@ -4,6 +4,8 @@
  * core.js
  *
  * Passport for sogou.com Ltd.
+
+ * This is the core of sogou passport.
  *
  * Compared to previous sogou.js,we removed the
  * HTML dialog part,and export the least number
@@ -113,7 +115,7 @@
      */
     function assertFrameWrapper(callback) {
         var c = frameWrapper;
-        if (!c || (type.strobject !== typeof c) || (type.strundefined === typeof c.appendChild) || !c.parentNode) {
+        if (!c || !type.isObject(c) || type.isUndefined(c.appendChild) || !c.parentNode) {
             c = frameWrapper = document.createElement('div');
             c.style.cssText = HIDDEN_CSS;
             c.className = c.id = EXPANDO;

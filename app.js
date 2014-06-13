@@ -17,7 +17,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(__dirname + '/web'));
-
+express.static.mime.define({'text/plain': ['map']});
 // development only
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());

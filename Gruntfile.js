@@ -8,7 +8,6 @@
  * 2014-05-25[11:31:17]:clean
  * 2014-06-11[21:10:44]:skin images
  *
- * @info yinyong,osx-x64,UTF-8,192.168.1.101,js,/Volumes/yinyong/sogou-passport-fe
  * @author yanni4night@gmail.com
  * @version 0.1.2
  * @since 0.1.0
@@ -33,12 +32,9 @@ module.exports = function(grunt) {
         },
         uglify: {
             options: {
-                sourceMap: true
+                sourceMap: false
             },
             compress: {
-                options: {
-                    sourceMap: false
-                },
                 files: [{
                     expand: true,
                     cwd: TARGET_DIR,
@@ -210,7 +206,7 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'less', 'copy', 'vars:html', 'imagemin']);
+    grunt.registerTask('test', ['clean', 'jshint', 'browserify', 'vars:test', 'uglify','less', 'copy', 'vars:html', 'imagemin']);
     grunt.registerTask('dist', ['clean', 'jshint', 'browserify', 'vars:dist', 'uglify', 'less', 'copy', 'vars:html', 'imagemin']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('server', ['express']);

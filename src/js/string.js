@@ -5,9 +5,10 @@
  *
  * changelog
  * 2014-06-12[09:18:30]:authorized
+ * 2014-06-13[09:54:34]:add 'equalsIgnoreCase'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
@@ -33,9 +34,9 @@
          *
          * 
          * 
-         * @param  {[type]} source  [description]
-         * @param  {[type]} pattern [description]
-         * @return {[type]}         [description]
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
          */
         startsWith: function(source, pattern) {
             type.assertString('source', source);
@@ -68,9 +69,9 @@
         /**
          *
          * 
-         * @param  {[type]} source  [description]
-         * @param  {[type]} pattern [description]
-         * @return {[type]}         [description]
+         * @param  {String} source
+         * @param  {String} pattern
+         * @return {Boolean}
          */
         endsWith: function(source, pattern) {
             type.assertString('source', source);
@@ -100,6 +101,17 @@
             type.assertString('pattern', pattern);
 
             return this.endsWith(source.toLowerCase(), pattern.toLowerCase());
+        },
+        /**
+         * 
+         * @param  {String} str1
+         * @param  {String} str2
+         * @return {boolean}
+         */
+        equalsIgnoreCase: function(str1,str2){
+            type.assertString('str1', str1);
+            type.assertString('str2', str2);
+            return str1.toLowerCase() === str2.toLowerCase();
         }
     };
 })();

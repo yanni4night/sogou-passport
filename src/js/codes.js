@@ -5,17 +5,15 @@
  *
  * changelog
  * 2014-05-24[23:06:47]:authorized
+ * 2014-06-13[09:44:05]:removed freeze;removed dependence of window&document
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
-(function(window, document, undefined) {
+(function() {
     "use strict";
-
-    //Just for freeze
-    var utils = require('./utils');
     
     var codes = {
         SYSTEM_ERROR: {
@@ -64,8 +62,6 @@
         }
     };
 
-    utils.freeze(codes);
-
     module.exports = codes;
 
-})(window, document);
+})();

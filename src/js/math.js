@@ -3,6 +3,8 @@
  *
  * math.js
  *
+ * Some legacy functions here,we reserve them all but not modify.
+ *
  * changelog
  * 2014-06-07[15:36:34]:authorized
  *

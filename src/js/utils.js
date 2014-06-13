@@ -10,9 +10,11 @@
  * 2014-06-07[16:39:34]:remove 'dom' module
  * 2014-06-09[11:05:06]:define 'hideSource' function
  * 2014-06-12[09:23:30]:remove 'trim'
+ * 2014-06-13[09:48:40]:as freeze does not throw errors,we removed it
+ * 2014-06-13[10:27:27]:redesigned 'mixin' to support multiple sources;defined 'extend' as an alias of 'mixin'
  *
  * @author yanni4night@gmail.com
- * @version 0.1.5
+ * @version 0.1.7
  * @since 0.1.0
  */
 
@@ -35,23 +37,32 @@
          * Merge object members.
          *
          * @param  {Object} dest
-         * @param  {Object} src
+         * @param  {Object} srcs
          * @return {Object}      Dest
          */
-        mixin: function(dest, src) {
-
-            src = src || {};
+        mixin: function(dest, srcs) {
 
             type.assertNonNullOrUndefined('dest', dest);
-
-            for (var e in src) {
-                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
-                    dest[e] = src[e];
+            
+            srcs = Array.prototype.slice.call(arguments,1);
+            array.forEach(srcs, function(src) {
+                for (var e in src) {
+                    if (src.hasOwnProperty && src.hasOwnProperty(e)) {
+                        dest[e] = src[e];
+                    }
                 }
-            }
+            });
+
             return dest;
         },
-
+        /**
+         * Alias for mixin.
+         * 
+         * @return {Object}
+         */
+        extend:function(){
+            return this.mixin.call(this,arguments);
+        },
         /**
          * Get version of Internet Explorer by user agent.
          * IE 11 supported.
@@ -84,27 +95,6 @@
             return null;
         },
         /**
-         * Freeze an object by Object.freeze,so it does not
-         * work on old browsers.
-         *
-         * This function is trying to remind developers to not
-         * modify something.
-         *
-         * @param  {Object} obj Object to be freezed
-         * @return {Object}    Source object
-         */
-        freeze: function(obj) {
-
-            type.assertNonNullOrUndefined('obj', obj);
-            type.assertObject('obj', obj);
-
-            if (type.strundefined !== typeof Object && type.strfunction === typeof Object.freeze) {
-                Object.freeze(obj);
-            }
-
-            return obj;
-        },
-        /**
          * Hide source of a function by defining toString.
          * 
          * @param  {String} name Function name
@@ -127,6 +117,7 @@
 
             func.toString = (function(name, source) {
                 return function() {
+                    //function(a,b,c){var s=....} => function(a,b,c)
                     return prefix + name + source.match(/\([^\{\(]+(?=\{)/)[0];
                 };
             })(name, source);
@@ -134,11 +125,6 @@
             return func.toString;
         }
     };
-
-    utils.freeze(math);
-    utils.freeze(dom);
-    utils.freeze(type);
-    utils.freeze(array);
 
     module.exports = utils;
 })();
