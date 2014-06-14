@@ -1,10 +1,10 @@
 /**
- * Copyright (C) 2014 yanni4night.com sogou.com
+ * Copyright (C) 2014 yanni4night.com
  *
  * core.js
  *
  * Passport for sogou.com Ltd.
-
+ 
  * This is the core of sogou passport.
  *
  * Compared to previous sogou.js,we removed the
@@ -29,7 +29,7 @@
  * 2014-06-10[14:39:15]:merge events into 'login_failed'
  * 2014-06-11[21:52:05]:callback default msg when third party login
  * 2014-06-12[13:24:21]:exports 'getFixedUrl'&'getSupportedEvents'
- * 2014-06-14[12:15:01]:exports utils
+ * 2014-06-14[12:15:01]:exports utils,add 'setPayload'&'getPayload'
  *
  * @author yanni4night@gmail.com
  * @version 0.2.1
@@ -85,7 +85,7 @@
     var VALIDATORS = [{
         name: ['appid'],
         validate: function(name, value) {
-            return value && (type.strstr === typeof value || type.strnumber === typeof value);
+            return type.isString(value) || type.isNumber(value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a string or a number';
@@ -93,7 +93,7 @@
     }, {
         name: ['redirectUrl'],
         validate: function(name, value) {
-            return value && type.strstr === typeof value && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+            return type.isNonEmptyString(value) && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
         },
         errmsg: function(name, value) {
             return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
@@ -102,25 +102,24 @@
 
     var gOptions = null;
     var PassportSC = null;
-    var frameWrapper = null;
+    var gFrameWrapper = null;
     var defaultOptions = {
         appid: null,
-        redirectUrl: null,
-        trdRedirectUrl:null
+        redirectUrl: null
     };
 
     var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
 
     /**
-     * Create frameWrapper if it not exists.
+     * Create gFrameWrapper if it not exists.
      *
      * @param {Function}
-     * @return {HTMLElement} frameWrapper
+     * @return {HTMLElement} gFrameWrapper
      */
-    function assertFrameWrapper(callback) {
-        var c = frameWrapper;
-        if (!c || !type.isObject(c) || type.isUndefined(c.appendChild) || !c.parentNode) {
-            c = frameWrapper = document.createElement('div');
+    function assertgFrameWrapper(callback) {
+        var c = gFrameWrapper;
+        if (!type.isHTMLElement(c) || !c.parentNode) {
+            c = gFrameWrapper = document.createElement('div');
             c.style.cssText = HIDDEN_CSS;
             c.className = c.id = EXPANDO;
             document.body.appendChild(c);
@@ -233,7 +232,7 @@
     var Passport = {
         version: '@version@', //see 'package.json'
         tools: tools,
-        utils:UTILS,
+        utils: UTILS,
         /**
          * Initialize.
          * This must be called at first before
@@ -315,7 +314,7 @@
                 token: gOptions._token
             };
 
-            assertFrameWrapper(function(container) {
+            assertgFrameWrapper(function(container) {
                 container.innerHTML = template(HTML_FRAME_LOGIN, payload);
                 container.getElementsByTagName('form')[0].submit();
             });
@@ -381,7 +380,7 @@
             var self = this;
             var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
 
-            assertFrameWrapper(function(container) {
+            assertgFrameWrapper(function(container) {
                 UTILS.dom.addIframe(container, url, function() {
                     self.emit(EVENTS.logout_success);
                 });
@@ -488,31 +487,31 @@
         },
         /**
          * Get a copy urls relative to passsport.
-         * 
+         *
          * @return {Object} Map of urls.
          */
-        getPassportUrls : function(){
-            return UTILS.mixin({},FIXED_URLS);
+        getPassportUrls: function() {
+            return UTILS.mixin({}, FIXED_URLS);
         },
         /**
          * Set a payload.
-         * 
+         *
          * @param {String} key
          * @param {Object} value
          */
-        setPayload: function(key,value){
-            type.assertNonEmptyString('key',key);
+        setPayload: function(key, value) {
+            type.assertNonEmptyString('key', key);
             gPayload[key] = value;
             return value;
         },
         /**
          * Get a payload.
-         * 
+         *
          * @param {String} key
          * @return {Object}
          */
-        getPayload: function(key){
-            type.assertNonEmptyString('key',key);
+        getPayload: function(key) {
+            type.assertNonEmptyString('key', key);
             return gPayload[key];
         }
     };

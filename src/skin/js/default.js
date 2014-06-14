@@ -163,7 +163,7 @@
           var target = UTILS.dom.eventTarget(e);
           var provider;
           if (target && target.tagName.toUpperCase() === 'A' && (provider = target.getAttribute('data-provider'))) {
-            return PassportSC.login3rd(provider, 'popup', PassportSC.getPassportUrls().trdRedirectUrl);
+            return PassportSC.login3rd(provider, 'popup', this.options.trdRedirectUrl);
           }
         });
       }
@@ -222,6 +222,9 @@
     }
   };
 
+  /**
+   * Override initSkin
+   */
   PassportSC.initSkin = function(){
     var skinOptions = this.getPayload('contrib-skin');
     if(!skinOptions){
@@ -231,7 +234,5 @@
     type.assertHTMLElement('container',container);
     new PassportCanvas({container:container,template:getDefaultHTML()});
   };
-
-  PassportSC.emit('skin_loaded',{});
 
 })(window, document);

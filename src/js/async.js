@@ -12,14 +12,14 @@
  */
 (function(undefined) {
   "use strict";
+  
   var type = require('./type');
   var array = require('./array');
   var async = {
     /**
-     * [parallel description]
-     * @param  {Array}   tasks    [description]
-     * @param  {Function} callback [description]
-     * @return {[type]}            [description]
+     * 
+     * @param  {Array}   tasks
+     * @param  {Function} callback
      */
     parallel: function(tasks, callback) {
       type.assertArray('tasks', tasks);

@@ -21,16 +21,21 @@
 </style>
 </head>
 <body>
+<button onclick="javascript:load();">Load</button>    
     <div class="passport-dialog" id="passport-dialog"></div>
 </body>
 <script type="text/javascript" src="dist/@version@/js/passport-core.js"></script>
 <script>
     window.PassportSC({
         appid:1120,
-        redirectUrl:location.protocol + '//' + location.host + '/jump.html',
-        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-    }).draw({
-        container:document.getElementById('passport-dialog')
+        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     });
+
+    function load(){
+        PassportSC.draw({
+            container:document.getElementById('passport-dialog'),
+            trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+        });
+    }
 </script>
 </html>
