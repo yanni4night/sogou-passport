@@ -50,6 +50,14 @@ module.exports = function(grunt) {
                     src: ['skin/js/*.js'],
                     dest: TARGET_DIR
                 }]
+            },
+            plugins:{
+                files:[{
+                    expand:true,
+                    cwd:STATIC_DIR+"js",
+                    src:["plugins/*.js"],
+                    dest:TARGET_DIR
+                }]
             }
         },
         less: {
@@ -160,10 +168,10 @@ module.exports = function(grunt) {
             }
         },
         browserify: {
-            plugins: {
+/*            plugins: {
                 src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
                 dest: TARGET_DIR + '/js/passport-draw.js'
-            },
+            },*/
             core: {
                 src: [STATIC_DIR + 'js/*.js'],
                 dest: TARGET_DIR + '/js/passport-core.js'
@@ -219,8 +227,8 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
-    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs']);
-    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test', 'uglify:libjs']);
+    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs','uglify:plugins']);
+    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test', 'uglify:libjs','uglify:plugins']);
     grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static']);
 
 

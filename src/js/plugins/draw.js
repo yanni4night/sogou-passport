@@ -306,10 +306,10 @@
 
     if (UTILS.type.isNullOrUndefined(gOptions.template)) {
       gOptions.template = getDefaultHTML();
-    } else if (UTILS.tyep.isFunction(gOptions.template)) {
+    } else if (UTILS.type.isFunction(gOptions.template)) {
       gOptions.template = gOptions.template.call(null);
     } else {
-      type.assertNonEmptyString('options.template', gOptions.template);
+      UTILS.type.assertNonEmptyString('options.template', gOptions.template);
     }
 
     gPassportCanvas = new PassportCanvas();
