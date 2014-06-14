@@ -5,19 +5,20 @@
  *
  * changelog
  * 2014-06-06[14:02:08]:authorized
+ * 2014-06-14[12:15:47]:removed utils
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
-(function() {
+(function(undefined) {
     "use strict";
-    
-    var UTILS = require('./utils');
+
     var console = require('./console');
-    var array = UTILS.array;
-    var type = UTILS.type;
+    var array = require('./array');
+    var type = require('./type');
+    var string = require('./string');
 
     var EventEmitter = function() {
 
@@ -33,10 +34,10 @@
         this.on = function(event, func, thisArg) {
             var evtArr;
 
-            type.assertNonEmptyString('event',event);
-            type.assertFunction('func',func);
+            type.assertNonEmptyString('event', event);
+            type.assertFunction('func', func);
 
-            evtArr = UTILS.string.trim(event).split(/\s/);
+            evtArr = string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 listeners[evt] = listeners[evt] || [];
@@ -54,7 +55,7 @@
          * Remove event,multiple events split by space supported.
          *
          * Empty 'func' means remove all listeners named 'event'.
-         * 
+         *
          * @param  {String} event
          * @param  {Function} func
          * @return {EventEmitter}     This event emitter
@@ -62,10 +63,10 @@
         this.off = function(event, func) {
             var evtArr, objs;
 
-            type.assertNonEmptyString('event',event);
-            type.assertFunction('func',func);
+            type.assertNonEmptyString('event', event);
+            type.assertFunction('func', func);
 
-            evtArr = UTILS.string.trim(event).split(/\s/);
+            evtArr = string.trim(event).split(/\s/);
             array.forEach(evtArr, function(evt) {
                 if (!func) {
                     delete listeners[evt];
@@ -86,7 +87,7 @@
 
         /**
          * Emit event(s),multiple events split by space supported.
-         * 
+         *
          * @param  {String} event
          * @param  {Object} data
          * @return {EventEmitter} This event emitter
@@ -94,9 +95,9 @@
         this.emit = function(event, data) {
             var evtArr, objs;
 
-            type.assertNonEmptyString('event',event);
+            type.assertNonEmptyString('event', event);
 
-            evtArr = UTILS.string.trim(event).split(/\s/);
+            evtArr = string.trim(event).split(/\s/);
 
             array.forEach(evtArr, function(evt) {
                 objs = listeners[evt];

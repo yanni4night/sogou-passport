@@ -29,9 +29,10 @@
  * 2014-06-10[14:39:15]:merge events into 'login_failed'
  * 2014-06-11[21:52:05]:callback default msg when third party login
  * 2014-06-12[13:24:21]:exports 'getFixedUrl'&'getSupportedEvents'
+ * 2014-06-14[12:15:01]:exports utils
  *
  * @author yanni4night@gmail.com
- * @version 0.1.10
+ * @version 0.2.1
  * @since 0.1.0
  */
 
@@ -229,6 +230,7 @@
     var Passport = {
         version: '@version@', //see 'package.json'
         tools: tools,
+        utils:UTILS,
         /**
          * Initialize.
          * This must be called at first before

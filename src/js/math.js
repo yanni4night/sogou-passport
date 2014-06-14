@@ -12,7 +12,7 @@
  * @version 0.1.0
  * @since 0.1.0
  */
-(function() {
+(function(undefined) {
     "use strict";
 
     //They seem to be const

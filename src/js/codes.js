@@ -12,7 +12,7 @@
  * @since 0.1.0
  */
 
-(function() {
+(function(undefined) {
     "use strict";
     
     var codes = {

@@ -12,9 +12,10 @@
  * 2014-06-12[09:23:30]:remove 'trim'
  * 2014-06-13[09:48:40]:as freeze does not throw errors,we removed it
  * 2014-06-13[10:27:27]:redesigned 'mixin' to support multiple sources;defined 'extend' as an alias of 'mixin'
+ * 2014-06-14[12:16:03]:event included
  *
  * @author yanni4night@gmail.com
- * @version 0.1.7
+ * @version 0.1.8
  * @since 0.1.0
  */
 
@@ -26,6 +27,7 @@
     var type = require('./type');
     var dom = require('./dom');
     var string = require('./string');
+    var event = require('./event');
 
     var utils = {
         math: math,
@@ -33,6 +35,7 @@
         dom: dom,
         type: type,
         string: string,
+        event: event,
         /**
          * Merge object members.
          *
@@ -43,8 +46,8 @@
         mixin: function(dest, srcs) {
 
             type.assertNonNullOrUndefined('dest', dest);
-            
-            srcs = Array.prototype.slice.call(arguments,1);
+
+            srcs = Array.prototype.slice.call(arguments, 1);
             array.forEach(srcs, function(src) {
                 for (var e in src) {
                     if (src.hasOwnProperty && src.hasOwnProperty(e)) {
@@ -57,11 +60,11 @@
         },
         /**
          * Alias for mixin.
-         * 
+         *
          * @return {Object}
          */
-        extend:function(){
-            return this.mixin.call(this,arguments);
+        extend: function() {
+            return this.mixin.call(this, arguments);
         },
         /**
          * Get version of Internet Explorer by user agent.
@@ -96,20 +99,19 @@
         },
         /**
          * Hide source of a function by defining toString.
-         * 
+         *
          * @param  {String} name Function name
          * @param  {Function} func Function to be hide-sourced
-         * @param  {String} prefix 
+         * @param  {String} prefix
          * @return {Function}      'toString' function
          */
         hideSource: function(name, func, prefix) {
             type.assertNonEmptyString('name', name);
             type.assertFunction('func', func);
 
-            if(prefix)
-            {
+            if (prefix) {
                 type.assertNonEmptyString(prefix);
-            }else{
+            } else {
                 prefix = 'PassportSC.';
             }
 
