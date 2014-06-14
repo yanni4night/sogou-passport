@@ -76,6 +76,8 @@
     var e; //for element
     var gLastLoginName; //for not active
 
+    var gPayload = {};
+
 
     var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -103,7 +105,8 @@
     var frameWrapper = null;
     var defaultOptions = {
         appid: null,
-        redirectUrl: null
+        redirectUrl: null,
+        trdRedirectUrl:null
     };
 
     var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
@@ -473,8 +476,7 @@
          * @return {Object} Options
          */
         getOptions: function() {
-            var opts = {};
-            return UTILS.mixin(opts, gOptions);
+            return UTILS.mixin({}, gOptions);
         },
         /**
          * Get a copy of events which passport supports.
@@ -482,8 +484,36 @@
          * @return {Object} Supported events
          */
         getSupportedEvents: function() {
-            var events = {};
-            return UTILS.mixin(events, EVENTS);
+            return UTILS.mixin({}, EVENTS);
+        },
+        /**
+         * Get a copy urls relative to passsport.
+         * 
+         * @return {Object} Map of urls.
+         */
+        getPassportUrls : function(){
+            return UTILS.mixin({},FIXED_URLS);
+        },
+        /**
+         * Set a payload.
+         * 
+         * @param {String} key
+         * @param {Object} value
+         */
+        setPayload: function(key,value){
+            type.assertNonEmptyString('key',key);
+            gPayload[key] = value;
+            return value;
+        },
+        /**
+         * Get a payload.
+         * 
+         * @param {String} key
+         * @return {Object}
+         */
+        getPayload: function(key){
+            type.assertNonEmptyString('key',key);
+            return gPayload[key];
         }
     };
 

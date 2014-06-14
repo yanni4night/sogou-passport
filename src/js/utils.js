@@ -28,6 +28,7 @@
     var dom = require('./dom');
     var string = require('./string');
     var event = require('./event');
+    var console = require('./console');
 
     var utils = {
         math: math,
@@ -36,6 +37,7 @@
         type: type,
         string: string,
         event: event,
+        console: console,
         /**
          * Merge object members.
          *

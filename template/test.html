@@ -27,12 +27,10 @@
 <script>
     window.PassportSC({
         appid:1120,
-        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+        redirectUrl:location.protocol + '//' + location.host + '/jump.html',
+        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
     }).draw({
-        container:document.getElementById('passport-dialog'),
-        style:'default',
-        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html',
-        show3rdLogin:1
+        container:document.getElementById('passport-dialog')
     });
 </script>
 </html>
