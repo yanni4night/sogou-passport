@@ -22,8 +22,14 @@ module.exports = function(grunt) {
     var CDN_DIR = 'dist/';
 
     var pkg = grunt.file.readJSON('package.json');
+    var now = new Date();
+    var builtVersion = pkg.version + "." + String(now.getFullYear()).slice(-2) +w(1 + now.getMonth()) + w(now.getDate());
 
-    var TARGET_DIR = WEB_DIR + CDN_DIR + pkg.version;
+    function w(d){
+        return d<10?('0'+d):d;
+    }
+
+    var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
 
     grunt.initConfig({
         jshint: {
@@ -134,7 +140,7 @@ module.exports = function(grunt) {
             },
             html: {
                 files: ['template/**/*.html'],
-                tasks: ['official']
+                tasks: ['copy', 'vars:html']
             },
             img: {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
@@ -214,12 +220,15 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
+    
+
     grunt.registerMultiTask('vars', 'replace vars', function() {
         var options = this.options({});
+        
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace(/@version@/img, pkg.version).replace(/@debug@/img, +!!options.debug);
+                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, +!!options.debug);
                 grunt.file.write(src, content);
                 grunt.log.ok(src);
             });
@@ -229,7 +238,7 @@ module.exports = function(grunt) {
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
     grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs']);
     grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test'/*, 'uglify:libjs'*/]);
-    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static']);
+    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static','less:css']);
 
 
     grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official']);

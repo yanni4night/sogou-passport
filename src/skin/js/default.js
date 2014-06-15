@@ -5,9 +5,10 @@
  *
  * changelog
  * 2014-06-13[17:58:50]:authorized
+ * 2014-06-15[11:30:42]:emit 'skin_loaded' instead of initSkin
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function(window, document, undefined) {
@@ -23,7 +24,9 @@
   var CAPTCHA_ID = 'sogou-passport-captcha';
   var AUTO_ID = 'sogou-passport-auto';
   var ERROR_ID = 'sogou-passport-error';
+  var CLOSE_ID = 'sogou-passport-close';
 
+  var PassportSC = window.PassportSC;
   var urls = PassportSC.getPassportUrls();
   var UTILS = PassportSC.utils;
   var type = UTILS.type;
@@ -155,6 +158,11 @@
         return false;
       });
 
+      UTILS.dom.bindEvent(UTILS.dom.id(CLOSE_ID),'click',function(e){
+        UTILS.dom.preventDefault(e);
+        PassportSC.emit('canvas_closing',{});
+      });
+
       var trdLoginArea = UTILS.dom.id('sogou-passport-3rd');
       if (trdLoginArea) {
         UTILS.dom.bindEvent(trdLoginArea, 'click', function(e) {
@@ -222,17 +230,22 @@
     }
   };
 
-  /**
-   * Override initSkin
-   */
-  PassportSC.initSkin = function(){
-    var skinOptions = this.getPayload('contrib-skin');
-    if(!skinOptions){
-      throw new Error('skin need a container');
+  var evtLoaded = PassportSC.getSupportedEvents().skin_loaded;
+
+  //This has to be emited to indicate skin loaded.
+  PassportSC.emit(evtLoaded, {
+    init: function() {
+      var skinOptions = this.getPayload('contrib-skin');
+      if (!skinOptions) {
+        throw new Error('Skin initializing need a skinOption,make sure you never clear "contrib-skin" payload');
+      }
+      var container = skinOptions.container;
+      type.assertHTMLElement('container', container);
+      new PassportCanvas({
+        container: container,
+        template: getDefaultHTML()
+      });
     }
-    var container = skinOptions.container;
-    type.assertHTMLElement('container',container);
-    new PassportCanvas({container:container,template:getDefaultHTML()});
-  };
+  });
 
 })(window, document);

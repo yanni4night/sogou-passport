@@ -9,6 +9,7 @@
         padding: 0;
         margin: 0;
         background: #333;
+        color: #fff;
     }
     .passport-dialog{
         width: 400px;
@@ -21,21 +22,37 @@
 </style>
 </head>
 <body>
-<button onclick="javascript:load();">Load</button>    
+    <p>点击下面的按钮，Passport lib 会从网络加载必要的css与js文件，并构建一个样式统一定义的登录对话框。</p>
+    <button onclick="javascript:load();">Load</button>    
     <div class="passport-dialog" id="passport-dialog"></div>
 </body>
 <script type="text/javascript" src="dist/@version@/js/passport-core.js"></script>
 <script>
+    function $(id){
+        return document.getElementById(id);
+    }
+
+    var inited = false;
+
     window.PassportSC({
         appid:1120,
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     });
 
+    PassportSC.on('canvas_closing',function(){
+        $('passport-dialog').style.display = 'none';
+    });
+
     function load(){
-        PassportSC.draw({
-            container:document.getElementById('passport-dialog'),
-            trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-        });
+        if(inited){
+            return $('passport-dialog').style.display = 'block';
+        }else{
+            inited = true;
+            PassportSC.draw({
+                container:$('passport-dialog'),
+                trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+            });
+        }
     }
 </script>
 </html>

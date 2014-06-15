@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8"/>
         <title>
             Simple Sogou Passport Library
         </title>
@@ -12,27 +12,25 @@
     <body class="flex">
         <a href="http://git.ufo.sogou-inc.com/yinyong/passport" class="fork f-f f-m f-c">Fork me</a>
         <header class="f-f f-m">
-            <div class="logo">
-                <div class="alpha">&alpha;</div>
-            </div>
-            <div class="tit f-1 tc">Simple Sogou Passport Library</div>
+            <div class="logo">P</div>
+            <div class="tit f-1 tc">Sogou Passport Library Draft</div>
+            <span class="alpha">@version@</span>
         </header>
-        <article>
+        <div class="article">
             <h4>Problems</h4>
             <p>
-                As every developer and you know,our front-end passport has some really serious problems:
+                目前搜狗使用的Passport库 <a href="http://s.account.sogoucdn.com/u/api/sogou.js">http://s.account.sogoucdn.com/u/api/sogou.js</a> 是从 <a href="https://passport.sohu.com">搜狐Passport</a> 修改而来，目前具有以下等一干问题：
             </p>
             <ol>
-                <li>Huge size javascript library contains functions which most are useless;</li>
-                <li>Confused login/logout API;</li>
-                <li>Many coupled DOM operations within</li>
+                <li>代码冗余----掺杂了许多搜狗不使用的功能代码；</li>
+                <li>接口混乱----API 函数的使用十分仰赖经验，难以上手；</li>
+                <li>功能耦合----通行证核心功能与对话框 DOM 操作混在一起；</li>
+                <li>源码遗失----该 lib 的源码搜狐未能提供，目前仅存压缩后的代码</li>
             </ol>
             <p>
-                What's worse,every product line has to copy
-                a heap of HTML codes to build the login area,which made various style:
+                由于该 lib 不能给搜狗提供统一的登录对话框样式，因此各个产品线不得不<i>拷贝</i>固定的 HTML 代码，按照固定的模式初始化 Passport 功能，造成了各式各样的<a href="#" onclick="javascript:showStyle();">风格</a>。
             </p>
-            <p>
-                <table>
+                <table id="styleLines" style="display:none">
                     <thead>
                         <tr>
                             <th>product</th>
@@ -68,35 +66,31 @@
                             <td><img src="/img/bizhi.png" alt=""></td>
                         </tr>
                     </tbody>
-                </table>
-            </p>
-            <p>Ugly,disunited,hard to maintain or update.</p>
+            </table>
             <p>
-                The reason of this may include it's from <a href="http://www.sohu.com" title="http://www.sohu.com">sohu.com</a> -- not <a href="http://www.sogou.com" title="http://www.sogou.com">sogou.com</a>,and we cannot get the source to improve.
-            </p>
-            <p>
-                Last year I do some stuff to make it working under sogou domain,and it works normally for over a year -- sounds like everything is OK.However there is a but:world change,requirements raise,the library has to be improved.
+                这种不受 Passport 控制的部署对以后的升级维护很不利，同时也给各个产品线带来了额外的不必要的工作量。
             </p>
             <h4>Work</h4>
             <p>
-                So I thought something,and looked at <a href="http://www.baidu.com" title="http://www.baidu.com">baidu.com</a>.Their passport library may be better.As our library is not so complex except the HTML part,I decided to spilt it to the following parts:
+                所以 Passport 前端方面十分有必要进行一次重构，由于 Passport 组没有任何前端人力资源，以下仅是我个人的一些初步想法：
             </p>
             <ol>
-                <li>Basic core just for login&amp;logout;</li>
-                <li>Usual uniform HTML login area;</li>
-                <li>Custom login area editor</li>
+                <li>分离出核心的功能，为需要最大灵活性、自定义性的产品线提供最基本的登录登出功能；</li>
+                <li>不必要的功能以集成插件形式存在，预计集成插件代码量不大，为简单起见，可以打进核心包；</li>
+                <li>统一的登录对话框以分离的插件形式按需引入，并开放自定义功能</li>
             </ol>
             <h4>Progress</h4>
-            <p>The first part is simple,I am already working on it.Thanks to the non-complex logic.The API is following:</p>
-            <p>First,when the library loaded in browser,a passport object named <q>PassportSC</q>,as same as previous:</p>
+            <p>初步的构建我已经基本完成，由于 JavaScript API 风格的多样化，下面的设计可能有诸多不合理之处，已经以 Question 的形式提出以供讨论:</p>
+            <p>由于各产品线对于跨域页面文件 <q>jump.html</q> 的部署已经十分广泛，为兼容及重用，我们仍然使用 <q>PassportSC</q> 作为入口对象名：</p>
 <pre>
-&lt;script type="text/javascript" src="dist/sogou.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="dist/@version@/js/passport-core.js"&gt;
+&lt;/script&gt;
 &lt;script type="text/javascript"&gt;
     window.PassportSC
 &lt;/script&gt;
 </pre>
-            <p>So you should avoid use <q>PassportSC</q> for other kind of purpose.</p>
-            <p>You can still define <q>PassportSC</q> first,and load library asynchronously.At this situation,its <q>onApiLoaded</q> function will be called if exists:</p>
+<p>你也可以提前定义 <q>PassportSC</q> 对象并异步引入库文件，在这种情况下，其 <q>onApiLoaded</q> 函数会被回调：</p>
+
 <pre>
 &lt;script type="text/javascript"&gt;
 var PassportSC = {
@@ -105,82 +99,108 @@ var PassportSC = {
         //Do your passport work here
     }
 };
-
-loadSync('sogou.js');
+loadSync('dist/@version@/js/passport-core.js');
 &lt;/script&gt;
 </pre>
-            <p>You have to initialize it before any other operations:</p>
-            <code>PassportSC.init(options);</code>
-            <p><q>options</q> must be set with the following keys:</p>
+            <p>初始化函数必须首先调用：</p>
+            <code id="api-init">PassportSC.init(options);</code>
+            <p><q>options</q> 参数需要包括:</p>
             <ol>
                 <li>appid: null</li>
                 <li>redirectUrl: null</li>
             </ol>
-            <p>By the way,it equals:</p>
-            <code>PassportSC(options);</code>
-            <p>
-                Login with:
-            </p>
-            <code>PassportSC.login(username, password, vcode, autoLogin);</code>
-            <p>
-                Logout with:
-            </p>
-            <code>PassportSC.logout();</code>
-            <p>
-                Get user-id which may or may not exist with:
-            </p>
-            <code>PassportSC.userid();</code>
-            <p>Get callback:</p>
+            
+            <p>这里有必要简述一下 JavaScript 登录原理，即利用表单向 <a href="https://account.sogou.com">https://account.sogou.com</a> 提交来传递登录验证信息，结果会通过嵌入的 iframe 中的同域的 jump.html 页面传回主页面。因此一个不可见的表单和 iframe 需要构建并加入DOM树中。</p>
+            <a href="#disqus_thread" class="q">表单和 iframe 可以共存于一个不可见元素中，之前需要主动提供该元素，现在由程序自动构建，并利用 CSS 保证其不显示在视窗中，这样是否合理，有无不安全之处？同时登录登出功能共享该元素是否合理？</a>
+                
+
+            <p>新的 API 使用事件获取异步接口的结果：</p>
             <code>PassportSC.on('loginsuccess loginfailed logoutsuccess',function(evt,data){});</code>
-            <p>Third party login with:</p>
-            <code>PassportSC.login3rd(provider,display,redirectUrl);</code>
             <p>
-            That'a all,so far so simple.All inner functions do not export.If you try to invoke:
-            <q>JSON.stringify(PassportSC)</q>,what you get will be:
-            <q>undefined</q> because it's a function.
+               登录接口（异步）：
             </p>
-            <p>Demo</p>
+            <code id="api-login">PassportSC.login(username, password, vcode, autoLogin);</code>
+            <p>
+                登出接口（异步）：
+            </p>
+            <code id="api-logout">PassportSC.logout();</code>
+            <a href="#disqus_thread" class="q">
+                由于登出调用并无失败返回，因此 <q>logoutsuccess</q> 事件是否有意义，在其事件回调内的代码是否安全？
+            </a>
+            <p>
+               获取用户id，该值应为邮箱格式，依赖于登录态 cookie：
+            </p>
+            <code id="api-userid">PassportSC.userid();</code>
+
+            <p>第三方登录：</p>
+            <code id="api-login3rd">PassportSC.login3rd(provider,display,redirectUrl);</code>
+            <a href="#disqus_thread" class="q">
+                第三方登录在使用 <q>window.open</q> 打开弹出窗口需要依赖一个同域下的回调文件，即 <q>redirectUrl</q>，该值应该在 <i>Passport.init</i> 中传入还是应该在
+                <i>PassportSC.login3rd</i> 中传入？
+            </a>
+            
+            <p>以上即是 Passport 的核心 API，称 <q>core</q>，下面的功能以集成插件的形式存在，做到完全不向 <q>core</q> 中注入与核心功能无关的功能。</p>
+
+            <code id="api-draw">PassportSC.draw(options);</code>
+            <p>该 API 即提供了统一构建登录对话框的功能，无需手动调用 login 等接口，但它不限定对话框的样式以及脚本逻辑，事实上，它一般用于加载未来 Passport 官方定义的对话框样式及功能，各个产品线完全可以忽略该接口，使用 <q>core</q> 来定义自己的对话框。</p>
+
+            <p>对于对话框的不同风格，我们称之为 <q>skin</q>。<a href="#api-draw">PassportSC.draw</a> 即负责加载线上 css 文件与该 <q>skin</q> 的 js 脚本文件。它们之间使用称之为 <q>skin_loaded</q> 的事件进行通信，符合该协议规则的任意 <q>skin</q> 都可以被 <a href="#api-draw">PassportSC.draw</a> 加载使用。</p>
+            <p>通过这样的简单设计，我们独立了 Passport 与 <q>skin</q>，它们相互之间的更新升级都不会也不应该影响到对方。</p>
+            <p>
+            
+            <a href="#disqus_thread" class="q">是否需要考虑未来可能存在较大的集成插件对仅使用核心功能的产品带来的影响？</a>
+            <a href="#disqus_thread" class="q">是否有必要定义统一的搜狗登录框样式？</a>
+            
+            <p>更多的集成插件仍在丰富中...</p>
+
+            <p>有必要说明 PassportSC 对象实质为一函数，因此 <a href="api-init">Passport.init</a> 也可以这样写</p>
+            <code>PassportSC(options);</code>
+            <p>并且其函数成员都进行了源码隐藏处理，因此简单地在 Chrome console中打出函数名并不能输出其源码。查看其所有成员，请打印 Object.keys(PassportSC):</p>
+            <p style="word-break: break-all;"><script>document.write(Object.keys(PassportSC));</script></p>
+
+            <h4>Demo</h4>
 <pre>
 PassportSC
 .<b>init</b>({
     appid: 1100,
     redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
-.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess needcaptcha 3rdlogincomplete</i>',function(evt,data){
+.<b>on</b>('<i>loginsuccess loginfailed logoutsuccess 3rdlogincomplete</i>',
+        function(evt,data){
             alert(evt.type.replace(/(log(?:in|out))/,"$1 "));
         });
 </pre>
             <h4>Test</h4>
-            <div id="info">Try the following login:</div>
+            <div id="info">尝试下面的操作</div>
             <form action="#" id="form">
                 <fieldset>
-                    <legend id="legend">Sogou Login Area</legend>
+                    <legend id="legend">搜狗帐号登录区</legend>
                     <div>
-                        <label for="username">username:</label>
+                        <label for="username">用户名：</label>
                         <input type="text" id="username" value="lovemd@sogou.com" required="required"/>
                     </div>
                     <div>
-                        <label for="passport">passport:</label>
+                        <label for="password">密码&nbsp;：</label>
                         <input type="password" id="password" value="123456" required="required"/>
                     </div>
                     <div id="captcha-div" style="display:none">
-                        <label for="captcha">captcha&nbsp;:</label>
+                        <label for="captcha">验证码：</label>
                         <input type="text" id="captcha"/>
                          <img src="about:blank" alt="captcha" id="captcha-img"/>
                     </div>
                     <div>
-                        <button id="login" type="submit">Login</button>
-                        <button id="logout" type="button">Logout</button>
-                        <button id="reset" type="reset">Reset</button>
+                        <button id="login" type="submit">登录</button>
+                        <button id="logout" type="button">登出</button>
+                        <button id="reset" type="reset">重设</button>
                         
                     </div>
                 </fieldset>
             </form>
             <form action="#" id="trd-form">
                 <fieldset>
-                    <legend id="trd-legend">Third-party Login Area</legend>
+                    <legend id="trd-legend">第三方登录区</legend>
                     <div>
-                        You'd better use <q>sogou.com</q> domain and remember to permit a popup window.
+                        你需要在sogou.com域下，并允许弹出式窗口。
                     </div>
                     <div>
                         <label><input type="radio" name="provider" value="qq" checked="checked"/> qq</label>
@@ -194,16 +214,17 @@ PassportSC
                     </div>
 
                     <div>
-                        <button id="trd-login" type="submit">Login</button>
-                        <button id="trd-reset" type="reset">Reset</button>
+                        <button id="trd-login" type="submit">登录</button>
+                        <button id="trd-reset" type="reset">重设</button>
                     </div>
                 </fieldset>
             </form>
             <h4>Todo</h4>
             <p>
-                See <a href="test.html">test.html</a>,Offer some advices and help.
+                测试页面 <a href="test.html">test.html</a>。
             </p>
-        </article>
+            <p>API doc</p>
+        </div><!--article-->
         <div id="disqus_thread"></div>
     <script type="text/javascript">
         var disqus_shortname = 'sogou-ufo'; // required: replace example with your forum shortname
@@ -225,6 +246,18 @@ PassportSC
         </footer>
         <div id="ppcontainer"></div>
         <script type="text/javascript">
+        function showStyle(e){
+            e  = e || window.event;
+            e&&e.preventDefault&&e.preventDefault();
+            e.returnValue = false;
+            var t = $('styleLines');
+            if('none' === t.style.display)
+                t.style.display = 'table';
+            else{
+                t.style.display = 'none';
+            }
+        }
+
         function $(id){
             return document.getElementById(id);
         }
