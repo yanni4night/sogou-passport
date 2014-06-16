@@ -14,8 +14,6 @@
 (function(window, document, undefined) {
   "use strict";
 
-  //var placeholderSupported = 'placeholder' in document.createElement('input');
-
   var WRAPPER_ID = 'sogou-passport-pop';
   var USER_ID = 'sogou-passport-user';
   var PASS_ID = 'sogou-passport-pass';
@@ -34,7 +32,7 @@
 
   function getDefaultHTML() {
     var captionHTML = '<div class="sogou-passport-caption">搜狗帐号登录' +
-      '<a href="#" class="ab sogou-passport-icon sogou-passport-icon-bx sogou-passport-close"></a>' +
+      '<a href="#" id="' + CLOSE_ID + '" class="ab sogou-passport-icon sogou-passport-icon-bx sogou-passport-close"></a>' +
       '</div>';
     var formHTML = '<form action="#" autocomplete="off" type="post">' +
       '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
@@ -140,7 +138,7 @@
 
       self.initEvent();
 
-      userid = PassportSC.userid() /*|| cookie.cookie('email')*/;
+      userid = PassportSC.userid() /*|| cookie.cookie('email')*/ ;
 
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
         UTILS.dom.id(USER_ID).value = userid;
@@ -158,9 +156,9 @@
         return false;
       });
 
-      UTILS.dom.bindEvent(UTILS.dom.id(CLOSE_ID),'click',function(e){
+      UTILS.dom.bindEvent(UTILS.dom.id(CLOSE_ID), 'click', function(e) {
         UTILS.dom.preventDefault(e);
-        PassportSC.emit('canvas_closing',{});
+        PassportSC.emit('canvas_closing', {});
       });
 
       var trdLoginArea = UTILS.dom.id('sogou-passport-3rd');

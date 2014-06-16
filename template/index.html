@@ -72,7 +72,7 @@
             </p>
             <h4>Work</h4>
             <p>
-                所以 Passport 前端方面十分有必要进行一次重构，由于 Passport 组没有任何前端人力资源，以下仅是我个人的一些初步想法：
+                所以不论从 Passport 的角度还是使用者的角度其前端方面十分都有必要进行一次重构。Passport 组没有任何前端技术资源，以下仅是我个人的一些初步想法：
             </p>
             <ol>
                 <li>分离出核心的功能，为需要最大灵活性、自定义性的产品线提供最基本的登录登出功能；</li>
@@ -80,8 +80,8 @@
                 <li>统一的登录对话框以分离的插件形式按需引入，并开放自定义功能</li>
             </ol>
             <h4>Progress</h4>
-            <p>初步的构建我已经基本完成，由于 JavaScript API 风格的多样化，下面的设计可能有诸多不合理之处，已经以 Question 的形式提出以供讨论:</p>
-            <p>由于各产品线对于跨域页面文件 <q>jump.html</q> 的部署已经十分广泛，为兼容及重用，我们仍然使用 <q>PassportSC</q> 作为入口对象名：</p>
+            <p>初步的构建我已经基本完成，下面的设计可能存在的不合理之处，以及可能造成混淆的 case，已经以 Question 的形式提出以供讨论:</p>
+            <p>由于各产品线对于跨域页面文件 <a href="http://wan.sogou.com/static/jump.html" target="_blank">jump.html</a> 的部署已经十分广泛，为兼容及重用，我们仍然使用 <q>PassportSC</q> 作为入口对象名：</p>
 <pre>
 &lt;script type="text/javascript" src="dist/@version@/js/passport-core.js"&gt;
 &lt;/script&gt;
