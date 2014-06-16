@@ -9,9 +9,10 @@
  * 2014-06-07[16:33:33]:authorized
  * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
  * 2014-06-12[09:28:41]:add 'addClass'/'hasClass'/'removeClass' functions
+ * 2014-06-16[10:21:41]:add 'siblings' function
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.3
  * @since 0.1.0
  */
 
@@ -392,6 +393,32 @@
             }
 
             return null;
+        },
+        /**
+         * Find all siblings of an element which match the selector.
+         * 
+         * @param  {HTMLElement} ele
+         * @param  {String} selector
+         * @return {Array}
+         */
+        siblings: function(ele,selector){
+            type.assertHTMLElement('ele', ele);
+            type.assertString('selector', selector);
+            selector = string.trim(selector);
+            var parent = ele.parentNode;
+            if(!parent){
+                return [];
+            }
+
+            var children = parent.childNodes;
+            var siblings = [];
+            array.forEach(children,function(child){
+                if(this.matches(child,selector) && child!=ele){
+                    siblings.push(child);
+                }
+            },this);
+
+            return siblings;
         }
     };
 
