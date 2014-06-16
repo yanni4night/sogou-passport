@@ -50,6 +50,7 @@
     var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;';
 
     var EVENTS = {
+        login_start: 'loginstart',
         login_success: 'loginsuccess',
         login_failed: 'loginfailed',
         logout_success: 'logoutsuccess',
@@ -313,6 +314,8 @@
                 redirectUrl: gOptions.redirectUrl,
                 token: gOptions._token
             };
+
+            this.emit(EVENTS.login_start,{});
 
             assertgFrameWrapper(function(container) {
                 container.innerHTML = template(HTML_FRAME_LOGIN, payload);
