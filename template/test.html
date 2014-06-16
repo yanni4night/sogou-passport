@@ -23,6 +23,7 @@
 </head>
 <body>
     <p>点击下面的按钮，Passport lib 会从网络加载必要的css与js文件，并构建一个样式统一定义的登录对话框。</p>
+    <p id="msg"></p>
     <button onclick="javascript:load();">Load</button>    
     <div class="passport-dialog" id="passport-dialog"></div>
 </body>
@@ -39,8 +40,12 @@
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     });
 
-    PassportSC.on('canvas_closing',function(){
+    PassportSC.on('canvasclosing',function(){
         $('passport-dialog').style.display = 'none';
+    });
+
+    PassportSC.on('drawcomplete',function(e){
+        $('msg').innerHTML = e.type;
     });
 
     function load(){

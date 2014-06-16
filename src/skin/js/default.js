@@ -158,7 +158,7 @@
 
       UTILS.dom.bindEvent(UTILS.dom.id(CLOSE_ID), 'click', function(e) {
         UTILS.dom.preventDefault(e);
-        PassportSC.emit('canvas_closing', {});
+        PassportSC.emit('canvasclosing', {});
       });
 
       var trdLoginArea = UTILS.dom.id('sogou-passport-3rd');

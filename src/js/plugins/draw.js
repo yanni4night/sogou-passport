@@ -27,12 +27,14 @@
   var array = require('../array');
   var cookie = require('../cookie');
   var evtSkinLoadedVal = 'skinloaded';
+  var evtSkinDrawComplete = 'drawcomplete';
 
   var domainList = ["sohu.com", "chinaren.com", "sogou.com", "vip.sohu.com", "17173.com", "focus.cn", "game.sohu.com", "37wanwan.com"];
 
   core.addFixedUrl('register', 'https://account.sogou.com/web/reg/email'); //ru&client_id
   core.addFixedUrl('recover', 'https://passport.sohu.com/web/RecoverPwdInput.action'); //ru
   core.addSupportedEvent('skin_loaded', evtSkinLoadedVal);
+  core.addSupportedEvent('draw_complete', evtSkinDrawComplete);
 
   var preDefinedSkinNames = ['default'];
 
@@ -96,6 +98,7 @@
     ], function(err) {
       if (!err) {
         skinInitFunc.call(PassportSC);
+        PassportSC.emit(evtSkinDrawComplete,{});
       } else {
         throw err;
       }
