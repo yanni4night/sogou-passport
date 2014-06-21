@@ -173,9 +173,9 @@
      * @return {String}
      */
     function template(tpl, data) {
-        return tpl.replace(/<%=([\w\-]+?)%>/g, function(k, n) {
+        return tpl.replace(/<%=([\w-]+?)%>/g, function(k, n) {
             var key = data[n];
-            return undefined === key ? "" : key;
+            return type.isNullOrUndefined(key) ? "" : key;
         });
     }
 
@@ -524,10 +524,7 @@
         return Passport.init.apply(Passport, arguments);
     };
 
-    UTILS.mixin(PassportSC, Passport);
-
-    //Make proxy an event emitter too.
-    UTILS.mixin(PassportSC, new Event());
+    UTILS.mixin(PassportSC, Passport,new Event());
 
     //PassportSC is shy.
     //We do this for hiding source of its function members,
