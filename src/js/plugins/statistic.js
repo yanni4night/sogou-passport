@@ -5,9 +5,10 @@
  *
  * changelog
  * 2014-06-16[11:11:22]:authorized
+ * 2014-06-22[16:31:49]:fixed bugs
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 (function(window, document, undefined) {
@@ -21,11 +22,15 @@
     var array = UTILS.array;
 
     var STATISTIC_UTL = 'https://account.sogou.com/web/slowinfo';
-    var loginThreshold = 6e3;
+    var loginThreshold = +PassportSC.getOptions().loginThreshold || 6e3;
+
+    var loginOverInter, loginStartTime;
 
     var commonPingData = [
         'pt=' + document.domain,
         'path=' + encodeURIComponent(location.pathname),
+        'fr=' + encodeURIComponent(document.referrer),
+        'ua=' + encodeURIComponent(navigator.userAgent),
         'ls=' + +navigator.cookieEnabled + '_' + +('localStorage' in window && window.localStorage !== null)
     ];
 
@@ -42,12 +47,8 @@
             });
         } else if (type.isPlainObject(data)) {
             //when data is a object,we encode each value in uri format.
-            parameters = [];
             for (var e in data) {
-                //empty space should not exist in key
-                if (!/[\s=&\?#]/.test(e)) {
-                    parameters.push(e + '=' + encodeURIComponent(data[e]));
-                }
+                parameters.push(e + '=' + encodeURIComponent(data[e]));
             }
         } else {
             console.warn('UnSupported data format:', data);
@@ -55,16 +56,18 @@
             return false;
         }
 
-        UTILS.mixin(parameters, commonPingData, {
-            '_': +new Date(),
-            'appid': PassportSC.getOptions().appid
-        });
+        parameters = parameters.concat('_=' + +new Date(),
+            'appid=' +
+            PassportSC.getOptions().appid).concat(commonPingData);
 
-        new Image().src = STATISTIC_UTL + '?' + parameters.join('&');
+        try {
+            new Image().src = STATISTIC_UTL + '?' + parameters.join('&');
+        } catch (e) {
+            console.error('Create image failed:' + e);
+        }
 
         return true;
     }
-    var loginOverInter, loginStartTime;
 
     function reportLogin(status) {
         report({
@@ -78,15 +81,19 @@
     function overLogin() {
         clearTimeout(loginOverInter);
         loginOverInter = setTimeout(function() {
-            reportLogin();
+            reportLogin(-1);
         }, loginThreshold);
     }
     var events = PassportSC.getSupportedEvents();
 
+
+    //create a timeout when start
     PassportSC.on(events.login_start, function(e) {
         loginStartTime = +new Date();
+        overLogin();
     }, PassportSC);
 
+    //clear timeout when callback during it
     PassportSC.on([events.login_success, events.login_failed].join(' '), function(e, data) {
         clearTimeout(loginOverInter);
         reportLogin(data.status);
