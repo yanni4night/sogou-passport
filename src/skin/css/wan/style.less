@@ -4,9 +4,239 @@
   * style.less
   *
   * changelog
-  * 2014-06-13[12:09:37]:authorized
-  *
+  * 2014-06-24[11:16:57]:copied from default
+  * 
   * @author yanni4night@gmail.com
   * @version 0.1.0
   * @since 0.1.0
   */
+.sogou-passport-pop{
+    /*sprites*/
+    .sogou-passport-icon {
+        background-image: url(http://wan.sogou.com/static/dwj/static/img/sprites-32.png);
+        background-repeat: no-repeat;
+        display: block;
+    }
+    .sogou-passport-icon-submit{
+        &:hover{
+            background-position: 0 -110px;
+        }
+        background-position: 0 -70px;
+        width: 100px;
+        height: 36px;
+    }
+    .sogou-passport-icon-3rdqq{
+        &:hover{
+            background-position: 0 -260px;
+        }
+        width: 60px;
+        height: 28px;
+        background-position: 0 -230px;
+    }
+    .sogou-passport-icon-3rdsina{
+        &:hover{
+            background-position: -140px -260px;
+        }
+        width: 60px;
+        height: 28px;
+        background-position: -140px -230px;
+    }
+    .sogou-passport-icon-3rdrenren{
+        &:hover{
+            background-position: -70px -260px;
+        }
+        width: 60px;
+        height: 28px;
+        background-position: -70px -230px;
+    }
+    .sogou-passport-icon-lock {
+        width: 36px;
+        height: 28px;
+        background-position: -40px -30px;
+        left:1px;
+        top:2px;
+    }
+    .sogou-passport-icon-user {
+        width: 36px;
+        height: 28px;
+        background-position: 0 -30px;
+        left:1px;
+        top:2px;
+    }
+
+    /*sprites*/
+    .re{position: relative;}
+    .fz0{font-size: 0;}
+    .fl{float: left;}
+    .fr{float: right;}
+    .ab{position: absolute;}
+    .w-fil{width: 100%;}
+    .h-fil{height: 100%;}
+    .tc{text-align: center;}
+    .ib{display: inline-block;*display: inline;*zoom:1;}
+    .sogou-passport-caption{
+        .sogou-passport-close{
+            right: 0;
+            top: 10px;
+            width: 24px;
+            height: 24px;
+            background: url(http://s2.wan.sogou.com/r4/img/004.png) -525px -605px no-repeat;
+        }
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+    .clearfix{
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: "";
+        clear: both;
+        height: 0;
+        padding: 0;
+        margin: 0;
+    }
+    a{
+        font-size: 12px;
+        text-decoration: none;
+        color: #000;
+        font-family: Arial, Helvetica, STHeiti,"simsun",sans-serif;
+    }
+    p{margin: 0;padding: 0;}
+    form{
+        .sogou-passport-error{
+            height: 20px;
+            line-height: 20px;
+            color:#fc4343;
+            font-size: 12px;
+        }
+        .sogou-passport-row{
+            position: relative;
+            margin: 0;
+            margin-bottom: 15px;
+            z-index: 18;
+            font-size: 14px;
+        }
+        .sogou-passport-submitwrapper{
+            .sogou-passport-findpwd{
+                top: -28px;
+                right: 0;
+            }
+            .sogou-passport-register{
+                top: 60px;
+                right: 0;
+            }
+            padding-bottom: 15px;
+            margin-bottom: 0;
+        }
+        input.sogou-passport-input,.sogou-passport-place{
+            outline: none;
+            width: 198px;
+            border: 1px solid #ddd;
+            padding:7px 10px 7px 38px;
+            height: 16px;
+            display:block;
+            background: none;
+            font-size: 12px;
+            line-height: 16px;
+        }
+        .sogou-passport-place{
+            z-index: -1;
+            color: #999;
+            left: 0;
+            top:0;
+        }
+        .sogou-passport-hover{
+            input.sogou-passport-input{
+                border-color:#f64014;
+            }
+        }
+        input.sogou-passport-submit{
+            outline: none;
+            width: 100px;
+            height: 36px;
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            border: none;
+        }
+        .sogou-passport-autologin{
+            input{
+                vertical-align: middle;
+            }
+            label{
+                display: inline;
+                color: #666;
+                font-size: 12px;
+                margin-left: 5px;
+            }
+            a{
+                font-size: 12px;
+            }
+            height: 15px;
+            margin-bottom: 15px;
+        }
+        .sogou-passport-captcha-wrapper{
+            .sogou-passport-input,.sogou-passport-place-captcha{
+                width: 100px;
+            }
+            img.sogou-passport-captcha-img{
+                height: 30px;
+                width: 85px;
+                margin-left: 10px;
+                margin-right: 10px;
+                cursor: pointer;
+            }
+            .sogou-passport-change{
+                height: 30px;
+                line-height: 30px;
+            }
+            width: 300px;
+            display: none;
+        }
+        width: 300px;
+        padding-bottom: 5px;
+        margin: 0 auto;
+    }
+    .sogou-passport-3rd{
+        .sogou-passport-3rd-title{
+            color: #666;
+            font-size: 12px;
+            top: -7px;
+            left: 150px;
+            background: #fff;
+        }
+        .sogou-passport-3rd-icons{
+        }
+        border-top: 1px dotted #b3b3b3;
+        padding-top: 15px;
+        height: 34px;
+    }
+    .sogou-passport-regarea{
+        a{  
+            &:hover{
+                text-decoration: underline;
+            }
+            color: #000;
+        }
+        background: #dfdfdf;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        font-size: 12px;
+        color: #000;
+    }
+    color: #434343;
+    font-size: 0;
+    width: 410px;
+    z-index: 99999;
+    border-radius: 5px;
+    -moz-box-shadow: 1px 1px 2px #aaa;
+    -webkit-box-shadow: 1px 1px 2px #aaa;
+    box-shadow: 1px 1px 2px #aaa;
+    background: #fff;
+    padding-bottom: 10px;
+}

@@ -19,18 +19,63 @@
         top:100px;
         margin-left: -200px;
     }
+    pre{
+        background: #000;
+        padding: 1em;
+        font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
+    }
+    .orange{
+        color: orange;
+    }
+    .purple{
+        color: purple;
+    }
 </style>
 </head>
 <body>
-    <p>点击下面的按钮，Passport lib 会从网络加载必要的css与js文件，并构建一个样式统一定义的登录对话框。</p>
+    <p>点击下面的按钮，Passport lib 会从网络加载必要的css与js文件，并自动构建一个登录对话框。</p>
     <p id="msg"></p>
-    <button onclick="javascript:load();">Load</button>    
+    <form action="#" id="form">
+        <label for="skin">皮肤</label>
+        <select name="skin" id="skin">
+            <option value="default">默认</option>
+            <option value="wan">游戏</option>
+        </select>
+        <button type="submit">Load</button>
+    </form>
+<pre>
+<span class="orange">PassportSC</span>({
+        appid:1120,
+        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+    })
+.<span class="orange">on</span>('canvasclosing',<span class="purple">function</span>(e){
+//close the container
+    })
+.<span class="orange">on</span>('drawcomplete',<span class="purple">function</span>(e){
+//css&amp;js loaded
+    })
+.<span class="orange">on</span>('loginstart loginsuccess loginfailed 3rdlogincomplete',<span class="purple">function</span>(e){
+//reload or show something
+    })
+.<span class="orange">draw</span>({
+    skin:'default',//'wan'
+    container:$('passport-dialog'),
+    trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+    })
+</pre>
     <div class="passport-dialog" id="passport-dialog"></div>
 </body>
 <script type="text/javascript" src="dist/@version@/js/passport-core.js"></script>
 <script>
     function $(id){
         return document.getElementById(id);
+    }
+    function bindEvent(dom,evt,func){
+        if(dom.addEventListener){
+            dom.addEventListener(evt,func,false);
+        }else if(dom.attachEvent){
+            dom.attachEvent('on'+evt,func);
+        }
     }
 
     var inited = false;
@@ -49,16 +94,38 @@
         $('msg').innerHTML = e.type;
     });
 
-    function load(){
+
+
+    function load(skin){
         if(inited){
             return $('passport-dialog').style.display = 'block';
         }else{
             inited = true;
             PassportSC.draw({
+                skin:skin,
                 container:$('passport-dialog'),
                 trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
             });
         }
     }
+
+    bindEvent($('form'),'submit',function(e){
+
+        e = e || window.event;
+        var t = e.target || e.srcElement;
+        if(e.preventDefault){
+            e.preventDefault();
+        }else{
+            e.returnValue = false;
+        }
+        var skinSelect = $('skin');
+
+        load(skinSelect.options[skinSelect.selectedIndex].value);
+
+       // t.style.visibility='hidden';
+
+        return false;
+
+    });
 </script>
 </html>
