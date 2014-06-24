@@ -150,13 +150,22 @@
             margin-bottom: 45px;
             width: 360px;
         }
-        input.sogou-passport-input{
+        input.sogou-passport-input,.sogou-passport-place{
             outline: none;
             width: 310px;
             border: 1px solid #ddd;
             padding:12px 10px 12px 38px;
             height: 16px;
             display:block;
+            background: none;
+            font-size: 12px;
+            line-height: 16px;
+        }
+        .sogou-passport-place{
+            z-index: -1;
+            color: #999;
+            left: 0;
+            top:0;
         }
         .sogou-passport-hover{
             input.sogou-passport-input{
@@ -199,7 +208,7 @@
             margin-bottom: 15px;
         }
         .sogou-passport-captcha-wrapper{
-            .sogou-passport-input{
+            .sogou-passport-input,.sogou-passport-place-captcha{
                 width: 100px;
             }
             img.sogou-passport-captcha-img{
@@ -207,6 +216,11 @@
                 width: 120px;
                 margin-left: 10px;
                 margin-right: 10px;
+                cursor: pointer;
+            }
+            .sogou-passport-change{
+                height: 42px;
+                line-height: 42px;
             }
             width: 360px;
             display: none;

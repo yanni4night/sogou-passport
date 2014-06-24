@@ -30,9 +30,10 @@
  * 2014-06-11[21:52:05]:callback default msg when third party login
  * 2014-06-12[13:24:21]:exports 'getFixedUrl'&'getSupportedEvents'
  * 2014-06-14[12:15:01]:exports utils,add 'setPayload'&'getPayload'
+ * 2014-06-24[10:16:46]:add 'getNewCaptcha'
  *
  * @author yanni4night@gmail.com
- * @version 0.2.1
+ * @version 0.2.2
  * @since 0.1.0
  */
 
@@ -431,7 +432,7 @@
                 data.msg = data.msg || '帐号未激活';
                 this.emit(EVENTS.login_failed, data);
             } else if (+data.needcaptcha) {
-                data.captchaimg = FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
+                data.captchaimg = this.getNewCaptcha();
                 data.msg = data.msg || '需要验证码';
                 this.emit(EVENTS.login_failed, data);
             } else {
@@ -516,6 +517,14 @@
         getPayload: function(key) {
             type.assertNonEmptyString('key', key);
             return gPayload[key];
+        },
+        /**
+         * Generate a new captcha image.
+         * 
+         * @return {String} New captcha image url
+         */
+        getNewCaptcha: function(){
+            return FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());
         }
     };
 

@@ -6,11 +6,13 @@
  * changelog
  * 2014-06-13[17:58:50]:authorized
  * 2014-06-15[11:30:42]:emit 'skin_loaded' instead of initSkin
+ * 2014-06-24[10:28:01]:enabled placeholder polyfil;fixed captcha refresh
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
+
 (function(window, document, undefined) {
   "use strict";
 
@@ -20,6 +22,7 @@
   var CAPTCHA_WRAPPER_ID = 'sogou-passport-captcha-wrapper';
   var CAPTCHA_IMG_ID = 'sogou-passport-captchaimg';
   var CAPTCHA_ID = 'sogou-passport-captcha';
+  var CHANGE_ID = 'sogou-passport-change';
   var AUTO_ID = 'sogou-passport-auto';
   var ERROR_ID = 'sogou-passport-error';
   var CLOSE_ID = 'sogou-passport-close';
@@ -28,7 +31,10 @@
   var urls = PassportSC.getPassportUrls();
   var UTILS = PassportSC.utils;
   var type = UTILS.type;
+  var array = UTILS.array;
   var console = UTILS.console;
+
+  var placeholderSupported = 'placeholder' in document.createElement('input');
 
   function getDefaultHTML() {
     var captionHTML = '<div class="sogou-passport-caption">搜狗帐号登录' +
@@ -37,17 +43,20 @@
     var formHTML = '<form action="#" autocomplete="off" type="post">' +
       '<div id="sogou-passport-error" class="sogou-passport-error"></div>' +
       '<div class="sogou-passport-row re">' +
-      '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" placeholder="手机/邮箱/用户名"/>' +
+      (placeholderSupported ? '' : '<div class="sogou-passport-place ab">手机/邮箱/用户名</div>') +
+      '<input type="text" class="sogou-passport-input" id="' + USER_ID + '" ' + (placeholderSupported ? 'placeholder="手机/邮箱/用户名"' : '') + '/>' +
       '<div class="sogou-passport-icon sogou-passport-icon-user ab"></div>' +
       '</div>' +
       '<div class="sogou-passport-row re">' +
-      '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" placeholder="密码"/>' +
+      (placeholderSupported ? '' : '<div class="sogou-passport-place ab">密码</div>') +
+      '<input type="password" class="sogou-passport-input" id="' + PASS_ID + '" ' + (placeholderSupported ? 'placeholder="密码"' : '') + '/>' +
       '<div class="sogou-passport-icon-lock sogou-passport-icon ab"></div>' +
       '</div>' +
       '<div class="sogou-passport-row re sogou-passport-captcha-wrapper" id="' + CAPTCHA_WRAPPER_ID + '">' +
-      '<input type="text" class="fl sogou-passport-input" id="' + CAPTCHA_ID + '" placeholder="验证码"/>' +
-      '<img src="about:blank" id="' + CAPTCHA_IMG_ID + '" alt="验证码" class="fl sogou-passport-captcha-img" border="0"/>' +
-      '<a href="#" class="fl h-fil">换一换</a>' +
+      (placeholderSupported ? '' : '<div class="sogou-passport-place sogou-passport-place-captcha ab">验证码</div>') +
+      '<input type="text" class="fl sogou-passport-input" id="' + CAPTCHA_ID + '" ' + (placeholderSupported ? 'placeholder="验证码"' : '') + '/>' +
+      '<img src="about:blank" id="' + CAPTCHA_IMG_ID + '" alt="验证码" class="fl sogou-passport-captcha-img" border="0" title="点击切换"/>' +
+      '<a id="' + CHANGE_ID + '" href="#" class="fl sogou-passport-change" title="点击切换">换一换</a>' +
       '<div class="clearfix"></div>' +
       '</div>' +
       '<div class="sogou-passport-row sogou-passport-autologin">' +
@@ -174,20 +183,32 @@
         });
       }
 
+      //Hide placeholder polyfil;show border
       var focus = function(e) {
         var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row');
+        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
+          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');
         if (row) {
           UTILS.dom.addClass(row, 'sogou-passport-hover');
         }
+        array.forEach(placeholder, function(item) {
+          item.style.display = 'none';
+        });
       };
 
+      //Show placeholder polyfil;hide border
       var blur = function(e) {
         var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row');
+        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
+          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');;
         if (row) {
           UTILS.dom.removeClass(row, 'sogou-passport-hover');
         }
+        array.forEach(placeholder, function(item) {
+          if (!t.value) {
+            item.style.display = 'block';
+          }
+        });
       };
 
       UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'focus', focus);
@@ -197,22 +218,19 @@
       UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'focus', focus);
       UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'blur', blur);
 
+      //Refresh captcha
+      var change = function(e) {
+        UTILS.dom.preventDefault(e);
+        UTILS.dom.id(CAPTCHA_IMG_ID).src = PassportSC.getNewCaptcha();
+      };
+      UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_IMG_ID), 'click', change);
+      UTILS.dom.bindEvent(UTILS.dom.id(CHANGE_ID), 'click', change);
     },
     doPost: function() {
-      var user$, pass$, auto$;
+      var user$ = UTILS.dom.id(USER_ID),
+        pass$ = UTILS.dom.id(PASS_ID),
+        auto$ = UTILS.dom.id(AUTO_ID);
       var user, pass, auto;
-      if (!(user$ = UTILS.dom.id(USER_ID))) {
-        console.error('Element[#' + USER_ID + '] does not exist');
-        return;
-      }
-      if (!(pass$ = UTILS.dom.id(PASS_ID))) {
-        console.error('Element[#' + PASS_ID + '] does not exist');
-        return;
-      }
-      if (!(auto$ = UTILS.dom.id(AUTO_ID))) {
-        console.error('Element[#' + AUTO_ID + '] does not exist');
-        return;
-      }
       if (!(user = UTILS.string.trim(user$.value))) {
         console.trace('user empty');
         return;

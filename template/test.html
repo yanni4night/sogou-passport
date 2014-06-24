@@ -40,8 +40,9 @@
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     });
 
-    PassportSC.on('canvasclosing',function(){
+    PassportSC.on('canvasclosing',function(e){
         $('passport-dialog').style.display = 'none';
+        $('msg').innerHTML = e.type;
     });
 
     PassportSC.on('drawcomplete',function(e){
