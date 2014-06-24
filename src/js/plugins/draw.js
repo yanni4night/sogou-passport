@@ -36,7 +36,7 @@
   core.addSupportedEvent('skin_loaded', evtSkinLoadedVal);
   core.addSupportedEvent('draw_complete', evtSkinDrawComplete);
 
-  var preDefinedSkinNames = ['default'];
+  var preDefinedSkinNames = ['default','wan'];
 
   //default options
   var defaultOptions = {
@@ -138,7 +138,7 @@
       throw new Error('You have to define a skin name or skinCssUrl');
     }
 
-    this.setPayload('contrib-skin', gOptions);
+    this.setPayload('contrib-skin', UTILS.extend({},gOptions));
 
     loadSkin();
 

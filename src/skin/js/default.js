@@ -178,7 +178,7 @@
           var target = UTILS.dom.eventTarget(e);
           var provider;
           if (target && target.tagName.toUpperCase() === 'A' && (provider = target.getAttribute('data-provider'))) {
-            return PassportSC.login3rd(provider, 'popup', this.options.trdRedirectUrl);
+            return PassportSC.login3rd(provider, 'popup', self.options.trdRedirectUrl);
           }
         });
       }
@@ -255,12 +255,11 @@
       if (!skinOptions) {
         throw new Error('Skin initializing need a skinOption,make sure you never clear "contrib-skin" payload');
       }
-      var container = skinOptions.container;
-      type.assertHTMLElement('container', container);
-      new PassportCanvas({
-        container: container,
-        template: getDefaultHTML()
-      });
+      type.assertHTMLElement('container', skinOptions.container);
+      
+      skinOptions.template = getDefaultHTML();
+
+      new PassportCanvas(skinOptions);
     }
   });
 
