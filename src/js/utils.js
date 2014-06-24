@@ -69,7 +69,7 @@
          * @return {Object}
          */
         extend: function() {
-            return this.mixin.call(this, arguments);
+            return this.mixin.apply(this, arguments);
         },
         /**
          * Get version of Internet Explorer by user agent.
