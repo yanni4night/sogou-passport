@@ -37,7 +37,7 @@
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
   function getDefaultHTML() {
-    var captionHTML = '<div class="sogou-passport-caption">搜狗帐号登录' +
+    var captionHTML = '<div class="sogou-passport-caption re">搜狗帐号登录' +
       '<a href="#" id="' + CLOSE_ID + '" class="ab sogou-passport-icon sogou-passport-icon-bx sogou-passport-close"></a>' +
       '</div>';
     var formHTML = '<form action="#" autocomplete="off" type="post">' +
