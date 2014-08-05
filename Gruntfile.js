@@ -33,6 +33,12 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
+            options:{
+                strict:true,
+                node:true,
+                browser:true,
+                predef:['require','module']
+            },
             lib: {
                 src: STATIC_DIR + 'js/*.js',
             }
