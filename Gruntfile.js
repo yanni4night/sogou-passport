@@ -8,9 +8,10 @@
  * 2014-05-25[11:31:17]:clean
  * 2014-06-11[21:10:44]:skin images
  * 2014-06-13[14:18:04]:reorder
+ * 2014-08-05[18:09:12]:options jshint
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -23,21 +24,22 @@ module.exports = function(grunt) {
 
     var pkg = grunt.file.readJSON('package.json');
     var now = new Date();
-    var builtVersion = pkg.version + "." + String(now.getFullYear()).slice(-2) +w(1 + now.getMonth()) + w(now.getDate());
+    var builtVersion = pkg.version + "." + String(now.getFullYear()).slice(-2) + w(1 + now.getMonth()) + w(now.getDate());
 
-    function w(d){
-        return d<10?('0'+d):d;
+    function w(d) {
+        return d < 10 ? ('0' + d) : d;
     }
 
     var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
 
     grunt.initConfig({
         jshint: {
-            options:{
-                strict:true,
-                node:true,
-                browser:true,
-                predef:['require','module']
+            options: {
+                strict: true,
+                node: true,
+                browser: true,
+                nonstandard: true,
+                predef: ['require', 'module']
             },
             lib: {
                 src: STATIC_DIR + 'js/*.js',
@@ -62,7 +64,8 @@ module.exports = function(grunt) {
                     src: ['skin/js/*.js'],
                     dest: TARGET_DIR
                 }]
-            }/*,
+            }
+            /*,
             plugins:{
                 files:[{
                     expand:true,
@@ -180,16 +183,16 @@ module.exports = function(grunt) {
             }
         },
         browserify: {
-/*            plugins: {
+            /*            plugins: {
                 src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
                 dest: TARGET_DIR + '/js/passport-draw.js'
             },*/
             core: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
+                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
                 dest: TARGET_DIR + '/js/passport-core.js'
             },
             test: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js', STATIC_DIR + 'js/test/*.js'],
+                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js', STATIC_DIR + 'js/test/*.js'],
                 dest: TARGET_DIR + '/js/passport-test.js'
             }
         },
@@ -226,11 +229,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
-    
+
 
     grunt.registerMultiTask('vars', 'replace vars', function() {
         var options = this.options({});
-        
+
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
@@ -243,8 +246,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
     grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs']);
-    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test'/*, 'uglify:libjs'*/]);
-    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static','less:css']);
+    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test' /*, 'uglify:libjs'*/ ]);
+    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static', 'less:css']);
 
 
     grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official']);
