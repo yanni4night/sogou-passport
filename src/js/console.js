@@ -14,21 +14,19 @@
  * @since 0.1.0
  */
 
-(function(window, undefined) {
-    "use strict";
+"use strict";
 
-    var type = require('./type');
-    var console = type.debug?window.console:{};
+var type = require('./type');
+var console = type.debug ? window.console : {};
 
-    if (!console || type.strobject !== typeof console) {
-        console = {};
-    }
+if (!console || type.strobject !== typeof console) {
+    console = {};
+}
 
-    var keys = 'trace,info,log,debug,warn,error'.split(',');
+var keys = 'trace,info,log,debug,warn,error'.split(',');
 
-    for (var i = keys.length - 1; i >= 0; i--) {
-        console[keys[i]] = console[keys[i]] || type.noop;
-    }
+for (var i = keys.length - 1; i >= 0; i--) {
+    console[keys[i]] = console[keys[i]] || type.noop;
+}
 
-    module.exports = console;
-})(window);
+module.exports = console;
