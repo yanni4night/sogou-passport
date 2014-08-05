@@ -31,7 +31,7 @@ var evtSkinDrawComplete = 'drawcomplete';
 var domainList = ["sohu.com", "chinaren.com", "sogou.com", "vip.sohu.com", "17173.com", "focus.cn", "game.sohu.com", "37wanwan.com"];
 
 core.addFixedUrl('register', 'https://account.sogou.com/web/reg/email'); //ru&client_id
-core.addFixedUrl('recover', 'https://passport.sohu.com/web/RecoverPwdInput.action'); //ru
+core.addFixedUrl('recover', 'https://account.sogou.com/web/findpwd'); //ru&client_id
 core.addSupportedEvent('skin_loaded', evtSkinLoadedVal);
 core.addSupportedEvent('draw_complete', evtSkinDrawComplete);
 

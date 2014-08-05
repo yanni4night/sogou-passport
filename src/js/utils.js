@@ -31,6 +31,8 @@ var xevent = require('./event');
 var async = require('./async');
 var console = require('./console');
 
+var hasOwn = ({}).hasOwnProperty;
+
 var utils = {
     math: math,
     array: array,
@@ -54,7 +56,7 @@ var utils = {
         srcs = Array.prototype.slice.call(arguments, 1);
         array.forEach(srcs, function(src) {
             for (var e in src) {
-                if (src.hasOwnProperty && src.hasOwnProperty(e)) {
+                if (hasOwn.call(src, e)) {
                     dest[e] = src[e];
                 }
             }
@@ -129,6 +131,13 @@ var utils = {
         })(name, source);
 
         return func.toString;
+    },
+    /**
+     * Get Unix timestamp of now.
+     * @return {Integer} Unix timestamp
+     */
+    now: function() {
+        return Date.now ? Date.now() : +new Date();
     }
 };
 

@@ -3,7 +3,7 @@ passport
 
 This is a tentative improvement for sogou passport javascript library.
 
-It's still under developing,see <http://passport.ufo.sogou-inc.com>.
+Continuous developing is still on,see <http://passport.ufo.sogou-inc.com>.
 
 build
 ======
@@ -15,14 +15,14 @@ test
 
 `grunt karma`
 
-todo
+history
 ======
- - pingback plugin
- - popup warning
+- 0.0.8.140721:Fixed css in draw plugin
+- 0.0.8.140709:First beta version.
 
 contact
 ======
- - <yanni4night@gmail.com>
+ - <yinyong@sogou-inc.com>
 
 license
 ======

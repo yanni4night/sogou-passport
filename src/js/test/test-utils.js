@@ -5,9 +5,10 @@
  *
  * changelog
  * 2014-06-08[16:18:43]:authorized
+ * 2014-08-05[18:33:24]:add test for utils.now
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
@@ -44,6 +45,12 @@
                 };
                 var funcstr = utils.hideSource('say', demo.say).call(demo.say);
                 assert(/say\(\s*\w\s*,\s*\w\s*,\s*\w\s*\)/.test(funcstr));
+            });
+        });
+
+        describe('#now()', function() {
+            it('should return UNIX timestamp', function() {
+                assert(/\d{13}/.test(utils.now()));
             });
         });
 

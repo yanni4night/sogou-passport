@@ -55,7 +55,7 @@ function report(data) {
         return false;
     }
 
-    parameters = parameters.concat('_=' + +new Date(),
+    parameters = parameters.concat('_=' + UTILS.now(),
         'appid=' +
         PassportSC.getOptions().appid).concat(commonPingData);
 
@@ -72,7 +72,7 @@ function reportLogin(status) {
     report({
         status: status || -1, //meaning over time
         api: encodeURIComponent('/web/login'),
-        cost: +new Date() - loginStartTime,
+        cost: UTILS.now() - loginStartTime,
         limit: loginThreshold
     });
 }
@@ -88,7 +88,7 @@ var events = PassportSC.getSupportedEvents();
 
 //create a timeout when start
 PassportSC.on(events.login_start, function(e) {
-    loginStartTime = +new Date();
+    loginStartTime = UTILS.now();
     overLogin();
 }, PassportSC);
 

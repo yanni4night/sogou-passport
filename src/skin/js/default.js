@@ -7,9 +7,10 @@
  * 2014-06-13[17:58:50]:authorized
  * 2014-06-15[11:30:42]:emit 'skin_loaded' instead of initSkin
  * 2014-06-24[10:28:01]:enabled placeholder polyfil;fixed captcha refresh
+ * 2014-08-05[18:45:20]:add client_id for recover url
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.3
  * @since 0.1.0
  */
 
@@ -28,6 +29,7 @@
   var CLOSE_ID = 'sogou-passport-close';
 
   var PassportSC = window.PassportSC;
+  var option = PassportSC.getOptions();
   var urls = PassportSC.getPassportUrls();
   var UTILS = PassportSC.utils;
   var type = UTILS.type;
@@ -65,8 +67,8 @@
       '</div>' +
       '<div class="re sogou-passport-row sogou-passport-submitwrapper">' +
       '<input id="sogou-passport-submit" type="submit" value="登录" class="sogou-passport-submit">' +
-      '<a href="' + (urls.recover + "?ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
-      '<a href="' + (urls.register + "?ru=" + encodeURIComponent(location.href) + '&client_id=' + PassportSC.getOptions().appid) + '" class="ab sogou-passport-register" target="_blank">立即注册</a>' +
+      '<a href="' + (urls.recover + "?client_id=" + options.appid + "&ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
+      '<a href="' + (urls.register + "?client_id=" + options.appid + "&ru=" + encodeURIComponent(location.href) + '&client_id=' + options.appid) + '" class="ab sogou-passport-register" target="_blank">立即注册</a>' +
       '</div>' +
       '</form>';
     var trdHTML = '<div id="sogou-passport-3rd" class="sogou-passport-3rd">' +
@@ -256,7 +258,7 @@
         throw new Error('Skin initializing need a skinOption,make sure you never clear "contrib-skin" payload');
       }
       type.assertHTMLElement('container', skinOptions.container);
-      
+
       skinOptions.template = getDefaultHTML();
 
       new PassportCanvas(skinOptions);

@@ -5,9 +5,10 @@
  *
  * changelog
  * 2014-06-24[13:20:06]:copied from default
- *
+ * 2014 - 08 - 05[18: 45: 20]: add client_id
+ for recover url *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
@@ -26,6 +27,7 @@
   var CLOSE_ID = 'sogou-passport-close';
 
   var PassportSC = window.PassportSC;
+  var options = PassportSC.getOptions();
   var urls = PassportSC.getPassportUrls();
   var UTILS = PassportSC.utils;
   var type = UTILS.type;
@@ -63,7 +65,7 @@
       '</div>' +
       '<div class="re sogou-passport-row sogou-passport-submitwrapper">' +
       '<input id="sogou-passport-submit" type="submit" value="" class="sogou-passport-submit sogou-passport-icon sogou-passport-icon-submit">' +
-      '<a href="' + (urls.recover + "?ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
+      '<a href="' + (urls.recover + "?client_id=" + options.appid + "&ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
       '</div>' +
       '</form>';
     var trdHTML = '<div id="sogou-passport-3rd" class="re sogou-passport-3rd">' +
