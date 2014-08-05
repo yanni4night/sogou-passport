@@ -10,43 +10,41 @@
  * @version 0.1.0
  * @since 0.1.0
  */
-(function(undefined) {
-  "use strict";
-  
-  var type = require('./type');
-  var array = require('./array');
-  var async = {
-    /**
-     * 
-     * @param  {Array}   tasks
-     * @param  {Function} callback
-     */
-    parallel: function(tasks, callback) {
-      type.assertArray('tasks', tasks);
-      type.assertFunction('callback', callback);
+"use strict";
 
-      var returned = false;
-      var total = tasks.length;
-      var count = 0;
+var type = require('./type');
+var array = require('./array');
+var async = {
+  /**
+   *
+   * @param  {Array}   tasks
+   * @param  {Function} callback
+   */
+  parallel: function(tasks, callback) {
+    type.assertArray('tasks', tasks);
+    type.assertFunction('callback', callback);
 
-      if(!total){
-        return callback.call(null,null);
-      }
+    var returned = false;
+    var total = tasks.length;
+    var count = 0;
 
-      array.forEach(tasks, function(task) {
-        task.call(null, function(err) {
-          if (err && !returned) {
-            callback.call(null, err);
-            returned = true;
-          } else {
-            if (++count === total) {
-              callback.call(null, null);
-            }
-          }
-        });
-      });
+    if (!total) {
+      return callback.call(null, null);
     }
-  };
 
-  module.exports = async;
-})();
+    array.forEach(tasks, function(task) {
+      task.call(null, function(err) {
+        if (err && !returned) {
+          callback.call(null, err);
+          returned = true;
+        } else {
+          if (++count === total) {
+            callback.call(null, null);
+          }
+        }
+      });
+    });
+  }
+};
+
+module.exports = async;
