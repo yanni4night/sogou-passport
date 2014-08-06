@@ -10,9 +10,10 @@
  * 2014-06-08[21:38:47]:add callback to 'addLink';add 'addScript'
  * 2014-06-12[09:28:41]:add 'addClass'/'hasClass'/'removeClass' functions
  * 2014-06-16[10:21:41]:add 'siblings' function
+ * 2014-08-06[12:32:36]:strict test window and head
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -23,9 +24,14 @@ var array = require('./array');
 var string = require('./string');
 var buggy = require('./buggy');
 
-if (!window || !document || !document.documentElement || 'HTML' !== document.documentElement.nodeName) {
+var doc, docHead;
+
+if (type.strundefined === typeof window || type.isNullOrUndefined(window.document) || type.isNullOrUndefined(document.documentElement) || 'HTML' !== document.documentElement.nodeName) {
     throw new Error("It's only for HTML document");
 }
+
+doc = window.document;
+docHead = doc.head || doc.getElementsByTagName('head')[0] || doc.documentElement;
 
 var dom = {
     /**
@@ -46,10 +52,11 @@ var dom = {
             callback = type.noop;
         }
 
-        var link = document.createElement('link');
+        var link = doc.createElement('link');
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        document.getElementsByTagName('head')[0].appendChild(link);
+        docHead.appendChild(link);
+
         if (link.readyState) {
             link.onreadystatechange = function() {
                 if (link.readyState === "loaded" || link.readyState === "complete") {
@@ -81,9 +88,10 @@ var dom = {
             callback = type.noop;
         }
 
-        var script = document.createElement("script");
+        var script = doc.createElement("script");
         script.type = "text/javascript";
         script.charset = "utf-8";
+
         if (script.readyState) {
             script.onreadystatechange = function() {
                 if (script.readyState == "loaded" || script.readyState == "complete") {
@@ -97,7 +105,7 @@ var dom = {
             };
         }
         script.src = src;
-        document.getElementsByTagName("head")[0].appendChild(script);
+        docHead.appendChild(script);
         return script;
     },
     addIframe: function(container, url, callback) {
@@ -105,7 +113,7 @@ var dom = {
         type.assertHTMLElement('container', container);
         type.assertNonEmptyString('url', url);
 
-        var iframe = document.createElement('iframe');
+        var iframe = doc.createElement('iframe');
         iframe.style.cssText = 'height:1px;width:1px;visibility:hidden;';
         iframe.src = url;
 
@@ -139,10 +147,12 @@ var dom = {
         type.assertNonEmptyString('evt', evt);
         type.assertFunction('func', func);
 
-        if (document.addEventListener) {
+        if (doc.addEventListener) {
             ele.addEventListener(evt, func, false);
-        } else if (document.attachEvent) {
+        } else if (doc.attachEvent) {
             ele.attachEvent('on' + evt, func);
+        } else {
+            ele['on' + evt] = func;
         }
 
         return this;
@@ -175,7 +185,7 @@ var dom = {
 
         type.assertNonEmptyString('id', id);
 
-        var ele = document.getElementById(id),
+        var ele = doc.getElementById(id),
             all, node;
         if (!buggy.getElementById) {
             //BlackBerry 4.6
@@ -189,7 +199,7 @@ var dom = {
             }
         }
         //TODO test
-        all = document.getElementsByTagName('*');
+        all = doc.getElementsByTagName('*');
         array.some(all, function(ele) {
             //ignore comment
             if (ele && ele.nodeType === 1 && ele.id === id) {
