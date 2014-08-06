@@ -416,7 +416,7 @@ var Passport = {
             return;
         }
 
-        if (!data || type.strobject !== typeof data) {
+        if (!type.isPlainObject(data)) {
             console.error('Nothing callback received');
             data.msg = '登录失败';
             this.emit(EVENTS.login_failed, data);
