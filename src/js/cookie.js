@@ -18,7 +18,7 @@
 
 var math = require('./math');
 var type = require('./type');
-var utils = require('./utils');
+var lone = require('./lone');
 
 var PassportCookieParser = {
     cookie: {},
@@ -131,7 +131,7 @@ module.exports = {
         // Write
 
         if (value !== undefined && !type.isFunction(value)) {
-            options = utils.extend({}, config.defaults, options);
+            options = lone.mixin({}, config.defaults, options);
 
             if (typeof options.expires === 'number') {
                 var days = options.expires,
@@ -185,7 +185,7 @@ module.exports = {
         }
 
         // Must not alter options, thus extending a fresh object...
-        $.cookie(key, '', utils.extend({}, options, {
+        $.cookie(key, '', lone.mixin({}, options, {
             expires: -1
         }));
         return !$.cookie(key);

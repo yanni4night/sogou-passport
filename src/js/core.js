@@ -41,10 +41,12 @@
 
 var UTILS = require('./utils');
 var CODES = require('./codes');
-var console = require('./console');
-var Event = require('./event');
+
 var type = UTILS.type;
-var PassportCookieParser = require('./cookie').PassportCookieParser;
+var console = UTILS.console;
+var Event = UTILS.event;
+
+var PassportCookieParser = UTILS.cookie.PassportCookieParser;
 
 var EXPANDO = type.expando;
 var HIDDEN_CSS = 'width:1px;height:1px;position:absolute;left:-10000px;display:block;visibility:hidden;';
@@ -147,8 +149,8 @@ function validateOptions(options) {
 
     type.assertPlainObject('options', options);
 
-    UTILS.mixin(opt, defaultOptions);
-    UTILS.mixin(opt, options);
+    UTILS.lone.mixin(opt, defaultOptions);
+    UTILS.lone.mixin(opt, options);
 
     for (i = VALIDATORS.length - 1; i >= 0; --i) {
         validator = VALIDATORS[i];
@@ -219,7 +221,7 @@ var tools = {
  */
 for (e in tools) {
     if (type.isFunction(tools[e])) {
-        UTILS.hideSource(e, tools[e], 'PassportSC.tools.');
+        UTILS.lone.hideSource(e, tools[e], 'PassportSC.tools.');
     }
 }
 
@@ -478,7 +480,7 @@ var Passport = {
      * @return {Object} Options
      */
     getOptions: function() {
-        return UTILS.mixin({}, gOptions);
+        return UTILS.lone.mixin({}, gOptions);
     },
     /**
      * Get a copy of events which passport supports.
@@ -486,7 +488,7 @@ var Passport = {
      * @return {Object} Supported events
      */
     getSupportedEvents: function() {
-        return UTILS.mixin({}, EVENTS);
+        return UTILS.lone.mixin({}, EVENTS);
     },
     /**
      * Get a copy urls relative to passsport.
@@ -494,7 +496,7 @@ var Passport = {
      * @return {Object} Map of urls.
      */
     getPassportUrls: function() {
-        return UTILS.mixin({}, FIXED_URLS);
+        return UTILS.lone.mixin({}, FIXED_URLS);
     },
     /**
      * Set a payload.
@@ -532,20 +534,20 @@ PassportSC = function() {
     return Passport.init.apply(Passport, arguments);
 };
 
-UTILS.mixin(PassportSC, Passport, new Event());
+UTILS.lone.mixin(PassportSC, Passport, new Event());
 
 //PassportSC is shy.
 //We do this for hiding source of its function members,
 //which may show up in chrome console.
 for (e in PassportSC) {
     if (type.isFunction(PassportSC[e])) {
-        UTILS.hideSource(e, PassportSC[e]);
+        UTILS.lone.hideSource(e, PassportSC[e]);
     }
 }
 
 //Sync loading supported
 if (window.PassportSC && type.isPlainObject(window.PassportSC)) {
-    UTILS.mixin(window.PassportSC, PassportSC);
+    UTILS.lone.mixin(window.PassportSC, PassportSC);
     if (type.isFunction(window.PassportSC.onApiLoaded)) {
         window.PassportSC.onApiLoaded();
     }

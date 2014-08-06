@@ -29,12 +29,13 @@
   var CLOSE_ID = 'sogou-passport-close';
 
   var PassportSC = window.PassportSC;
-  var option = PassportSC.getOptions();
+  var options = PassportSC.getOptions();
   var urls = PassportSC.getPassportUrls();
   var UTILS = PassportSC.utils;
   var type = UTILS.type;
   var array = UTILS.array;
   var console = UTILS.console;
+  var cookie = UTILS.cookie;
 
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
@@ -149,7 +150,7 @@
 
       self.initEvent();
 
-      userid = PassportSC.userid() /*|| cookie.cookie('email')*/ ;
+      userid = PassportSC.userid() || cookie.cookie('email');
 
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
         UTILS.dom.id(USER_ID).value = userid;

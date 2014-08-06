@@ -122,7 +122,7 @@ PassportSC.draw = function(options) {
     throw new Error('You can draw only once');
   }
 
-  gOptions = UTILS.mixin({}, defaultOptions, options || {});
+  gOptions = UTILS.lone.mixin({}, defaultOptions, options || {});
 
   UTILS.type.assertHTMLElement('options.container', gOptions.container);
   UTILS.type.assertNonEmptyString('options.trdRedirectUrl', gOptions.trdRedirectUrl);
@@ -137,7 +137,7 @@ PassportSC.draw = function(options) {
     throw new Error('You have to define a skin name or skinCssUrl');
   }
 
-  this.setPayload('contrib-skin', UTILS.extend({}, gOptions));
+  this.setPayload('contrib-skin', UTILS.lone.extend({}, gOptions));
 
   loadSkin();
 
@@ -160,9 +160,9 @@ PassportSC.getPredefinedSkin = function() {
   return preDefinedSkinNames.slice();
 };
 
-UTILS.hideSource('draw', PassportSC.draw);
-UTILS.hideSource('getSuggestDomain', PassportSC.getSuggestDomain);
-UTILS.hideSource('getPredefinedSkin', PassportSC.getPredefinedSkin);
+UTILS.lone.hideSource('draw', PassportSC.draw);
+UTILS.lone.hideSource('getSuggestDomain', PassportSC.getSuggestDomain);
+UTILS.lone.hideSource('getPredefinedSkin', PassportSC.getPredefinedSkin);
 
 module.exports = {
   PassportSC: PassportSC

@@ -5,8 +5,8 @@
  *
  * changelog
  * 2014-06-24[13:20:06]:copied from default
- * 2014 - 08 - 05[18: 45: 20]: add client_id
- for recover url *
+ * 2014 -08 -05[18:45:20]:add client_id for recover url
+ *
  * @author yanni4night@gmail.com
  * @version 0.1.1
  * @since 0.1.0
@@ -33,6 +33,7 @@
   var type = UTILS.type;
   var array = UTILS.array;
   var console = UTILS.console;
+  var cookie = UTILS.cookie;
 
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
@@ -148,7 +149,7 @@
 
       self.initEvent();
 
-      userid = PassportSC.userid() /*|| cookie.cookie('email')*/ ;
+      userid = PassportSC.userid() || cookie.cookie('email');
 
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
         UTILS.dom.id(USER_ID).value = userid;
