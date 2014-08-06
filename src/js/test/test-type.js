@@ -83,10 +83,9 @@
                 pos: [document.documentElement, document.createElement('p')]
             },
             "PlainObject": {
-                nec: ['x', 1, false, [], null, undefined, type.noop],
+                nec: ['x', 1, false, [], null, undefined, type.noop, window],
                 pos: [{},
-                    new Object(),
-                    window
+                    new Object()
                 ]
             },
             "Undefined": {

@@ -15,6 +15,8 @@
 
 var noop = function() {};
 
+var hasOwn = ({}).hasOwnProperty;
+
 var type = {
     expando: "sogou-passport-" + (+new Date()),
     noop: noop,
@@ -46,7 +48,20 @@ var type = {
      * @return {Boolean}
      */
     isPlainObject: function(obj) {
-        return this.isObject(obj) && !this.isNull(obj) && !this.isArray(obj) && !this.isRegExp(obj) && !this.isDate(obj);
+        if (!obj || !this.isObject(obj) || obj.nodeType || this.isWindow(obj)) {
+            return false;
+        }
+
+        try {
+            if (obj.constructor && !hasOwn.call(obj, 'constructor') && !hasOwn.call(obj.constructor.prototype, 'isPrototypeOf')) {
+                return false;
+            }
+        } catch (e) {
+            return false;
+        }
+        var key;
+        for (key in obj) {}
+        return this.isUndefined(key) || hasOwn.call(obj, key);
     },
     isNonEmptyString: function(obj) {
         return !!(obj && this.isString(obj));
@@ -64,7 +79,11 @@ var type = {
         return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
     },
     isObject: function(obj) {
-        return type.strobject === typeof obj;
+        return this.strobject === typeof obj;
+    },
+    isWindow: function(obj) {
+        //jquery
+        return this.isNonNullOrUndefined(obj) && obj == obj.window;
     }
 };
 
