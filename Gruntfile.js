@@ -15,12 +15,16 @@
  * @since 0.1.0
  */
 
+var markdown = require('markdown').markdown;
+
 module.exports = function(grunt) {
 
     "use strict";
     var STATIC_DIR = 'src/';
     var WEB_DIR = 'web/';
     var CDN_DIR = 'dist/';
+
+    var mdHTML = markdown.toHTML(grunt.file.read('./README.md'));
 
     var pkg = grunt.file.readJSON('package.json');
     var now = new Date();
@@ -35,11 +39,10 @@ module.exports = function(grunt) {
     grunt.initConfig({
         jshint: {
             options: {
-                strict: true,
-                node: true,
-                browser: true,
-                nonstandard: true,
-                predef: ['require', 'module']
+                strict: true, //use strict
+                node: true, //module,require,console
+                browser: true, //window,document,navigator
+                nonstandard: true //escape,unescape
             },
             lib: {
                 src: STATIC_DIR + 'js/*.js',
@@ -148,7 +151,7 @@ module.exports = function(grunt) {
                 tasks: ['less:css']
             },
             html: {
-                files: ['template/**/*.html'],
+                files: ['template/**/*.html','*.md'],
                 tasks: ['copy', 'vars:html']
             },
             img: {
@@ -229,7 +232,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
 
+    grunt.task.registerTask('inline markdown', 'Merge README to index.html', function(arg1, arg2) {
 
+    });
 
     grunt.registerMultiTask('vars', 'replace vars', function() {
         var options = this.options({});
@@ -237,7 +242,7 @@ module.exports = function(grunt) {
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, +!!options.debug);
+                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, +!!options.debug).replace(/@readme@/img, mdHTML);
                 grunt.file.write(src, content);
                 grunt.log.ok(src);
             });
@@ -253,5 +258,6 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official']);
     grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official']);
     grunt.registerTask('default', ['test']);
+    grunt.registerTask('pub', ['dist']);
     grunt.registerTask('server', ['express']);
 };
