@@ -55,6 +55,9 @@ var dom = {
         var link = doc.createElement('link');
         link.rel = 'stylesheet';
         link.type = 'text/css';
+        link.charset = 'utf-8';
+        link.media = 'screen';
+        
         docHead.appendChild(link);
 
         if (link.readyState) {
