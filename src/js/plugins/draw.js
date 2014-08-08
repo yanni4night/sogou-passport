@@ -19,7 +19,6 @@
 "use strict";
 
 var core = require('../core');
-var PassportSC = core.PassportSC;
 var UTILS = require('../utils');
 var console = require('../console');
 var async = require('../async');
@@ -27,6 +26,7 @@ var array = require('../array');
 var cookie = require('../cookie');
 var evtSkinLoadedVal = 'skinloaded';
 var evtSkinDrawComplete = 'drawcomplete';
+var PassportSC = core.PassportSC;
 
 var domainList = ["sohu.com", "chinaren.com", "sogou.com", "vip.sohu.com", "17173.com", "focus.cn", "game.sohu.com", "37wanwan.com"];
 
@@ -143,7 +143,7 @@ PassportSC.draw = function(options) {
 
   return this;
 };
-
+console.log(PassportSC);
 /**
  * Get a copy of suggestion domain list.
  * @return {Array}

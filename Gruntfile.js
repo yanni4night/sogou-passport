@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                 nonstandard: true //escape,unescape
             },
             lib: {
-                src: STATIC_DIR + 'js/*.js',
+                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
             }
         },
         uglify: {

@@ -30,7 +30,7 @@ var commonPingData = [
     'path=' + encodeURIComponent(location.pathname),
     'fr=' + encodeURIComponent(document.referrer),
     'ua=' + encodeURIComponent(navigator.userAgent),
-    'ls=' + +navigator.cookieEnabled + '_' + +('localStorage' in window && window.localStorage !== null)
+    'ls=' + (+navigator.cookieEnabled) + '_' + (+('localStorage' in window))
 ];
 
 function report(data) {
