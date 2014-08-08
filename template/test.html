@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="gb2312"/>
-<title>Test</title>
+<meta charset="utf-8"/>
+<title>Passport Test</title>
 <meta name="author" content="yanni4night@gmail.com"/>
 <style>
     body{
@@ -27,105 +27,180 @@
     .orange{
         color: orange;
     }
-    .purple{
-        color: purple;
+    .cyan{
+        color: cyan;
+    }
+    .yellow{
+        color: yellow;
+    }
+    .red{
+        color: red;
+    }
+    button{
+        padding: 0.2em 1em;
+        text-align: center;
+        height: 25px;;
+        background: #eee;
+        border: 1px solid #fff;
+        border-radius: 10px;
+        margin: 5px;
     }
 </style>
 </head>
 <body>
-    <p>点击下面的按钮，Passport lib 会从网络加载必要的css与js文件，并自动构建一个登录对话框。</p>
+    <p>选择皮肤与库加载模式，点击“构建”按钮，将会自动生成一个登录对话框。</p>
     <p id="msg"></p>
     <form action="#" id="form">
-        <label for="skin">皮肤</label>
-        <select name="skin" id="skin">
-            <option value="default">默认</option>
-            <option value="wan">游戏</option>
-        </select>
-        <button type="submit">Load</button>
+        <div>
+            <label for="skin">皮肤</label>
+            <input type="radio" name="skin" id="wan" value="wan"/><label for="wan">wan</label>
+            <input type="radio" name="skin" id="default" value="default"/><label for="default">default</label>
+        </div>
+        <div>
+            <label for="skin">模式</label>
+            <input type="radio" name="mode" id="async" value="async"/><label for="async">异步</label>
+            <input type="radio" name="mode" id="sync" value="sync"/><label for="sync">同步</label>
+        </div>
+        <div style="display:none" id="submitWrap">
+            <button type="submit">构建</button>
+        </div>
+        <div>
+            <button type="button" onclick="javascript:location.reload()">刷新页面，重新初始化</button>
+        </div>
     </form>
-<pre>
-<span class="orange">PassportSC</span>({
-        appid:1120,
-        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-    })
-.<span class="orange">on</span>('canvasclosing',<span class="purple">function</span>(e){
-//close the container
-    })
-.<span class="orange">on</span>('drawcomplete',<span class="purple">function</span>(e){
-//css&amp;js loaded
-    })
-.<span class="orange">on</span>('loginstart loginsuccess loginfailed 3rdlogincomplete',<span class="purple">function</span>(e){
-//reload or show something
-    })
-.<span class="orange">draw</span>({
+<pre id="demo-sync" style="display:none">
+PassportSC({
+    appid:1120,
+    redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+})
+.on('canvasclosing',function(e){
+    //close the container
+})
+.on('drawcomplete',function(e){
+    //css&amp;js loaded
+})
+.on('loginstart loginsuccess loginfailed 3rdlogincomplete',function(e){
+    //reload or show something
+})
+.draw({
     skin:'default',//'wan'
-    container:$('passport-dialog'),
+    container:document.getElementById('passport-dialog'),//Where the dialog html should be injected in
     trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-    })
+});
+</pre>
+<pre id="demo-async" style="display:none">
+var PassportSC = {
+    onApiLoaded:function(){
+        //use "PassportSC.init()" instead of "PassportSC()" under async mode
+        this.init({
+            appid:1120,
+            redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+        })
+        .on('canvasclosing',function(e){
+            //close the container
+        })
+        .on('drawcomplete',function(e){
+            //css&amp;js loaded
+        })
+        .on('loginstart loginsuccess loginfailed 3rdlogincomplete',function(e){
+            //reload or show something
+        })
+        .draw({
+            skin:'default',//'wan'
+            container:document.getElementById('passport-dialog'),//Where the dialog html should be injected in
+            trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+        });
+    }//onApiLoaded
+};
 </pre>
     <div class="passport-dialog" id="passport-dialog"></div>
 </body>
-<script type="text/javascript" src="dist/@version@/js/passport-core.js"></script>
+<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+
 <script>
-    function $(id){
-        return document.getElementById(id);
-    }
-    function bindEvent(dom,evt,func){
-        if(dom.addEventListener){
-            dom.addEventListener(evt,func,false);
-        }else if(dom.attachEvent){
-            dom.attachEvent('on'+evt,func);
+    var skin,mode,loaded;
+    var libjs = "dist/@version@/js/passport-core.js";
+
+    $(':radio[name="skin"]').change(function(e){
+        skin = this.value;
+        $(':radio[name="skin"]').not($(this)).prop('disabled',true);
+
+        if(skin&&mode){
+            $('#submitWrap').show();
         }
+    });
+
+    $(':radio[name="mode"]').change(function(e){
+        mode = this.value;
+        
+        $(':radio[name="mode"]').not($(this)).prop('disabled',true);
+        
+        var pre = $('pre#demo-'+mode).show();
+
+        pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));
+        
+        if(skin&&mode){
+            $('#submitWrap').show();
+        }
+    });
+
+    function initPassport(PC){
+        PC = PC||window.PassportSC;
+        PC.init({
+            appid:1120,
+            redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+        }).on('canvasclosing',function(e){
+            $('#passport-dialog').hide();
+            $('#msg').text(e.type);
+        }).on('drawcomplete',function(e){
+             $('#passport-dialog').show();
+            $('#msg').text(e.type);
+        }).draw({
+            skin:skin,
+            container:document.getElementById('passport-dialog'),
+            trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+        });
     }
 
-    var inited = false;
+    function loadSync(){
+        //use this to simulate sync
+        $.getScript(libjs,function(){
+            initPassport();
+        });
+    }
 
-    window.PassportSC({
-        appid:1120,
-        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-    });
+    function loadAsync(){
+        window.PassportSC = {
+            onApiLoaded:function(){
+                initPassport(this);
+            }
+        };
+        var script = document.createElement('script');
+        script.async = true;
+        script.charset = 'utf-8';
+        script.type = 'text/javascript';
+        script.src = libjs;
+        (document.head||document.getElementsByTagName('head')[0]).appendChild(script);
+    }
 
-    PassportSC.on('canvasclosing',function(e){
-        $('passport-dialog').style.display = 'none';
-        $('msg').innerHTML = e.type;
-    });
 
-    PassportSC.on('drawcomplete',function(e){
-        $('msg').innerHTML = e.type;
-    });
+    $('form').submit(function(e){
+        e.preventDefault();
+        if(!skin||!mode){
+            return alert('必须选择皮肤和模式');
+        }
 
+        if(loaded){
+            $('#passport-dialog').show();
+            return;
+        }
 
-
-    function load(skin){
-        if(inited){
-            return $('passport-dialog').style.display = 'block';
+        if('async'===mode){
+            loadAsync();
         }else{
-            inited = true;
-            PassportSC.draw({
-                skin:skin,
-                container:$('passport-dialog'),
-                trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-            });
+            loadSync();
         }
-    }
-
-    bindEvent($('form'),'submit',function(e){
-
-        e = e || window.event;
-        var t = e.target || e.srcElement;
-        if(e.preventDefault){
-            e.preventDefault();
-        }else{
-            e.returnValue = false;
-        }
-        var skinSelect = $('skin');
-
-        load(skinSelect.options[skinSelect.selectedIndex].value);
-
-       // t.style.visibility='hidden';
-
-        return false;
-
+        loaded = true;
     });
 </script>
 </html>
