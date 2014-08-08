@@ -199,7 +199,7 @@ var tools = {
      * @return {Boolean}
      */
     validateUsername: function(username) {
-        return type.isNonEmptyString(username) && /^[\w-@\.]+$/.test(username);
+        return type.isNonEmptyString(username) && /^[a-zA-Z]([a-zA-Z0-9_.]{3,15})$/.test(username);
     },
     /**
      * Validate password.
@@ -208,7 +208,7 @@ var tools = {
      * @return {Boolean}
      */
     validatePassword: function(password) {
-        return type.isNonEmptyString(password) && /^[\w-]{6,16}$/.test(password);
+        return type.isNonEmptyString(password) && /^\S{6,16}$/.test(password);
     },
     /**
      * Validtae captcha.
