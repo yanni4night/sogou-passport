@@ -31,9 +31,10 @@
  * 2014-06-12[13:24:21]:exports 'getFixedUrl'&'getSupportedEvents'
  * 2014-06-14[12:15:01]:exports utils,add 'setPayload'&'getPayload'
  * 2014-06-24[10:16:46]:add 'getNewCaptcha'
+ * 2014-08-08[11:05:06]:initialized plugins here
  *
  * @author yanni4night@gmail.com
- * @version 0.2.2
+ * @version 0.2.3
  * @since 0.1.0
  */
 
@@ -41,6 +42,9 @@
 
 var UTILS = require('./utils');
 var CODES = require('./codes');
+//These plugins should be initialized ar last but before merge window.PassportSC
+var drawPlugin = require('./plugins/draw');
+var statisticPlugin = require('./plugins/statistic');
 
 var type = UTILS.type;
 var console = UTILS.console;
@@ -81,6 +85,7 @@ var gLastLoginName; //for not active
 
 var gPayload = {};
 
+var gPlugins = [drawPlugin, statisticPlugin];
 
 var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -545,18 +550,9 @@ for (e in PassportSC) {
     }
 }
 
-//Sync loading supported
-if (window.PassportSC && type.isPlainObject(window.PassportSC)) {
-    UTILS.lone.mixin(window.PassportSC, PassportSC);
-    if (type.isFunction(window.PassportSC.onApiLoaded)) {
-        window.PassportSC.onApiLoaded();
-    }
-} else {
-    window.PassportSC = PassportSC;
-}
 
-module.exports = {
-    PassportSC: window.PassportSC,
+var core = {
+    PassportSC: PassportSC,
     addSupportedEvent: function(name, val) {
         type.assertNonEmptyString('name', name);
         type.assertNonEmptyString('val', val);
@@ -576,3 +572,19 @@ module.exports = {
         return EVENTS;
     }
 };
+
+//Merge plugin
+//We have to initialize plugins because 'onApiLoaded'
+UTILS.array.each(gPlugins, function(pluginInit) {
+    pluginInit(core);
+});
+
+//Sync loading supported
+if (window.PassportSC) {
+    UTILS.lone.mixin(window.PassportSC, PassportSC);
+    if (type.isFunction(window.PassportSC.onApiLoaded)) {
+        window.PassportSC.onApiLoaded();
+    }
+} else {
+    window.PassportSC = PassportSC;
+}

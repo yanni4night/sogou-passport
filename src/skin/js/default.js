@@ -8,9 +8,10 @@
  * 2014-06-15[11:30:42]:emit 'skin_loaded' instead of initSkin
  * 2014-06-24[10:28:01]:enabled placeholder polyfil;fixed captcha refresh
  * 2014-08-05[18:45:20]:add client_id for recover url
+ * 2014-08-08[11:13:53]:show error message when user/pwd empty
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -36,6 +37,8 @@
   var array = UTILS.array;
   var console = UTILS.console;
   var cookie = UTILS.cookie;
+
+  var errClearInter;
 
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
@@ -83,6 +86,18 @@
     return captionHTML + formHTML + trdHTML;
   }
 
+  /**
+   * show error message
+   * @param  {[type]} msg [description]
+   * @return {[type]}     [description]
+   */
+  var showErrMsg = function(msg) {
+    clearTimeout(errClearInter);
+    UTILS.dom.id(ERROR_ID).innerHTML = msg;
+    setTimeout(function() {
+      UTILS.dom.id(ERROR_ID).innerHTML = '';
+    }, 5e3);
+  };
 
   var PassportCanvas = function(options) {
 
@@ -235,11 +250,18 @@
         auto$ = UTILS.dom.id(AUTO_ID);
       var user, pass, auto;
       if (!(user = UTILS.string.trim(user$.value))) {
-        console.trace('user empty');
+        showErrMsg('请输入用户名');
+        return;
+      } else if (!PassportSC.tools.validateUsername(user)) {
+        showErrMsg('请填写正确格式的用户名');
         return;
       }
+
       if (!(pass = UTILS.string.trim(pass$.value))) {
-        console.trace('pass empty');
+        showErrMsg('请输入密码');
+        return;
+      } else if (!PassportSC.tools.validatePassword(pass)) {
+        showErrMsg('请填写正确格式的密码');
         return;
       }
 

@@ -1,14 +1,15 @@
 /**
  * Copyright (C) 2014 yanni4night.com
  *
- * default.js
+ * wan.js
  *
  * changelog
  * 2014-06-24[13:20:06]:copied from default
  * 2014 -08 -05[18:45:20]:add client_id for recover url
+ * 2014-08-08[11:13:53]:show error message when user/pwd empty
  *
  * @author yanni4night@gmail.com
- * @version 0.1.1
+ * @version 0.1.2
  * @since 0.1.0
  */
 
@@ -34,6 +35,8 @@
   var array = UTILS.array;
   var console = UTILS.console;
   var cookie = UTILS.cookie;
+
+  var errClearInter;
 
   var placeholderSupported = 'placeholder' in document.createElement('input');
 
@@ -81,7 +84,18 @@
     var regHTML = '<div class="sogou-passport-regarea">还没有账号？<a href="http://wan.sogou.com/register.do" target="_blank">立即注册</a></div>';
     return captionHTML + formHTML + trdHTML + regHTML;
   }
-
+  /**
+   * show error message
+   * @param  {[type]} msg [description]
+   * @return {[type]}     [description]
+   */
+  var showErrMsg = function(msg) {
+    clearTimeout(errClearInter);
+    UTILS.dom.id(ERROR_ID).innerHTML = msg;
+    setTimeout(function() {
+      UTILS.dom.id(ERROR_ID).innerHTML = '';
+    }, 5e3);
+  };
 
   var PassportCanvas = function(options) {
 
@@ -131,7 +145,7 @@
           ;
       }
 
-      UTILS.dom.id(ERROR_ID).innerHTML = data.msg;
+      showErrMsg(data.msg);
     });
 
     this.render();
@@ -234,11 +248,18 @@
         auto$ = UTILS.dom.id(AUTO_ID);
       var user, pass, auto;
       if (!(user = UTILS.string.trim(user$.value))) {
-        console.trace('user empty');
+        showErrMsg('请输入用户名');
+        return;
+      } else if (!PassportSC.tools.validateUsername(user)) {
+        showErrMsg('请填写正确格式的用户名');
         return;
       }
+
       if (!(pass = UTILS.string.trim(pass$.value))) {
-        console.trace('pass empty');
+        showErrMsg('请输入密码');
+        return;
+      } else if (!PassportSC.tools.validatePassword(pass)) {
+        showErrMsg('请填写正确格式的密码');
         return;
       }
 
