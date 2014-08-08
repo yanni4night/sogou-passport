@@ -7,9 +7,11 @@
  * 2014-06-24[13:20:06]:copied from default
  * 2014 -08 -05[18:45:20]:add client_id for recover url
  * 2014-08-08[11:13:53]:show error message when user/pwd empty
+ * 2014-08-08[20:28:29]:fixed background of submit button
+ * 2014-08-08[20:53:09]:hide placeholder when auto username is set;auto focus
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.4
  * @since 0.1.0
  */
 
@@ -26,6 +28,7 @@
   var AUTO_ID = 'sogou-passport-auto';
   var ERROR_ID = 'sogou-passport-error';
   var CLOSE_ID = 'sogou-passport-close';
+  var SUBMIT_ID = 'sogou-passport-submit';
 
   var PassportSC = window.PassportSC;
   var options = PassportSC.getOptions();
@@ -68,9 +71,10 @@
       '<label for="sogou-passport-auto">自动登录</label>' +
       '</div>' +
       '<div class="re sogou-passport-row sogou-passport-submitwrapper">' +
-      '<input id="sogou-passport-submit" type="submit" value="" class="sogou-passport-submit sogou-passport-icon sogou-passport-icon-submit">' +
+      '<a id="' + SUBMIT_ID + '" href="#" class="sogou-passport-submit sogou-passport-icon sogou-passport-icon-submit"></a>' +
       '<a href="' + (urls.recover + "?client_id=" + options.appid + "&ru=" + encodeURIComponent(location.href)) + '" class="ab sogou-passport-findpwd" target="_blank">找回密码</a>' +
       '</div>' +
+      '<input type="submit" class="far" />' +
       '</form>';
     var trdHTML = '<div id="sogou-passport-3rd" class="re sogou-passport-3rd">' +
       '<p class="ab sogou-passport-3rd-title">使用其他账号登录</p>' +
@@ -151,10 +155,46 @@
     this.render();
   };
 
+  function hidePlaceholder(input, silent) {
+    var row = UTILS.dom.parents(input, '.sogou-passport-row'),
+      placeholder = UTILS.dom.siblings(input, '.sogou-passport-place');
+    if (row && !silent) {
+      UTILS.dom.addClass(row, 'sogou-passport-hover');
+    }
+    array.forEach(placeholder, function(item) {
+      item.style.display = 'none';
+    });
+  }
+
+  function showPlaceholder(input, silent) {
+    var row = UTILS.dom.parents(input, '.sogou-passport-row'),
+      placeholder = UTILS.dom.siblings(input, '.sogou-passport-place');;
+    if (row && !silent) {
+      UTILS.dom.removeClass(row, 'sogou-passport-hover');
+    }
+    array.forEach(placeholder, function(item) {
+      if (!t.value) {
+        item.style.display = 'block';
+      }
+    });
+  }
+
+  //Hide placeholder polyfil;show border
+  function focus(e) {
+    var t = UTILS.dom.eventTarget(e);
+    hidePlaceholder(t);
+  }
+
+  //Show placeholder polyfil;hide border
+  function blur(e) {
+    var t = UTILS.dom.eventTarget(e);
+    showPlaceholder(t);
+  }
+
   PassportCanvas.prototype = {
     render: function() {
       var self = this;
-      var userid;
+      var userid, $user, $pass;
 
       var wrapper = self.wrapper = document.createElement('div');
       wrapper.id = wrapper.className = WRAPPER_ID;
@@ -163,20 +203,36 @@
 
       self.initEvent();
 
+      $user = UTILS.dom.id(USER_ID);
+      $pass = UTILS.dom.id(PASS_ID);
+
       userid = PassportSC.userid() || cookie.cookie('email');
 
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
-        UTILS.dom.id(USER_ID).value = userid;
+        $user.value = userid;
+        hidePlaceholder($user, true);
+        $pass.focus();
+      } else {
+        $user.focus();
       }
     },
     initEvent: function() {
       var self = this;
       var $form = self.wrapper.getElementsByTagName('form')[0];
+      var $submit = UTILS.dom.id(SUBMIT_ID);
       //listen form submit
       UTILS.dom.bindEvent($form, 'submit', function(e) {
         var dom = UTILS.dom.eventTarget(e);
         UTILS.dom.preventDefault(e);
         console.trace('Passport form submitting');
+        self.doPost();
+        return false;
+      });
+
+      UTILS.dom.bindEvent($submit, 'click', function(e) {
+        var dom = UTILS.dom.eventTarget(e);
+        UTILS.dom.preventDefault(e);
+        console.trace('Passport form clicking');
         self.doPost();
         return false;
       });
@@ -198,34 +254,6 @@
           }
         });
       }
-
-      //Hide placeholder polyfil;show border
-      var focus = function(e) {
-        var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
-          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');
-        if (row) {
-          UTILS.dom.addClass(row, 'sogou-passport-hover');
-        }
-        array.forEach(placeholder, function(item) {
-          item.style.display = 'none';
-        });
-      };
-
-      //Show placeholder polyfil;hide border
-      var blur = function(e) {
-        var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
-          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');;
-        if (row) {
-          UTILS.dom.removeClass(row, 'sogou-passport-hover');
-        }
-        array.forEach(placeholder, function(item) {
-          if (!t.value) {
-            item.style.display = 'block';
-          }
-        });
-      };
 
       UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'focus', focus);
       UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'blur', blur);

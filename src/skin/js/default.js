@@ -9,9 +9,10 @@
  * 2014-06-24[10:28:01]:enabled placeholder polyfil;fixed captcha refresh
  * 2014-08-05[18:45:20]:add client_id for recover url
  * 2014-08-08[11:13:53]:show error message when user/pwd empty
+ * 2014-08-08[20:53:09]:hide placeholder when auto username is set;auto focus
  *
  * @author yanni4night@gmail.com
- * @version 0.1.4
+ * @version 0.1.5
  * @since 0.1.0
  */
 
@@ -153,10 +154,46 @@
     this.render();
   };
 
+  function hidePlaceholder(input, silent) {
+    var row = UTILS.dom.parents(input, '.sogou-passport-row'),
+      placeholder = UTILS.dom.siblings(input, '.sogou-passport-place');
+    if (row && !silent) {
+      UTILS.dom.addClass(row, 'sogou-passport-hover');
+    }
+    array.forEach(placeholder, function(item) {
+      item.style.display = 'none';
+    });
+  }
+
+  function showPlaceholder(input, silent) {
+    var row = UTILS.dom.parents(input, '.sogou-passport-row'),
+      placeholder = UTILS.dom.siblings(input, '.sogou-passport-place');;
+    if (row && !silent) {
+      UTILS.dom.removeClass(row, 'sogou-passport-hover');
+    }
+    array.forEach(placeholder, function(item) {
+      if (!t.value) {
+        item.style.display = 'block';
+      }
+    });
+  }
+
+  //Hide placeholder polyfil;show border
+  function focus(e) {
+    var t = UTILS.dom.eventTarget(e);
+    hidePlaceholder(t);
+  }
+
+  //Show placeholder polyfil;hide border
+  function blur(e) {
+    var t = UTILS.dom.eventTarget(e);
+    showPlaceholder(t);
+  }
+
   PassportCanvas.prototype = {
     render: function() {
       var self = this;
-      var userid;
+      var userid, $user, $pass;
 
       var wrapper = self.wrapper = document.createElement('div');
       wrapper.id = wrapper.className = WRAPPER_ID;
@@ -165,10 +202,17 @@
 
       self.initEvent();
 
+      $user = UTILS.dom.id(USER_ID);
+      $pass = UTILS.dom.id(PASS_ID);
+
       userid = PassportSC.userid() || cookie.cookie('email');
 
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
-        UTILS.dom.id(USER_ID).value = userid;
+        $user.value = userid;
+        hidePlaceholder($user, true);
+        $pass.focus();
+      } else {
+        $user.focus();
       }
     },
     initEvent: function() {
@@ -200,34 +244,6 @@
           }
         });
       }
-
-      //Hide placeholder polyfil;show border
-      var focus = function(e) {
-        var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
-          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');
-        if (row) {
-          UTILS.dom.addClass(row, 'sogou-passport-hover');
-        }
-        array.forEach(placeholder, function(item) {
-          item.style.display = 'none';
-        });
-      };
-
-      //Show placeholder polyfil;hide border
-      var blur = function(e) {
-        var t = UTILS.dom.eventTarget(e);
-        var row = UTILS.dom.parents(t, '.sogou-passport-row'),
-          placeholder = UTILS.dom.siblings(t, '.sogou-passport-place');;
-        if (row) {
-          UTILS.dom.removeClass(row, 'sogou-passport-hover');
-        }
-        array.forEach(placeholder, function(item) {
-          if (!t.value) {
-            item.style.display = 'block';
-          }
-        });
-      };
 
       UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'focus', focus);
       UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'blur', blur);
