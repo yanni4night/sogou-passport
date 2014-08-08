@@ -269,8 +269,14 @@ PassportSC
             appid: 1120,
             redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
+        .on('loginstart',function(){
+            $('info').innerHTML = 'Login...';
+        })
+        .on('paramerror',function(){
+            $('info').innerHTML = 'Parameter(s) error';
+        })
         .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha 3rdlogincomplete',function(evt,data){
-            $('info').innerHTML = evt.type.replace(/(log(?:in|out)|need)/,"$1 ");
+            $('info').innerHTML = 'Event:' + evt.type.replace(/(log(?:in|out)|need)/,"$1 ");
             if('needcaptcha' === evt.type){
                 $('captcha-div').style.display = 'block';
                 $('captcha-img').src = data.captchaimg;

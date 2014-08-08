@@ -200,7 +200,7 @@ var tools = {
      * @return {Boolean}
      */
     validateUsername: function(username) {
-        return type.isNonEmptyString(username) && /^[a-zA-Z]([a-zA-Z0-9_.]{3,15})$/.test(username);
+        return type.isNonEmptyString(username) && /^[a-zA-Z]([a-zA-Z0-9_@\.-]{3,15})$/.test(username);
     },
     /**
      * Validate password.
