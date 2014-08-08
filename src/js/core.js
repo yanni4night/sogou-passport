@@ -69,7 +69,8 @@ var FIXED_URLS = {
     logout: 'https://account.sogou.com/web/logout_js',
     active: 'https://account.sogou.com/web/remindActivate',
     captcha: 'https://account.sogou.com/captcha',
-    trdparty: 'http://account.sogou.com/connect/login'
+    trdparty: 'http://account.sogou.com/connect/login',
+    libprefix: 'http://s.account.sogoucdn.com/u/api'
 };
 
 var THIRD_PARTY_SIZE = {

@@ -59,7 +59,7 @@ var pluginInit = function(core) {
     if (!UTILS.type.isNonEmptyString(name) || !~array.indexOf(preDefinedSkinNames, name)) {
       return null;
     }
-    return (UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') + '/@version@/skin/css/' + name + '/style.css';
+    return (UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/skin/css/' + name + '/style.css';
   }
 
   /**
@@ -71,7 +71,7 @@ var pluginInit = function(core) {
     if (!UTILS.type.isNonEmptyString(name) || !~array.indexOf(preDefinedSkinNames, name)) {
       return null;
     }
-    return (UTILS.type.debug ? '/dist' : 'http://s.account.sogoucdn.com/u/api') + '/@version@/skin/js/' + name + '.js';
+    return (UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/skin/js/' + name + '.js';
   }
 
   /**
@@ -165,5 +165,5 @@ var pluginInit = function(core) {
   UTILS.lone.hideSource('draw', PassportSC.draw);
   UTILS.lone.hideSource('getSuggestDomain', PassportSC.getSuggestDomain);
   UTILS.lone.hideSource('getPredefinedSkin', PassportSC.getPredefinedSkin);
-};//pluginInit
+}; //pluginInit
 module.exports = pluginInit;
