@@ -17,11 +17,13 @@ test
 
 history
 ======
-- 0.0.8.14080x(proceeding):
+- 0.0.8.140808:
     - Moved utils.*hideSource/mixin/extend/getIEVersion* to lone;
     - Added a new `now` function in lone;
     - Export PassportSC.utils.*cookie*;
     - Get logined username in `email` cookie.
+    - Fixed a bug when loading async
+    - Show required error message on dialog
 - 0.0.8.140721:
     - Fixed css in draw plugin.
 - 0.0.8.140709:
