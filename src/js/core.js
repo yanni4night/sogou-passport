@@ -42,9 +42,10 @@
 
 var UTILS = require('./utils');
 var CODES = require('./codes');
-//These plugins should be initialized ar last but before merge window.PassportSC
-var drawPlugin = require('./appendix/draw');
-var statisticPlugin = require('./appendix/statistic');
+var drawAppendix = require('./appendix/draw');
+var statisticAppendix = require('./appendix/statistic');
+var pluginAppendix = require('./appendix/plugin');
+//These appendixes should be initialized ar last but before merge window.PassportSC
 
 var type = UTILS.type;
 var console = UTILS.console;
@@ -86,7 +87,7 @@ var gLastLoginName; //for not active
 
 var gPayload = {};
 
-var gPlugins = [drawPlugin, statisticPlugin];
+var gAppendixes = [drawAppendix, statisticAppendix, pluginAppendix];
 
 var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -576,8 +577,8 @@ var core = {
 
 //Merge plugin
 //We have to initialize plugins because 'onApiLoaded'
-UTILS.array.each(gPlugins, function(pluginInit) {
-    pluginInit(core);
+UTILS.array.forEach(gAppendixes, function(appendixInit,idx) {
+    appendixInit(core);
 });
 
 //Sync loading supported

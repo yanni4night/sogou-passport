@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                 nonstandard: true //escape,unescape
             },
             lib: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/appendix/*.js'],
+                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/appendix/*.js',STATIC_DIR + 'js/plugin/*.js'],
             }
         },
         uglify: {
@@ -60,6 +60,14 @@ module.exports = function(grunt) {
                     dest: TARGET_DIR
                 }]
             },
+            plugins: {
+                files: [{
+                    expand: true,
+                    cwd: TARGET_DIR,
+                    src: ['js/plugin/*.js'],
+                    dest: TARGET_DIR
+                }]
+            },
             skin: {
                 files: [{
                     expand: true,
@@ -68,15 +76,6 @@ module.exports = function(grunt) {
                     dest: TARGET_DIR
                 }]
             }
-            /*,
-            plugins:{
-                files:[{
-                    expand:true,
-                    cwd:STATIC_DIR+"js",
-                    src:["plugins/*.js"],
-                    dest:TARGET_DIR
-                }]
-            }*/
         },
         less: {
             options: {
@@ -143,8 +142,12 @@ module.exports = function(grunt) {
         },
         watch: {
             libjs: {
-                files: [STATIC_DIR + 'js/**/*.js'],
+                files: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/{appendix,test}/*.js'],
                 tasks: ['libjs-test']
+            },
+            plugins:{
+                files:[STATIC_DIR + 'js/plugin/*.js'],
+                tasks:['browserify:plugins']
             },
             css: {
                 files: [STATIC_DIR + 'css/**/*.{css,less}'],
@@ -186,10 +189,12 @@ module.exports = function(grunt) {
             }
         },
         browserify: {
-            /*            plugins: {
-                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
-                dest: TARGET_DIR + '/js/passport-draw.js'
-            },*/
+            plugins: {
+                expand:true,
+                cwd:STATIC_DIR,
+                src: [  'js/plugin/*.js'],
+                dest: TARGET_DIR 
+            },
             core: {
                 src: [STATIC_DIR + 'js/core.js'],
                 dest: TARGET_DIR + '/js/passport-core.js'
