@@ -17,8 +17,9 @@ test
 
 history
 ======
-- 0.0.8.140811:
+- 0.0.8.140811-fix1:
     - Fixed crash about var undefined;
+    - Fixed "far" submit button showed in IE7
 - 0.0.8.140808-fixed3:
     - Moved utils.*hideSource/mixin/extend/getIEVersion* to lone;
     - Added a new `now` function in lone;
