@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                 nonstandard: true //escape,unescape
             },
             lib: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/plugins/*.js'],
+                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/appendix/*.js'],
             }
         },
         uglify: {
@@ -191,11 +191,11 @@ module.exports = function(grunt) {
                 dest: TARGET_DIR + '/js/passport-draw.js'
             },*/
             core: {
-                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js'],
+                src: [STATIC_DIR + 'js/core.js'],
                 dest: TARGET_DIR + '/js/passport-core.js'
             },
             test: {
-                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/plugins/*.js', STATIC_DIR + 'js/test/*.js'],
+                src: [/*STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js',*/ STATIC_DIR + 'js/test/*.js'],
                 dest: TARGET_DIR + '/js/passport-test.js'
             }
         },

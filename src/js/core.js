@@ -43,8 +43,8 @@
 var UTILS = require('./utils');
 var CODES = require('./codes');
 //These plugins should be initialized ar last but before merge window.PassportSC
-var drawPlugin = require('./plugins/draw');
-var statisticPlugin = require('./plugins/statistic');
+var drawPlugin = require('./appendix/draw');
+var statisticPlugin = require('./appendix/statistic');
 
 var type = UTILS.type;
 var console = UTILS.console;
