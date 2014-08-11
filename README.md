@@ -17,18 +17,20 @@ test
 
 history
 ======
+- 0.0.8.140811:
+    - Fixed crash about var undefined;
 - 0.0.8.140808-fixed3:
     - Moved utils.*hideSource/mixin/extend/getIEVersion* to lone;
     - Added a new `now` function in lone;
     - Export PassportSC.utils.*cookie*;
-    - Get logined username in `email` cookie.
-    - Fixed a bug when loading async
-    - Show required error message on dialog
-    - Fixed wrong submit bg on IE6
+    - Get logined username in `email` cookie;
+    - Fixed a bug when loading async;
+    - Show required error message on dialog;
+    - Fixed wrong submit bg on IE6;
 - 0.0.8.140721:
-    - Fixed css in draw plugin.
+    - Fixed css in draw plugin;
 - 0.0.8.140709:
-    - First beta version.
+    - First beta version;
 
 contact
 ======

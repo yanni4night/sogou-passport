@@ -173,7 +173,7 @@
       UTILS.dom.removeClass(row, 'sogou-passport-hover');
     }
     array.forEach(placeholder, function(item) {
-      if (!t.value) {
+      if (!input.value) {
         item.style.display = 'block';
       }
     });
