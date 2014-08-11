@@ -29,11 +29,11 @@ var codes = {
     },
     ACCOUNT_NOT_EXIST: {
         code: 20205,
-        info: "帐号不存在"
+        info: "账号不存在"
     },
     ACCOUNT_NOT_EXIST_1: {
         code: 10009,
-        info: "帐号不存在"
+        info: "账号不存在"
     },
     ACCOUNT_NOT_ACTIVED: {
         code: 20231,

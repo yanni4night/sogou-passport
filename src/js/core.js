@@ -437,7 +437,7 @@ var Passport = {
             this.emit(EVENTS.login_success, data);
         } else if (+data.status === 20231) {
             data.activeurl = FIXED_URLS.active + '?email=' + encodeURIComponent(gLastLoginName || "") + '&client_id=' + gOptions.appid + '&ru=' + encodeURIComponent(location.href);
-            data.msg = data.msg || '帐号未激活';
+            data.msg = data.msg || '账号未激活';
             this.emit(EVENTS.login_failed, data);
         } else if (+data.needcaptcha) {
             data.captchaimg = this.getNewCaptcha();
