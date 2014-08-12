@@ -48,28 +48,52 @@
 </style>
 </head>
 <body>
-    <button>Pop</button>
+允许省略构建登录对话框，直接弹出
+<button>Pop</button>
+<pre>
+var popParam={
+        skin:'wan',
+        //we do not need 'container'
+        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+    };
+
+PassportSC.init({
+    appid:1120,
+    redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+}).on('pluginloaded',function(e,data){
+    if('pop'===data.plugin){
+        PassportSC.pop(popParam);
+    }
+});
+
+if(PassportSC.pop)
+        PassportSC.pop(popParam);
+    else
+        PassportSC.loadPlugin('pop');
+</pre>
 </body>
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 <script src="dist/@version@/js/passport-core.js"></script>
 <script>
-
-var pa={
+var pre = $('pre');
+pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|pluginloaded|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));
+var popParam={
         skin:'wan',
         trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-            };
+    };
+
  PassportSC.init({
         appid:1120,
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     }).on('pluginloaded',function(e,data){
         if('pop'===data.plugin){
-            PassportSC.pop(pa);
+            PassportSC.pop(popParam);
         }
     });
 
 $('button').click(function(e){
     if(PassportSC.pop)
-        PassportSC.pop(pa);
+        PassportSC.pop(popParam);
     else
         PassportSC.loadPlugin('pop');
 });
