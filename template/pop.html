@@ -53,24 +53,24 @@
 <button>Pop</button>
 <pre>
 var popParam={
-        skin:'wan',
+        <span class="red">skin</span>:'wan',
+        <span class="red">mask</span>:true,//show a half-opacity background
+        <span class="red">maskClickClose</span>:true,//click the half-opacity bg to click the dialog
         //we do not need 'container'
-        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
+        <span class="red">trdRedirectUrl</span>:location.protocol + '//' + location.host + '/popup.html'
     };
 
 <span class="orange">PassportSC</span>.<span class="cyan">init</span>({
     appid:1120,
     redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-}).<span class="cyan">on</span>('<span class="red">pluginloaded</span>',function(e,data){
-    if('pop'===data.plugin){
-        <span class="orange">PassportSC</span>.pop(popParam);
-    }
 });
 
 if(<span class="orange">PassportSC</span>.pop)
         <span class="orange">PassportSC</span>.pop(popParam);
     else
-        <span class="orange">PassportSC</span>.loadPlugin('pop');
+        <span class="orange">PassportSC</span>.requiresPlugins('pop',/*other plugins...*/function(){
+            <span class="orange">PassportSC</span>.pop(popParam);
+    });
 </pre>
 </body>
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
@@ -87,17 +87,15 @@ var popParam={
  PassportSC.init({
         appid:1120,
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-    }).on('pluginloaded',function(e,data){
-        if('pop'===data.plugin){
-            PassportSC.pop(popParam);
-        }
     });
 
 $('button').click(function(e){
     if(PassportSC.pop)
         PassportSC.pop(popParam);
     else
-        PassportSC.loadPlugin('pop');
+        PassportSC.requirePlugins('pop',function(){
+            PassportSC.pop(popParam);
+        });
 });
 </script>
 </html>

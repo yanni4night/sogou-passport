@@ -13,6 +13,7 @@
 
 var UTILS = require('../utils');
 var console = require('../console');
+var array = require('../array');
 
 var pluginInit = function(core) {
     var PC = core.PassportSC;
@@ -20,16 +21,28 @@ var pluginInit = function(core) {
     core.addSupportedEvent('plugin_loaded', evtPluginLoadedVal);
 
     //These are the plugins we created,you can create your own.
-    var preDefinedPlugins = ['pop'];
+    var preDefinedPlugins = ['pop', 'jQuery'];
 
     //record which plugins have been loaded
-    var _pluginLoaded = {};
+    var LoaderHistory = {
+        _pluginLoaded: {
+            //sniff loaded jQuery library
+            jQuery: !!(window.jQuery && (PC.jQuery = PC.$ = window.jQuery))
+            },
+        hasPluginLoaded: function(name) {
+            return !!this._pluginLoaded[name];
+        },
+        setPluginLoaded: function(name) {
+            this._pluginLoaded[name] = true;
+        }
+    };
 
-    function loadPlugin(url) {
+    function loadPlugin(name) {
+        var url = (UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/js/plugin/' + name + '.js';
         console.trace('loading plugin:', url);
-        if (!_pluginLoaded[url]) {
+        if (!LoaderHistory.hasPluginLoaded(name)) {
             UTILS.dom.addScript(url, function() {
-                _pluginLoaded[url] = true;
+                LoaderHistory.setPluginLoaded(name);
             });
         }
     }
@@ -44,30 +57,54 @@ var pluginInit = function(core) {
     };
 
     /**
-     * Load a plugin by loading a javascript file.
+     * [requirePlugins description]
      *
-     * We do not add a callback here.
-     * For each plugin,a 'pluginloaded' event must br emitted
-     * when initialized.
-     *
-     * @param  {String} name    Plugin name
-     * @param  {Object} options Options
-     * @return {this}
+     * @param  {Function} done [description]
      */
-    PC.loadPlugin = function(name, options) {
-        if (UTILS.type.isNonEmptyString(name)) {
-
-            loadPlugin((UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/js/plugin/' + name + '.js');
-        } else if (options && UTILS.type.isNonEmptyString(options.url)) {
-            loadPlugin(options.url);
-        } else {
-            throw new Error('A plugin\'s "name" or "url" has to indicated.');
+    PC.requirePlugins = function( /*names..,done*/ ) {
+        if (arguments.length < 2) {
+            throw Error('A "plugin name" and a callback function are required.');
         }
+
+        if (!PC.utils.type.isFunction(arguments[arguments.length - 1])) {
+            throw Error('A callback function is required.');
+        }
+
+        var done = arguments[arguments.length - 1];
+
+
+        var names = array.filter(Array.prototype.slice.call(arguments, 0, arguments.length - 1), function(name) {
+                return !LoaderHistory.hasPluginLoaded(name);
+            }),
+            nonLoadedPluginsCnt = names.length;
+
+        console.debug('requiring:', names);
+
+        if (!nonLoadedPluginsCnt) {
+            done.call(this);
+            return this;
+        }
+        //We just load the plugins that have not been loaded
+        //
+        //For the plugins that loaded with error(s),we can do nothing.
+        //That is really fatal.
+
+        this.on(this.getSupportedEvents().plugin_loaded, function(e, data) {
+            //Just check the loading plugins
+            if (~array.indexOf(names,data.plugin) && !--nonLoadedPluginsCnt) {
+                done.call(this);
+            }
+        }, this);
+
+        array.forEach(names, function(name) {
+            loadPlugin(name);
+        });
+
         return this;
     };
 
     UTILS.lone.hideSource('getPreDefinedPlugin', PC.getPreDefinedPlugin);
-    UTILS.lone.hideSource('loadPlugin', PC.loadPlugin);
+    UTILS.lone.hideSource('requirePlugins', PC.requirePlugins);
 };
 
 module.exports = pluginInit;
