@@ -22,6 +22,7 @@
     pre{
         background: #000;
         padding: 1em;
+        white-space: pre-wrap;
         font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
     }
     .orange{
@@ -57,26 +58,25 @@ var popParam={
         trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
     };
 
-PassportSC.init({
+<span class="orange">PassportSC</span>.<span class="cyan">init</span>({
     appid:1120,
     redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-}).on('pluginloaded',function(e,data){
+}).<span class="cyan">on</span>('<span class="red">pluginloaded</span>',function(e,data){
     if('pop'===data.plugin){
-        PassportSC.pop(popParam);
+        <span class="orange">PassportSC</span>.pop(popParam);
     }
 });
 
-if(PassportSC.pop)
-        PassportSC.pop(popParam);
+if(<span class="orange">PassportSC</span>.pop)
+        <span class="orange">PassportSC</span>.pop(popParam);
     else
-        PassportSC.loadPlugin('pop');
+        <span class="orange">PassportSC</span>.loadPlugin('pop');
 </pre>
 </body>
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 <script src="dist/@version@/js/passport-core.js"></script>
 <script>
-var pre = $('pre');
-pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|pluginloaded|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));
+
 var popParam={
         skin:'wan',
         trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'

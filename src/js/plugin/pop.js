@@ -4,9 +4,10 @@
  *
  * changelog
  * 2014-08-11[18:03:19]:authorized
+ * 2014-08-12[10:23:00]:fixed IE6 
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 
@@ -14,6 +15,8 @@
 var $ = require('../lib/jquery-1.11.1');
 
 var PC = window.PassportSC;
+
+var fixedPositionSupported = !(document.all&&!window.XMLHttpRequest);
 
 var _pluginName = 'pop';
 var evts = PC.getSupportedEvents();
@@ -23,7 +26,7 @@ PC[_pluginName] = function(conf) {
     conf = conf || {};
     if (!$dialog) {
         $dialog = $('<div/>').css({
-            position: "fixed",
+            position: fixedPositionSupported ? "fixed" : "absolute",
             left: "50%",
             top: "50%",
             "margin-top": "-200px",
@@ -38,9 +41,20 @@ PC[_pluginName] = function(conf) {
             $dialog.css({
                 width: w + 'px',
                 height: h + 'px',
-                "margin-top": -h / 2 + 'px',
-                "margin-left": -w / 2 + 'px'
+                "margin-top": fixedPositionSupported ? (-h / 2 + 'px') : 0,
+                "margin-left": -w / 2 + 'px',
+                'z-index':100000
             }).show();
+            //draw complete will be emitted only once
+            if (!fixedPositionSupported) {
+                $(window).on('scroll resize', function(e) {
+                    if ($dialog.is(':visible')) {
+                        $dialog.css({
+                            top: $(document).scrollTop() + ($(window).height() - $dialog.height()) / 2 + 'px'
+                        });
+                    }
+                }).trigger('scroll')
+            }
         }).on('canvasclosing', function(e) {
             $dialog.hide();
         }).draw(conf);
