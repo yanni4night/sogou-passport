@@ -93,13 +93,27 @@
    * @param  {[type]} msg [description]
    * @return {[type]}     [description]
    */
-  var showErrMsg = function(msg) {
+  function showErrMsg(msg) {
     clearTimeout(errClearInter);
     UTILS.dom.id(ERROR_ID).innerHTML = msg;
     setTimeout(function() {
       UTILS.dom.id(ERROR_ID).innerHTML = '';
     }, 5e3);
-  };
+  }
+
+  function focus(ele) {
+    try {
+      ele.focus();
+    } catch (e) {}
+    return ele;
+  }
+
+  function select(ele) {
+    try {
+      ele.select();
+    } catch (e) {}
+    return ele;
+  }
 
   var PassportCanvas = function(options) {
 
@@ -121,25 +135,25 @@
 
       if (needcaptcha) {
         UTILS.dom.id(CAPTCHA_IMG_ID).src = data.captchaimg;
-        $captcha.focus();
+        focus($captcha);
       }
 
       switch (e.type) {
         case events.login_failed:
           $pass.value = '';
           $captcha.value = '';
-          $pass.focus();
+          focus($pass);
           break;
         case events.param_error:
           if ('username' === data.name) {
-            $user.focus();
-            $user.select();
+            focus($user);
+            select($user);
           } else if ('password' === data.name) {
-            $pass.focus();
-            $pass.select();
+            focus($pass);
+            select($pass);
           } else if ('captcha' === data.name) {
-            $captcha.focus();
-            $captcha.select();
+            focus($captcha);
+            select($captcha);
           }
           break;
         case events.third_party_login_complete:
@@ -180,13 +194,13 @@
   }
 
   //Hide placeholder polyfil;show border
-  function focus(e) {
+  function onfocus(e) {
     var t = UTILS.dom.eventTarget(e);
     hidePlaceholder(t);
   }
 
   //Show placeholder polyfil;hide border
-  function blur(e) {
+  function onblur(e) {
     var t = UTILS.dom.eventTarget(e);
     showPlaceholder(t);
   }
@@ -211,9 +225,9 @@
       if (userid && /@so(?:hu|gou)\.com$/.test(userid)) {
         $user.value = userid;
         hidePlaceholder($user, true);
-        $pass.focus();
+        focus($pass);
       } else {
-        $user.focus();
+        focus($user);
       }
     },
     initEvent: function() {
@@ -255,12 +269,12 @@
         });
       }
 
-      UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'focus', focus);
-      UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'blur', blur);
-      UTILS.dom.bindEvent(UTILS.dom.id(PASS_ID), 'focus', focus);
-      UTILS.dom.bindEvent(UTILS.dom.id(PASS_ID), 'blur', blur);
-      UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'focus', focus);
-      UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'blur', blur);
+      UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'focus', onfocus);
+      UTILS.dom.bindEvent(UTILS.dom.id(USER_ID), 'blur', onblur);
+      UTILS.dom.bindEvent(UTILS.dom.id(PASS_ID), 'focus', onfocus);
+      UTILS.dom.bindEvent(UTILS.dom.id(PASS_ID), 'blur', onblur);
+      UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'focus', onfocus);
+      UTILS.dom.bindEvent(UTILS.dom.id(CAPTCHA_ID), 'blur', onblur);
 
       //Refresh captcha
       var change = function(e) {
