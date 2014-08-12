@@ -19,7 +19,7 @@ history
 ======
 - 0.0.9.14081*(proceeding):
     - plugins supported;
-    - pop function supported;
+    - pop function supported with jQuery sniffing;
 - 0.0.8.140811-fix1:
     - Fixed crash about var undefined;
     - Fixed "far" submit button showed in IE7
