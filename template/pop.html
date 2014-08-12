@@ -93,7 +93,7 @@ $('button').click(function(e){
     if(PassportSC.pop)
         PassportSC.pop(popParam);
     else
-        PassportSC.requirePlugins('pop',function(){
+        PassportSC.requirePlugins('pop','DD_belatedPNG',function(){
             PassportSC.pop(popParam);
         });
 });

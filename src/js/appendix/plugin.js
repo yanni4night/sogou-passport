@@ -21,14 +21,15 @@ var pluginInit = function(core) {
     core.addSupportedEvent('plugin_loaded', evtPluginLoadedVal);
 
     //These are the plugins we created,you can create your own.
-    var preDefinedPlugins = ['pop', 'jQuery'];
+    var preDefinedPlugins = ['pop', 'jQuery', 'DD_belatedPNG'];
 
     //record which plugins have been loaded
     var LoaderHistory = {
         _pluginLoaded: {
             //sniff loaded jQuery library
-            jQuery: !!(window.jQuery && (PC.jQuery = PC.$ = window.jQuery))
-            },
+            jQuery: !!(window.jQuery && (PC.jQuery = PC.$ = window.jQuery)),
+            DD_belatedPNG: !!(window.DD_belatedPNG && (PC.DD_belatedPNG = window.DD_belatedPNG))
+        },
         hasPluginLoaded: function(name) {
             return !!this._pluginLoaded[name];
         },
@@ -91,7 +92,7 @@ var pluginInit = function(core) {
 
         this.on(this.getSupportedEvents().plugin_loaded, function(e, data) {
             //Just check the loading plugins
-            if (~array.indexOf(names,data.plugin) && !--nonLoadedPluginsCnt) {
+            if (~array.indexOf(names, data.plugin) && !--nonLoadedPluginsCnt) {
                 done.call(this);
             }
         }, this);

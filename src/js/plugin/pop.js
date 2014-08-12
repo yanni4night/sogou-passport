@@ -15,7 +15,6 @@
  */
 
 "use strict";
-//var $ = require('../lib/jquery-1.11.1');
 
 var PC = window.PassportSC;
 
