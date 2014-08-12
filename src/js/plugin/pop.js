@@ -30,6 +30,7 @@ var _pluginName = 'pop';
 var evts = PC.getSupportedEvents();
 
 var $dialog;
+var $mask;
 
 var slideTimeout;
 
@@ -41,7 +42,7 @@ var slideTimeout;
  * @param  {Boolean} now or delay
  */
 function calculatePos(now) {
-    if ($dialog && $dialog.is(':visible')) {
+    if ($dialog && !fixedPositionSupported && $dialog.is(':visible')) {
         clearTimeout(slideTimeout);
 
         var target = {
@@ -59,18 +60,51 @@ function calculatePos(now) {
 }
 
 PC[_pluginName] = function(conf) {
-    conf = conf || {};
+    conf = this.utils.lone.extend({
+        mask: false,
+        maskClickClose: false
+    }, conf || {});
+
     if (!$dialog) {
+
+        if (conf.mask) {
+            $mask = $('<div/>').css({
+                background: '#000',
+                opacity: 0.7,
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                'z-index': 9999,
+                display: 'none'
+            }).appendTo($(document.body));
+
+            if (conf.maskClickClose) {
+                $mask.click(function() {
+                    $dialog.hide();
+                    $(this).hide();
+                });
+            }
+
+            $(document).resize(function(e) {
+                $mask.css({
+                    width: $(document).width() + 'px',
+                    height: $(document).height() + 'px'
+                });
+            }).trigger('resize');
+        }
+
         $dialog = $('<div/>').css({
             position: fixedPositionSupported ? "fixed" : "absolute",
             left: "50%",
             top: "50%",
             "margin-top": "-200px",
-            "margin-left": "-200px"
+            "margin-left": "-200px",
+            display: 'none'
         }).appendTo($(document.body));
 
         conf.container = $dialog[0];
-
         this.on(evts.draw_complete, function(e) {
             var w = $dialog.width();
             var h = $dialog.height();
@@ -79,8 +113,11 @@ PC[_pluginName] = function(conf) {
                 height: h + 'px',
                 "margin-top": fixedPositionSupported ? (-h / 2 + 'px') : 0,
                 "margin-left": -w / 2 + 'px',
-                'z-index': 100000
+                'z-index': 10000
             }).show();
+            if ($mask) {
+                $mask.show();
+            }
             //draw complete will be emitted only once
             if (!fixedPositionSupported) {
 
@@ -91,8 +128,15 @@ PC[_pluginName] = function(conf) {
             }
         }).on('canvasclosing', function(e) {
             $dialog.hide();
+            if ($mask) {
+                $mask.hide();
+            }
+
         }).draw(conf);
     } else {
+        if ($mask) {
+            $mask.show();
+        }
         $dialog.show();
         calculatePos();
     }

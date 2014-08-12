@@ -135,9 +135,9 @@ var PassportSC = {
         
         $(':radio[name="mode"]').not($(this)).prop('disabled',true);
         
-        var pre = $('pre#demo-'+mode).show();
+     /*var pre =*/ $('pre#demo-'+mode).show();
 
-        pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));
+     /*      pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));*/
         
         if(skin&&mode){
             $('#submitWrap').show();
