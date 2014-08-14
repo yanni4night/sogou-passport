@@ -37,6 +37,7 @@ module.exports = function(grunt) {
     var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
 
     grunt.initConfig({
+        pkg:pkg,
         jshint: {
             options: {
                 strict: true, //use strict
@@ -223,6 +224,13 @@ module.exports = function(grunt) {
                 },
                 src: [WEB_DIR + '/*.html']
             }
+        },
+        jsdoc:{
+            options:{
+                destDir : 'web/doc/',
+                title:'Sogou passport(<%=pkg.version%>)'
+            },
+            all:[STATIC_DIR+'js/*.js',STATIC_DIR+'js/appendix/*.js']
         }
     });
 
@@ -236,10 +244,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-browserify');
-
-    grunt.task.registerTask('inline markdown', 'Merge README to index.html', function(arg1, arg2) {
-
-    });
+    grunt.loadNpmTasks('grunt-yjsdoc');
 
     grunt.registerMultiTask('vars', 'replace vars', function() {
         var options = this.options({});
@@ -260,8 +265,8 @@ module.exports = function(grunt) {
     grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static', 'less:css']);
 
 
-    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official']);
-    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official']);
+    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official','jsdoc']);
+    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official','jsdoc']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('pub', ['dist']);
     grunt.registerTask('server', ['express']);
