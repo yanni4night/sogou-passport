@@ -124,6 +124,7 @@ var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
  * Create gFrameWrapper if it not exists.
  *
  * @param {Function}
+ * @ignore
  * @return {HTMLElement} gFrameWrapper
  */
 function assertgFrameWrapper(callback) {
@@ -147,6 +148,7 @@ function assertgFrameWrapper(callback) {
  * it may be called only once.
  *
  * @param {Object} options
+ * @ignore
  * @throws {Error} If any validattion failed
  */
 function validateOptions(options) {
@@ -177,6 +179,7 @@ function validateOptions(options) {
 /**
  * Simple template replacer.
  *
+ * @ignore
  * @param  {String} tpl
  * @param  {Object} data
  * @return {String}
@@ -188,17 +191,14 @@ function template(tpl, data) {
     });
 }
 
-/**
- * Passport tools.
- *
- * @class
- */
-var tools = {
+var Tools = {
     /**
      * Validate username.
      *
      * @param  {String} username
      * @return {Boolean}
+     * @class Tools
+     * @since 0.0.8
      */
     validateUsername: function(username) {
         return type.isNonEmptyString(username) && /^[a-zA-Z]([a-zA-Z0-9_@\.-]{3,})$/.test(username);
@@ -208,6 +208,8 @@ var tools = {
      *
      * @param  {String} password
      * @return {Boolean}
+     * @class Tools
+     * @since 0.0.8
      */
     validatePassword: function(password) {
         return type.isNonEmptyString(password) && /^\S{6,16}$/.test(password);
@@ -217,6 +219,8 @@ var tools = {
      *
      * @param  {String} captcha
      * @return {Boolean}
+     * @class Tools
+     * @since 0.0.8
      */
     validateCaptcha: function(captcha) {
         return type.isNonEmptyString(captcha) && /^[a-zA-Z0-9]+$/.test(captcha);
@@ -226,9 +230,9 @@ var tools = {
 /**
  * Hide source of tools.
  */
-for (e in tools) {
-    if (type.isFunction(tools[e])) {
-        UTILS.lone.hideSource(e, tools[e], 'PassportSC.tools.');
+for (e in Tools) {
+    if (type.isFunction(Tools[e])) {
+        UTILS.lone.hideSource(e, Tools[e], 'PassportSC.tools.');
     }
 }
 
@@ -236,12 +240,32 @@ for (e in tools) {
  * Core passport object.
  *
  * This will be merged into PassportSC.
- *
- * @class
+ * @ignore
  */
 var Passport = {
+    /**
+     * The current version of passport library.
+     * 
+     * @type {String}
+     * @class PassportSC
+     * @since 0.0.8
+     */
     version: '@version@', //see 'package.json'
-    tools: tools,
+    /**
+     * Commaon passport tools.
+     * 
+     * @class PassportSC
+     * @since 0.0.8
+     * @see  {#Tools}
+     */
+    tools: Tools,
+    /**
+     * Passport utils.
+     *
+     * @class PassportSC
+     * @since 0.0.8
+     * @see  {#Utils}
+     */
     utils: UTILS,
     /**
      * Initialize.
@@ -252,8 +276,10 @@ var Passport = {
      * 1.appid -- Integer of ID,it depends on the product line;
      * 2.redirectUrl -- A same domain page url for cross-domain;
      *
-     * @param  {Obejct} options Required options
-     * @return {Object} PassportSC
+     * @param  {Object} options Required options
+     * @class PassportSC
+     * @return {this}
+     * @since 0.0.8
      */
     init: function(options) {
         if (!this.isInitialized()) {
@@ -268,12 +294,14 @@ var Passport = {
     /**
      * Do login action.It's an async function.
      *
+     * @class PassportSC
      * @param  {String} username
      * @param  {String} password
      * @param  {String} vcode
      * @param  {Boolean} autoLogin
      * @return {Boolean} If login action is executed
      * @throws {Error} If not initialized
+     * @since 0.0.8
      */
     login: function(username, password, vcode, autoLogin) {
         if (!this.isInitialized()) {
@@ -289,21 +317,21 @@ var Passport = {
             vcode = '';
         }
 
-        if (!tools.validateUsername(username)) {
+        if (!Tools.validateUsername(username)) {
             this.emit(EVENTS.param_error, {
                 name: 'username',
                 value: username,
                 msg: "账号格式不正确"
             });
             return false;
-        } else if (!tools.validatePassword(password)) {
+        } else if (!Tools.validatePassword(password)) {
             this.emit(EVENTS.param_error, {
                 name: 'password',
                 value: password,
                 msg: "密码格式不正确"
             });
             return false;
-        } else if (vcode && !tools.validateCaptcha(vcode)) {
+        } else if (vcode && !Tools.validateCaptcha(vcode)) {
             this.emit(EVENTS.param_error, {
                 name: 'captcha',
                 value: vcode,
@@ -336,11 +364,13 @@ var Passport = {
     /**
      * Third party login.
      *
+     * @class PassportSC
      * @param  {String} provider qq|sina|renren
      * @param  {String} display page|popup
      * @param  {String} redirectUrl
-     * @return {Boolean} True
+     * @return {this}
      * @throws {Error} If any parameter failed
+     * @since 0.0.8
      */
     login3rd: function(provider, display, redirectUrl) {
         if (!this.isInitialized()) {
@@ -377,12 +407,18 @@ var Passport = {
             throw new Error('display:"' + display + '" is not supported in third party login');
         }
 
-        return true;
+        return this;
     },
     /**
-     * Do logout.
-     * @return {Object} this
+     * Do logout.This functions does not accept any parameter,it's
+     * callback is event "loginoutsuccess".
+     *
+     * Alert:we cannot get the logout failure callback.
+     *
+     * @class PassportSC
+     * @return {this}
      * @throws {Error} If not initialized
+     * @since 0.0.8
      */
     logout: function() {
         if (!this.isInitialized()) {
@@ -400,9 +436,12 @@ var Passport = {
 
     },
     /**
-     * Get userid from cookie
+     * Get userid from cookie.
+     *
+     * @class PassportSC
      * @return {String} userid or empty string
      * @throws {Error} If not initialized
+     * @since 0.0.8
      */
     userid: function() {
         if (!this.isInitialized()) {
@@ -413,9 +452,12 @@ var Passport = {
     },
     /**
      * Login callback from iframe.
+     *
      * DO NOT call it directly.
      *
-     * @param  {Object} data login result
+     * @param {Object} data login result
+     * @class PassportSC
+     * @since 0.0.8
      */
     _logincb: function(data) {
         if (!this.isInitialized()) {
@@ -462,7 +504,10 @@ var Passport = {
      * Third party login callback from 'popup' window.
      * DO NOT call it directly.
      *
-     * It does not support callback with 'page' display.
+     * Callback with 'page' display is not supported.
+     * 
+     * @class PassportSC
+     * @since 0.0.8
      */
     _logincb3rd: function() {
         if (!this.isInitialized()) {
@@ -477,6 +522,8 @@ var Passport = {
      * If passport has been initialized.
      *
      * @return {Boolean} Initialized
+     * @class PassportSC
+     * @since 0.0.8
      */
     isInitialized: function() {
         return !!gOptions;
@@ -485,6 +532,8 @@ var Passport = {
      * Get a copy of options.
      *
      * @return {Object} Options
+     * @class PassportSC
+     * @since 0.0.8
      */
     getOptions: function() {
         return UTILS.lone.mixin({}, gOptions);
@@ -493,6 +542,8 @@ var Passport = {
      * Get a copy of events which passport supports.
      *
      * @return {Object} Supported events
+     * @class PassportSC
+     * @since 0.0.8
      */
     getSupportedEvents: function() {
         return UTILS.lone.mixin({}, EVENTS);
@@ -501,15 +552,20 @@ var Passport = {
      * Get a copy urls relative to passsport.
      *
      * @return {Object} Map of urls.
+     * @class PassportSC
+     * @since 0.0.8
      */
     getPassportUrls: function() {
         return UTILS.lone.mixin({}, FIXED_URLS);
     },
     /**
-     * Set a payload.
+     * Set a payload.The payload is used for communicating among
+     * plugins or something.
      *
      * @param {String} key
      * @param {Object} value
+     * @class PassportSC
+     * @since 0.0.8
      */
     setPayload: function(key, value) {
         type.assertNonEmptyString('key', key);
@@ -520,7 +576,9 @@ var Passport = {
      * Get a payload.
      *
      * @param {String} key
-     * @return {Object}
+     * @return {Object} The payload
+     * @class PassportSC
+     * @since 0.0.8
      */
     getPayload: function(key) {
         type.assertNonEmptyString('key', key);
@@ -530,6 +588,8 @@ var Passport = {
      * Generate a new captcha image.
      *
      * @return {String} New captcha image url
+     * @class PassportSC
+     * @since 0.0.8
      */
     getNewCaptcha: function() {
         return FIXED_URLS.captcha + '?token=' + gOptions._token + '&t=' + (+new Date());

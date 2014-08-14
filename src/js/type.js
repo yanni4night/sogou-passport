@@ -18,34 +18,132 @@ var noop = function() {};
 var hasOwn = ({}).hasOwnProperty;
 
 var type = {
+    /**
+     * Library expando.
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     expando: "sogou-passport-" + (+new Date()),
+    /**
+     * A empty function.
+     *
+     * @type {Function}
+     * @class Type
+     * @since 0.0.8
+     */
     noop: noop,
+    /**
+     * Debug mode status.
+     *
+     * @type {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     debug: +'@debug@', //This has to be replaced with 1 or 0 to indicate a boolean value
+    /**
+     * typeof undefined
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     strundefined: typeof undefined,
+    /**
+     * typeof a string
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     strstr: typeof '',
+    /**
+     * typeof an object
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     strobject: typeof {},
+    /**
+     * typeof a number
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     strnumber: typeof 0,
+    /**
+     * typeof a function
+     *
+     * @type {String}
+     * @class Type
+     * @since 0.0.8
+     */
     strfunction: typeof noop,
+    /**
+     * Detect if an object is null or undefined.
+     *
+     * @param  {Object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isNullOrUndefined: function(obj) {
         return !!(this.isNull(obj) || this.isUndefined(obj));
     },
+    /**
+     * Detect if an object isn't null or undefined.
+     * 
+     * @param  {object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isNonNullOrUndefined: function(obj) {
         return !this.isNullOrUndefined(obj);
     },
+    /**
+     * Detect if an object is a number,NaN and Finite are not included.
+     * 
+     * @param  {object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isInteger: function(num) {
         return !!(this.isNumber(num) && /^(\-|\+)?\d+?$/i.test(num));
     },
+    /**
+     * Detect if an object is null.
+     * 
+     * @param  {object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isNull: function(obj) {
         return null === obj;
     },
+    /**
+     * Detect if an object is undefined.
+     * 
+     * @param  {object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isUndefined: function(obj) {
         return undefined === obj;
     },
     /**
-     * Check if obj is a non-null and non-array object.
+     * Check if obj is a plain object.
      *
      * @param  {Object}  obj
      * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
      */
     isPlainObject: function(obj) {
         if (!obj || !this.isObject(obj) || obj.nodeType || this.isWindow(obj)) {
@@ -63,24 +161,61 @@ var type = {
         for (key in obj) {}
         return this.isUndefined(key) || hasOwn.call(obj, key);
     },
+    /**
+     * Detect if an object is a non-empty string.
+     * 
+     * @param  {Object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isNonEmptyString: function(obj) {
         return !!(obj && this.isString(obj));
     },
+    /**
+     * Detect if an object is a HTMLElement.
+     *
+     * This kind detection is quite simple,you can easily
+     * pass with a fake HTMLElement with some special methods.
+     * 
+     * @param  {Object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isHTMLElement: function(obj) {
         return !!(obj && obj.childNodes && obj.tagName && obj.appendChild);
     },
     /**
-     * Check if obj is null,undefined,empty array or empty string.
+     * Detect if an object is null,undefined,empty array or empty string.
      *
      * @param  {Object}  obj
      * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
      */
     isEmpty: function(obj) {
         return this.isNullOrUndefined(obj) || (this.isArray(obj) && !obj.length) || '' === obj;
     },
+    /**
+     * Detect typeof obj is 'object',which makes array&null pass.
+     *
+     * @param  {Object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isObject: function(obj) {
         return this.strobject === typeof obj;
     },
+    /**
+     * Detect if an object is window in browser.
+     *
+     * @param  {Object}  obj
+     * @return {Boolean}
+     * @class Type
+     * @since 0.0.8
+     */
     isWindow: function(obj) {
         //jquery
         return this.isNonNullOrUndefined(obj) && obj == obj.window;
@@ -91,6 +226,8 @@ var typeKeys = "RegExp,Date,String,Array,Boolean,Function,Number".split(',');
 
 /**
  * Create is* functions.
+ *
+ * @ignore
  * @param  {String} vari
  * @return {Function}
  */
@@ -104,6 +241,8 @@ function createIs(vari) {
 
 /**
  * Create assert function.
+ *
+ * @ignore
  * @param  {String} vari
  * @return {Function}
  */

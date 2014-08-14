@@ -16,9 +16,12 @@ var type = require('./type');
 var array = require('./array');
 var async = {
   /**
-   *
+   * Invoke parallel tasks.
+   * 
    * @param  {Array}   tasks
    * @param  {Function} callback
+   * @class Async
+   * @since 0.0.8
    */
   parallel: function(tasks, callback) {
     type.assertArray('tasks', tasks);

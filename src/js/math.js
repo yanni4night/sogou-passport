@@ -262,6 +262,13 @@ var math = {
             .toString(16)
             .substring(1);
     },
+    /**
+     * Get a uuid.
+     * 
+     * @return {String}
+     * @class Math
+     * @since 0.0.8
+     */
     uuid: function() {
         var s4 = this.s4;
         return s4() + s4() + s4() + s4() +

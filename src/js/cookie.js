@@ -59,6 +59,7 @@ var PassportCookieParser = {
     },
     /**
      * Legacy function,DO NOT MODIFY.
+     * @ignore
      */
     _parsePassportCookie: function(F) {
         var J = 0,
@@ -126,6 +127,17 @@ module.exports = {
         return type.isFunction(converter) ? converter(value) : value;
     }
 
+    /**
+     * Get a cookie value.
+     * 
+     * @param  {String} key
+     * @param  {String} value
+     * @param  {Object} options
+     * @return {String}
+     * @see {#https://github.com/carhartl/jquery-cookie}
+     * @class Cookie
+     * @since 0.0.8
+     */
     var config = $.cookie = function(key, value, options) {
 
         // Write
@@ -178,7 +190,16 @@ module.exports = {
     };
 
     config.defaults = {};
-
+    /**
+     * Remove a cookie.
+     * 
+     * @param  {String} key
+     * @param  {Object} options
+     * @return {Boolean}
+     * @see {#https://github.com/carhartl/jquery-cookie}
+     * @class Cookie
+     * @since 0.0.8
+     */
     $.removeCookie = function(key, options) {
         if ($.cookie(key) === undefined) {
             return false;

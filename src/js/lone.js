@@ -24,6 +24,8 @@ module.exports = {
      * @param  {Object} dest
      * @param  {Object} srcs
      * @return {Object} Dest
+     * @class Lone
+     * @since 0.0.8
      */
     mixin: function(dest, srcs) {
 
@@ -44,6 +46,8 @@ module.exports = {
      * Alias for mixin.
      *
      * @return {Object}
+     * @class Lone
+     * @since 0.0.8
      */
     extend: function() {
         return this.mixin.apply(this, arguments);
@@ -53,6 +57,8 @@ module.exports = {
      * IE 11 supported.
      *
      * @return {Integer} Version in integer.
+     * @class Lone
+     * @since 0.0.8
      */
     getIEVersion: function() {
         var ua = navigator.userAgent,
@@ -86,6 +92,8 @@ module.exports = {
      * @param  {Function} func Function to be hide-sourced
      * @param  {String} prefix
      * @return {Function}      'toString' function
+     * @class Lone
+     * @since 0.0.8
      */
     hideSource: function(name, func, prefix) {
         type.assertNonEmptyString('name', name);
@@ -110,7 +118,10 @@ module.exports = {
     },
     /**
      * Get Unix timestamp of now.
+     * 
      * @return {Integer} Unix timestamp
+     * @class Lone
+     * @since 0.0.9
      */
     now: function() {
         return Date.now ? Date.now() : +new Date();

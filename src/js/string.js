@@ -21,7 +21,22 @@ var whitespace = "[\\x20\\t\\r\\n\\f]";
 var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
 
 module.exports = {
+    /**
+     * Whitespace matching pattern.
+     * 
+     * @type {RexExp}
+     * @class String
+     * @since 0.0.8
+     */
     whitespace: whitespace,
+    /**
+     * Trim a string.
+     * 
+     * @param  {String} str
+     * @return {String}
+     * @class String
+     * @since 0.0.8
+     */
     trim: function(str) {
         if (String.prototype.trim) {
             return String.prototype.trim.call(String(str));
@@ -30,12 +45,13 @@ module.exports = {
         }
     },
     /**
-     *
-     *
+     * Detect if a string starts with another string.
      *
      * @param  {String} source
      * @param  {String} pattern
      * @return {Boolean}
+     * @class String
+     * @since 0.0.8
      */
     startsWith: function(source, pattern) {
         type.assertString('source', source);
@@ -53,11 +69,13 @@ module.exports = {
         return true;
     },
     /**
-     *
+     * like 'starsWith',but case ignored.
      *
      * @param  {String} source
      * @param  {String} pattern
      * @return {Boolean}
+     * @class String
+     * @since 0.0.8
      */
     startsWithIgnoreCase: function(source, pattern) {
         type.assertString('source', source);
@@ -66,11 +84,13 @@ module.exports = {
         return this.startsWith(source.toLowerCase(), pattern.toLowerCase());
     },
     /**
-     *
+     * Detect if a string ends with another string.
      *
      * @param  {String} source
      * @param  {String} pattern
      * @return {Boolean}
+     * @class String
+     * @since 0.0.8
      */
     endsWith: function(source, pattern) {
         type.assertString('source', source);
@@ -90,10 +110,13 @@ module.exports = {
         return true;
     },
     /**
-     *
+     * Like 'endsWith',but case ignored.
+     * 
      * @param  {String} source
      * @param  {String} pattern
      * @return {Boolean}
+     * @class String
+     * @since 0.0.8
      */
     endsWithIgnoreCase: function(source, pattern) {
         type.assertString('source', source);
@@ -102,10 +125,13 @@ module.exports = {
         return this.endsWith(source.toLowerCase(), pattern.toLowerCase());
     },
     /**
+     * Detect if two strings equal with each other case ignored.
      *
      * @param  {String} str1
      * @param  {String} str2
      * @return {boolean}
+     * @class String
+     * @since 0.0.8
      */
     equalsIgnoreCase: function(str1, str2) {
         type.assertString('str1', str1);

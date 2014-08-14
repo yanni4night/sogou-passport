@@ -228,7 +228,7 @@ module.exports = function(grunt) {
         jsdoc:{
             options:{
                 destDir : 'web/doc/',
-                title:'Sogou passport(<%=pkg.version%>)'
+                title:'Sogou passport <%=pkg.version%>'
             },
             all:[STATIC_DIR+'js/*.js',STATIC_DIR+'js/appendix/*.js']
         }

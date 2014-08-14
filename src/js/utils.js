@@ -35,15 +35,86 @@ var lone = require('./lone');
 var cookie = require('./cookie');
 
 module.exports = {
+    /**
+     * An instance of class Math.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     math: math,
+    /**
+     * An instance of class Array.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     array: array,
+    /**
+     * An instance of class Dom.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     dom: dom,
+    /**
+     * An instance of class Type.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     type: type,
+    /**
+     * An instance of class String.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     string: string,
+    /**
+     * An instance of class EventEmitter.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     event: xevent,
+    /**
+     * An instance of class Async.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     async: async,
+    /**
+     * A console polyfill fot all browsers.
+     * It only print under DEBUG mode.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.8
+     */
     console: console,
+    /**
+     * An instance of class Lone.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.9
+     */
     lone: lone,
+    /**
+     * An instance of class Cookie.
+     * 
+     * @type {Object}
+     * @class Utils
+     * @since 0.0.9
+     */
     cookie: cookie
 
 };

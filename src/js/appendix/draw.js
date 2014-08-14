@@ -52,6 +52,7 @@ var pluginInit = function(core) {
   /**
    * Compute css url.
    *
+   * @ignore
    * @param  {String} name
    * @return {String} url
    */
@@ -64,6 +65,8 @@ var pluginInit = function(core) {
 
   /**
    * Compute js url
+   *
+   * @ignore
    * @param  {String} name
    * @return {String}
    */
@@ -77,6 +80,7 @@ var pluginInit = function(core) {
   /**
    * Load skin by loading css&js.
    * Once called,never call again.
+   * @ignore
    */
   function loadSkin() {
     var skinInitFunc;
@@ -111,6 +115,8 @@ var pluginInit = function(core) {
    * This function cannot be called more than once.
    *
    * @param  {Object} options
+   * @class PassportSC
+   * @since 0.0.8
    * @return {this}
    */
   PassportSC.draw = function(options) {
@@ -148,7 +154,10 @@ var pluginInit = function(core) {
 
   /**
    * Get a copy of suggestion domain list.
+   *
+   * @class PassportSC
    * @return {Array}
+   * @since 0.0.8
    */
   PassportSC.getSuggestDomain = function() {
     return domainList.slice();
@@ -156,7 +165,10 @@ var pluginInit = function(core) {
 
   /**
    * Get a copy array of pre-defined skin names.
+   * 
    * @return {Array} Skin names array
+   * @class PassportSC
+   * @since 0.0.8
    */
   PassportSC.getPredefinedSkin = function() {
     return preDefinedSkinNames.slice();

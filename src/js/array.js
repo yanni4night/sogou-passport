@@ -25,6 +25,8 @@ var array = {};
  * @param  {Object} ele
  * @param  {Integer} fromIndex
  * @return {Boolean}
+ * @class Array
+ * @since 0.0.8
  */
 array.indexOf = function(arr, ele, fromIndex) {
   var i, len;
@@ -67,6 +69,8 @@ array.indexOf = function(arr, ele, fromIndex) {
  * @param  {Function} callbackfn
  * @param  {Object} thisArg
  * @return {Undefined}
+ * @class Array
+ * @since 0.0.8
  */
 array.forEach = function(arr, callbackfn, thisArg) {
   var i, len;
@@ -89,6 +93,8 @@ array.forEach = function(arr, callbackfn, thisArg) {
  * @param  {Array} arr
  * @param  {Function} func
  * @return {Boolean}
+ * @class Array
+ * @since 0.0.8
  */
 array.each = array.every = function(arr, callbackfn, thisArg) {
   var i, len;
@@ -117,6 +123,8 @@ array.each = array.every = function(arr, callbackfn, thisArg) {
  * @param  {Function} callbackfn
  * @param  {Object} thisArg
  * @return {Boolean}
+ * @class Array
+ * @since 0.0.8
  */
 array.some = function(arr, callbackfn, thisArg) {
   var i, len;
@@ -145,6 +153,8 @@ array.some = function(arr, callbackfn, thisArg) {
  * @param  {Function} callbackfn
  * @param  {Object} thisArg
  * @return {Array}
+ * @class Array
+ * @since 0.0.8
  */
 array.filter = function(arr, callbackfn, thisArg) {
   var ret = [];

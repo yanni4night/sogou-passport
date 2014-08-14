@@ -40,7 +40,9 @@ var dom = {
      * @param  {String} href Link url
      * @param  {Function} callback Callback function
      * @return {HTMLLinkElement}
+     * @class Dom
      * @throws {Error} If parameters illegal
+     * @since 0.0.8
      */
     addLink: function(href, callback) {
 
@@ -57,7 +59,7 @@ var dom = {
         link.type = 'text/css';
         link.charset = 'utf-8';
         link.media = 'screen';
-        
+
         docHead.appendChild(link);
 
         if (link.readyState) {
@@ -80,6 +82,8 @@ var dom = {
      *
      * @param {String}   src
      * @param {Function} callback
+     * @class Dom
+     * @since 0.0.8
      */
     addScript: function(src, callback) {
 
@@ -111,6 +115,15 @@ var dom = {
         docHead.appendChild(script);
         return script;
     },
+    /**
+     * Insert a iframe element into a HTMLElement.
+     *
+     * @param {HTMLElement}   container
+     * @param {String}   url The url of the iframe
+     * @param {Function} callback Iframe onload callback
+     * @class Dom
+     * @since  0.0.8
+     */
     addIframe: function(container, url, callback) {
 
         type.assertHTMLElement('container', container);
@@ -138,11 +151,14 @@ var dom = {
     },
     /**
      * Attatch event listener to HTMLElements.
-     * @param  {HTMLElement} dom
-     * @param  {String} evt
-     * @param  {Function} func
+     *
+     * @param  {HTMLElement} dom The Element bind to
+     * @param  {String} evt Event type
+     * @param  {Function} func Event function
      * @return {this}
+     * @class Dom
      * @throws {Error} If parameters illegal
+     * @since 0.0.8
      */
     bindEvent: function(ele, evt, func) {
 
@@ -160,6 +176,13 @@ var dom = {
 
         return this;
     },
+    /**
+     * make an event stopping propagation.
+     *
+     * @param  {HTMLEvent} evt
+     * @class Dom
+     * @since 0.0.8
+     */
     stopPropagation: function(evt) {
         if (evt.stopPropagation) {
             evt.stopPropagation();
@@ -167,6 +190,13 @@ var dom = {
             evt.cancelBubble = true;
         }
     },
+    /**
+     * make an event preventing default action.
+     *
+     * @param  {HTMLEvent} evt
+     * @class Dom
+     * @since 0.0.8
+     */
     preventDefault: function(evt) {
         if (evt.preventDefault) {
             evt.preventDefault();
@@ -174,15 +204,25 @@ var dom = {
             evt.returnValue = false;
         }
     },
+    /**
+     * Get the target of an event.
+     *
+     * @param  {HTMLEvent} e An event.
+     * @return {HTMLElement}
+     * @class Dom
+     * @since 0.0.8
+     */
     eventTarget: function(e) {
         e = e || window.event;
         return e.target || e.srcElement;
     },
     /**
-     * Get HTMLElement by id.
+     * Get the HTMLElement by its id.
      *
      * @param  {String} id
+     * @class Dom
      * @return {HTMLElement}
+     * @since 0.0.8
      */
     id: function(id) {
 
@@ -213,9 +253,11 @@ var dom = {
     },
     /**
      * [hasClass description]
-     * @param  {[type]}  ele        [description]
-     * @param  {[type]}  classnames [description]
-     * @return {Boolean}            [description]
+     * @param  {HTMLElement}  ele
+     * @param  {String}  classnames
+     * @return {Boolean}
+     * @class Dom
+     * @since 0.0.8
      */
     hasClass: function(ele, classnames) {
 
@@ -254,9 +296,12 @@ var dom = {
     },
     /**
      * Add a class to an element.
+     *
      * @param {HTMLElement} ele
      * @param {String} classnames
-     * @return {O}
+     * @return {this}
+     * @class Dom
+     * @since 0.0.8
      */
     addClass: function(ele, classnames) {
 
@@ -302,7 +347,9 @@ var dom = {
      * Remove classes from an element.
      * @param  {HTMLElement} ele
      * @param  {String|Function} classnames
-     * @return {O}
+     * @return {this}
+     * @class Dom
+     * @since 0.0.8
      */
     removeClass: function(ele, classnames) {
 
@@ -347,6 +394,8 @@ var dom = {
      * @param  {HTMLElement} ele
      * @param  {String} selector
      * @return {Boolean}
+     * @class Dom
+     * @since 0.0.8
      */
     matches: function(ele, selector) {
 
@@ -389,6 +438,8 @@ var dom = {
      * @param  {HTMLElement} ele
      * @param  {String} selector
      * @return {HTMLElement}
+     * @class Dom
+     * @since 0.0.8
      */
     parents: function(ele, selector) {
         type.assertHTMLElement('ele', ele);
@@ -411,6 +462,8 @@ var dom = {
      * @param  {HTMLElement} ele
      * @param  {String} selector
      * @return {Array}
+     * @class Dom
+     * @since 0.0.8
      */
     siblings: function(ele, selector) {
         type.assertHTMLElement('ele', ele);

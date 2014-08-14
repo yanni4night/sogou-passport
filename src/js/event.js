@@ -24,11 +24,14 @@ var EventEmitter = function() {
     var listeners = {};
 
     /**
-     * Bind event,multiple events split by space supported
+     * Bind event,multiple events split by space supported.
+     * 
      * @param  {String} event
      * @param  {Function} func
      * @param  {Object} thisArg
      * @return {EventEmitter}      This event emitter
+     * @class EventEmitter
+     * @since 0.0.8
      */
     this.on = function(event, func, thisArg) {
         var evtArr;
@@ -58,6 +61,8 @@ var EventEmitter = function() {
      * @param  {String} event
      * @param  {Function} func
      * @return {EventEmitter}     This event emitter
+     * @class EventEmitter
+     * @since 0.0.8
      */
     this.off = function(event, func) {
         var evtArr, objs;
@@ -90,6 +95,8 @@ var EventEmitter = function() {
      * @param  {String} event
      * @param  {Object} data
      * @return {EventEmitter} This event emitter
+     * @class EventEmitter
+     * @since 0.0.8
      */
     this.emit = function(event, data) {
         var evtArr, objs;

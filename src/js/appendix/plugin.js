@@ -52,6 +52,8 @@ var pluginInit = function(core) {
      * Get pre-defined plugins' names.
      *
      * @return {Array}
+     * @class PassportSC
+     * @since 0.0.9
      */
     PC.getPreDefinedPlugin = function() {
         return preDefinedPlugins.slice();
@@ -60,7 +62,10 @@ var pluginInit = function(core) {
     /**
      * [requirePlugins description]
      *
-     * @param  {Function} done [description]
+     * @param  {Function} done
+     * @class PassportSC
+     * @return {this}
+     * @since 0.0.9
      */
     PC.requirePlugins = function( /*names..,done*/ ) {
         if (arguments.length < 2) {
