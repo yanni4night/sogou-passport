@@ -236,7 +236,7 @@
       UTILS.dom.bindEvent($form, 'submit', function(e) {
         var dom = UTILS.dom.eventTarget(e);
         UTILS.dom.preventDefault(e);
-        console.trace('Passport form submitting');
+        console.debug('Passport form submitting');
         self.doPost();
         return false;
       });

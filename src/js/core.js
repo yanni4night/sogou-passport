@@ -49,7 +49,7 @@ var pluginAppendix = require('./appendix/plugin');
 
 var type = UTILS.type;
 var console = UTILS.console;
-var Event = UTILS.event;
+var XEvent = UTILS.event;
 
 var PassportCookieParser = UTILS.cookie.PassportCookieParser;
 
@@ -283,7 +283,7 @@ var Passport = {
      */
     init: function(options) {
         if (!this.isInitialized()) {
-            console.trace('Initialize passport');
+            console.debug('Initializing passport');
             validateOptions(options);
         } else {
             console.warn('Passport has already been initialized');
@@ -308,7 +308,7 @@ var Passport = {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
 
-        console.trace('logining with:' + Array.prototype.join.call(arguments));
+        console.debug('logining with:' + Array.prototype.join.call(arguments));
 
         var payload;
 
@@ -424,7 +424,7 @@ var Passport = {
         if (!this.isInitialized()) {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
-        console.trace('logouting');
+        console.debug('logouting');
         var self = this;
         var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
 
@@ -461,7 +461,7 @@ var Passport = {
      */
     _logincb: function(data) {
         if (!this.isInitialized()) {
-            console.trace('Login callback received but [Passport] has not been initialized');
+            console.debug('Login callback received but [Passport] has not been initialized');
             return;
         }
 
@@ -511,7 +511,7 @@ var Passport = {
      */
     _logincb3rd: function() {
         if (!this.isInitialized()) {
-            console.trace('Login3rd callback received but [Passport] has not been initialized');
+            console.debug('Login3rd callback received but [Passport] has not been initialized');
             return;
         }
         this.emit(EVENTS.third_party_login_complete, {
@@ -601,7 +601,7 @@ PassportSC = function() {
     return Passport.init.apply(Passport, arguments);
 };
 
-UTILS.lone.mixin(PassportSC, Passport, new Event());
+UTILS.lone.mixin(PassportSC, Passport, new XEvent());
 
 //PassportSC is shy.
 //We do this for hiding source of its function members,

@@ -30,22 +30,49 @@ var pluginInit = function(core) {
             jQuery: !!(window.jQuery && (PC.jQuery = PC.$ = window.jQuery)),
             DD_belatedPNG: !!(window.DD_belatedPNG && (PC.DD_belatedPNG = window.DD_belatedPNG))
         },
+        _pluginLoading: {},
         hasPluginLoaded: function(name) {
             return !!this._pluginLoaded[name];
         },
         setPluginLoaded: function(name) {
             this._pluginLoaded[name] = true;
+            return this;
+        },
+        isPluginLoading: function(name) {
+            return !!this._pluginLoading[name];
+        },
+        setPluginLoading: function(name) {
+            this._pluginLoading[name] = true;
+            return this;
+        },
+        resetPluginLoading: function(name) {
+            delete this._pluginLoading[name];
+            return this;
         }
     };
 
+    /**
+     * Load a plugin.
+     * If the plugin is already loading or has been loaded,do nothing.
+     *
+     * @param  {String} name Plugin name
+     * @since 0.0.9
+     * @ignore
+     */
     function loadPlugin(name) {
-        var url = (UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/js/plugin/' + name + '.js';
-        console.trace('loading plugin:', url);
-        if (!LoaderHistory.hasPluginLoaded(name)) {
-            UTILS.dom.addScript(url, function() {
-                LoaderHistory.setPluginLoaded(name);
-            });
+        var url;
+        if (LoaderHistory.isPluginLoading(name) || LoaderHistory.hasPluginLoaded(name)) {
+            console.debug(name + ' is loaded or loading.');
+            return;
         }
+
+        url = (UTILS.type.debug ? '/dist' : core.getFixedUrls().libprefix) + '/@version@/js/plugin/' + name + '.js';
+        console.debug('loading plugin:', url);
+
+        LoaderHistory.setPluginLoading(name);
+        UTILS.dom.addScript(url, function() {
+            LoaderHistory.setPluginLoaded(name).resetPluginLoading(name);
+        });
     }
 
     /**
@@ -60,31 +87,40 @@ var pluginInit = function(core) {
     };
 
     /**
-     * [requirePlugins description]
+     * Loas a series of plugins.
      *
-     * @param  {Function} done
+     * This function accept multiple plugin names and a callback function.
+     * Only all the plugins loaded successfully,the callback could be called.
+     *
+     * @param {String} names... Plugin name.
+     * @param  {Function} done Plugins loaded callback.
      * @class PassportSC
      * @return {this}
      * @since 0.0.9
      */
     PC.requirePlugins = function( /*names..,done*/ ) {
+
+        var done,names,nonLoadedPluginsCnt;
         if (arguments.length < 2) {
             throw Error('A "plugin name" and a callback function are required.');
         }
 
-        if (!PC.utils.type.isFunction(arguments[arguments.length - 1])) {
+        done = arguments[arguments.length - 1];
+
+        if (!PC.utils.type.isFunction(done)) {
             throw Error('A callback function is required.');
         }
 
-        var done = arguments[arguments.length - 1];
 
-
-        var names = array.filter(Array.prototype.slice.call(arguments, 0, arguments.length - 1), function(name) {
-                return !LoaderHistory.hasPluginLoaded(name);
-            }),
-            nonLoadedPluginsCnt = names.length;
+        names = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
 
         console.debug('requiring:', names);
+
+        names = array.filter(names, function(name) {
+            return !LoaderHistory.hasPluginLoaded(name);
+        });
+
+        nonLoadedPluginsCnt = names.length;
 
         if (!nonLoadedPluginsCnt) {
             done.call(this);
@@ -97,7 +133,11 @@ var pluginInit = function(core) {
 
         this.on(this.getSupportedEvents().plugin_loaded, function(e, data) {
             //Just check the loading plugins
-            if (~array.indexOf(names, data.plugin) && !--nonLoadedPluginsCnt) {
+            if (~array.indexOf(names, data.plugin) /* && !--nonLoadedPluginsCnt*/ ) {
+                //Avoid dumplicated names in requirement.
+                names = array.filter(names, function(name) {
+                    return name !== data.plugin;
+                });
                 done.call(this);
             }
         }, this);

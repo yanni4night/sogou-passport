@@ -116,7 +116,7 @@ var EventEmitter = function() {
             }
         });
 
-        console.trace('emitting ' + evtArr.join());
+        console.debug('emitting ' + evtArr.join());
         return this;
     };
 };

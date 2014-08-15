@@ -49,6 +49,9 @@ var pluginInit = function(core) {
 
   var gOptions = null;
 
+  var gDrawing = false;
+  var gDrawCompleted = false;
+
   /**
    * Compute css url.
    *
@@ -85,6 +88,8 @@ var pluginInit = function(core) {
   function loadSkin() {
     var skinInitFunc;
 
+    gDrawing = true;
+
     return async.parallel([
 
       function(cb) {
@@ -104,6 +109,8 @@ var pluginInit = function(core) {
       if (!err) {
         skinInitFunc.call(PassportSC);
         PassportSC.emit(evtSkinDrawComplete, {});
+        gDrawCompleted = true;
+        gDrawing  =false;
       } else {
         throw err;
       }
@@ -118,15 +125,18 @@ var pluginInit = function(core) {
    * @class PassportSC
    * @since 0.0.8
    * @return {this}
+   * @throws {Error} If drawing is still on or drawed
    */
   PassportSC.draw = function(options) {
-
     if (!this.isInitialized()) {
       throw new Error('You have to initialize passport before draw');
     }
 
+    if(gDrawing){
+      throw new Error('The passport is drawing');
+    }
     //Avoid draw twice
-    if (gOptions) {
+    if (gDrawCompleted) {
       throw new Error('You can draw only once');
     }
 
@@ -165,7 +175,7 @@ var pluginInit = function(core) {
 
   /**
    * Get a copy array of pre-defined skin names.
-   * 
+   *
    * @return {Array} Skin names array
    * @class PassportSC
    * @since 0.0.8
