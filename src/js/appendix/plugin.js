@@ -4,9 +4,10 @@
  *
  * changelog
  * 2014-08-11[19:53:37]:authorized
+ * 2014-08-15[11:52:06]:fixed no response when loading dumplicated plugins
  *
  * @author yanni4night@gmail.com
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 "use strict";
@@ -23,7 +24,7 @@ var pluginInit = function(core) {
     //These are the plugins we created,you can create your own.
     var preDefinedPlugins = ['pop', 'jQuery', 'DD_belatedPNG'];
 
-    //record which plugins have been loaded
+    //record which plugins have been loaded or are still been loading
     var LoaderHistory = {
         _pluginLoaded: {
             //sniff loaded jQuery library
@@ -78,7 +79,7 @@ var pluginInit = function(core) {
     /**
      * Get pre-defined plugins' names.
      *
-     * @return {Array}
+     * @return {Array} The pre-defined plugins.
      * @class PassportSC
      * @since 0.0.9
      */
@@ -96,11 +97,12 @@ var pluginInit = function(core) {
      * @param  {Function} done Plugins loaded callback.
      * @class PassportSC
      * @return {this}
+     * @throws {Error} If the plugin is unknown
      * @since 0.0.9
      */
     PC.requirePlugins = function( /*names..,done*/ ) {
 
-        var done,names,nonLoadedPluginsCnt;
+        var done, names, nonLoadedPluginsCnt;
         if (arguments.length < 2) {
             throw Error('A "plugin name" and a callback function are required.');
         }
@@ -117,6 +119,9 @@ var pluginInit = function(core) {
         console.debug('requiring:', names);
 
         names = array.filter(names, function(name) {
+            if (!~array.indexOf(preDefinedPlugins, name)) {
+                throw new Error('Unknown plugin "' + name + '"');
+            }
             return !LoaderHistory.hasPluginLoaded(name);
         });
 
