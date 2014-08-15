@@ -107,7 +107,7 @@ var pluginInit = function(core) {
       }
     ], function(err) {
       if (!err) {
-        skinInitFunc.call(PassportSC);
+        skinInitFunc.call(PassportSC,gOptions);
         PassportSC.emit(evtSkinDrawComplete, {});
         gDrawCompleted = true;
         gDrawing  =false;
@@ -121,7 +121,7 @@ var pluginInit = function(core) {
    * Draw a passport login canvas on a HTMLElement.
    * This function cannot be called more than once.
    *
-   * @param  {Object} options
+   * @param  {Object} options {container:,skin:,trdRedirectUrl:,skinJsUrl:,skinCssUrl:}
    * @class PassportSC
    * @since 0.0.8
    * @return {this}
@@ -154,8 +154,6 @@ var pluginInit = function(core) {
     if (!gOptions.skinCssUrl) {
       throw new Error('You have to define a skin name or skinCssUrl');
     }
-
-    this.setPayload('contrib-skin', UTILS.lone.extend({}, gOptions));
 
     loadSkin();
 

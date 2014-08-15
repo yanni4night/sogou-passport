@@ -315,8 +315,7 @@
 
   //This has to be emited to indicate skin loaded.
   PassportSC.emit(evtLoaded, {
-    init: function() {
-      var skinOptions = this.getPayload('contrib-skin');
+    init: function(skinOptions) {
       if (!skinOptions) {
         throw new Error('Skin initializing need a skinOption,make sure you never clear "contrib-skin" payload');
       }
