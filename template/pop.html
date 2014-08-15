@@ -50,27 +50,23 @@
 </head>
 <body>
 允许省略构建登录对话框，直接弹出
-<button>Pop</button>
+<button>弹出<sup>&beta;</sup></button>
 <pre>
-var popParam={
+
+<span class="orange">PassportSC</span>({
+    appid:1120,
+    redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+}).<span class="cyan">on</span>('<b>loginsuccess loginfailed 3rdloginsuccess</b>',function(e){
+    if('loginsuccess' === e.type)...
+}).<span class="cyan">requiresPlugins</span>('<b>pop</b>',function(){
+    <span class="orange">this</span>.pop({
         <span class="red">skin</span>:'wan',
         <span class="red">mask</span>:true,//show a half-opacity background
         <span class="red">maskClickClose</span>:true,//click the half-opacity bg to click the dialog
         //we do not need 'container'
-        <span class="red">trdRedirectUrl</span>:location.protocol + '//' + location.host + '/popup.html'
-    };
-
-<span class="orange">PassportSC</span>.<span class="cyan">init</span>({
-    appid:1120,
-    redirectUrl:location.protocol + '//' + location.host + '/jump.html'
-});
-
-if(<span class="orange">PassportSC</span>.pop)
-        <span class="orange">PassportSC</span>.pop(popParam);
-    else
-        <span class="orange">PassportSC</span>.requiresPlugins('pop',/*other plugins...*/function(){
-            <span class="orange">PassportSC</span>.pop(popParam);
+        <span class="red">trdRedirectUrl</span>:location.protocol + '//' + location.host + '/static/popup.html'
     });
+});
 </pre>
 </body>
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
@@ -90,9 +86,6 @@ var popParam={
     });
 
 $('button').click(function(e){
-    if(PassportSC.pop)
-        PassportSC.pop(popParam);
-    else
         PassportSC.requirePlugins('pop','DD_belatedPNG','pop',function(){
             PassportSC.pop(popParam);
         });
