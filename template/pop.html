@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>Passport Test</title>
+<title>Passport Pop Test</title>
 <meta name="author" content="yanni4night@gmail.com"/>
 <style>
     body{
@@ -10,14 +10,6 @@
         margin: 0;
         background: #333;
         color: #fff;
-    }
-    .passport-dialog{
-        width: 400px;
-        position: fixed;
-        _position:absolute;
-        left: 50%;
-        top:100px;
-        margin-left: -200px;
     }
     pre{
         background: #000;
@@ -58,7 +50,7 @@
     redirectUrl:location.protocol + '//' + location.host + '/jump.html'
 }).<span class="cyan">on</span>('<b>loginsuccess loginfailed 3rdloginsuccess</b>',function(e){
     if('loginsuccess' === e.type)...
-}).<span class="cyan">requiresPlugins</span>('<b>pop</b>',function(){
+}).<span class="cyan">requirePlugins</span>('<b>pop</b>',function(){
     <span class="orange">this</span>.pop({
         <span class="red">skin</span>:'wan',
         <span class="red">mask</span>:true,//show a half-opacity background
@@ -72,23 +64,20 @@
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 <script src="dist/@version@/js/passport-core.js"></script>
 <script>
-
-var popParam={
-        skin:'wan',
-        mask:true,
-        maskClickClose:true,
-        trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
-    };
-
- PassportSC.init({
+ PassportSC({
         appid:1120,
         redirectUrl:location.protocol + '//' + location.host + '/jump.html'
     });
 
 $('button').click(function(e){
         PassportSC.requirePlugins('pop','DD_belatedPNG','pop',function(){
-            PassportSC.pop(popParam);
+            PassportSC.pop({
+                skin:'wan',
+                mask:true,
+                maskClickClose:true,
+                trdRedirectUrl:location.protocol + '//' + location.host + '/popup.html'
         });
+});
 });
 </script>
 </html>
