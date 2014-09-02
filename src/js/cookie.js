@@ -9,9 +9,10 @@
  * 2014-06-07[13:47:16]:authorized
  * 2014-06-07[15:21:54]:search cookie by regexp
  * 2014-06-13[10:01:30]:transplanted jquery.cookie
+ * 2014-09-02[21:10:35]:rewrite cookie parser
  *
  * @author yanni4night@gmail.com
- * @version 0.1.2
+ * @version 0.1.3
  * @since 0.1.0
  */
 "use strict";
@@ -19,6 +20,7 @@
 var math = require('./math');
 var type = require('./type');
 var lone = require('./lone');
+var array = require('./array');
 
 
 var exports = module.exports;
@@ -151,6 +153,12 @@ var PassportCookieParser = {
     getCookie: function() {
         return this.cookie;
     },
+    /**
+     * Parse information from cookie ppinf|ppinfo|passport under sogou.com domain.
+     *
+     * @ignore
+     * @return {this}
+     */
     parsePassportCookie: function() {
         var ppinf, parsedArray, payload;
 
@@ -167,9 +175,9 @@ var PassportCookieParser = {
 
         try {
             parsedArray = unescape(ppinf).split("|");
-            this.version = parsedArray[0];
+            this.version = parseInt(parsedArray[0]);
             payload = parsedArray[3];
-            if (1 == this.version || 2 == this.version || 5 == this.version && payload) {
+            if (!!~array.indexOf([1, 2, 5], this.version) && payload) {
                 this._parsePassportCookie(math.utf8to16(math.b64_decodex(payload)));
             }
         } catch (e) {}
@@ -177,29 +185,29 @@ var PassportCookieParser = {
         return this;
     },
     /**
-     * Legacy function,DO NOT MODIFY.
+     *
+     * Parse payload:
+     *
+     * SH:
+     * loginid:0:|userid:44:BF56C74E50C5295E4600B4A444AC31A0@qq.sohu.com|serviceuse:30:000000000000000000000000000000|crt:0:|emt:1:0|appid:4:1120|trust:1:1|partnerid:1:0|relation:0:|uuid:16:c07af282ae5b427x|uid:16:c07af282ae5b427x|uniqname:43:NightingaleY1361%E5%9C%A8%E6%90%9C%E7%8B%90|refuserid:32:BF56C74E50C5295E4600B4A444AC31A0|refnick:13:Nightingale.Y|
+     * SG:
+     * clientid:4:2002|crt:10:1409662939|refnick:0:|trust:1:1|userid:16:lovemd@sogou.com|uniqname:0:|
+     * 
      * @ignore
      */
-    _parsePassportCookie: function(F) {
-        var J = 0,
-            D, B, A, I, lenEnd_offset;
-        var C = F.indexOf(":", J);
-        while (C != -1) {
-            B = F.substring(J, C);
-            lenEnd_offset = F.indexOf(":", C + 1);
-            if (lenEnd_offset == -1) {
-                break;
+    _parsePassportCookie: function(payload) {
+        var segments = payload.split('|'),
+            segarr, key, len, val;
+        array.forEach(segments, function(segment) {
+            segarr = segment.split(':');
+            if (3 !== segarr.length || !(key = segarr[0]) || !(len = segarr[1])) return;
+            val = segarr[2];
+            //validate length
+            if (len != val.length) {
+                return;
             }
-            A = parseInt(F.substring(C + 1, lenEnd_offset));
-            I = F.substr(lenEnd_offset + 1, A);
-            if (F.charAt(lenEnd_offset + 1 + A) != "|") {
-                break;
-            }
-            this.cookie[B] = I;
-            J = lenEnd_offset + 2 + A;
-            C = F.indexOf(":", J);
-        }
-
+            this.cookie[key] = val;
+        }, this);
         return this;
     }
 };

@@ -17,6 +17,8 @@ test
 
 history
 ======
+- 0.0.9.14090*:
+    - rewrite sogou cookie parser,version 5 is supported
 - 0.0.9.140822:
     - plugins supported;
     - pop function supported with jQuery sniffing;

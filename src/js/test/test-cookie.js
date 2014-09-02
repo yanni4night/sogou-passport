@@ -21,8 +21,12 @@
         describe('#PassportCookieParser', function() {
             it('should parse userid', function() {
                 if (navigator.cookieEnabled) {
-                    document.cookie = 'ppinf=5|1402199707|1403409307|bG9naW5pZDowOnx1c2VyaWQ6NDQ6QkY1NkM3NEU1MEM1Mjk1RTQ2MDBCNEE0NDRBQzMxQTBAcXEuc29odS5jb218c2VydmljZXVzZTozMDowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDB8Y3J0OjA6fGVtdDoxOjB8YXBwaWQ6NDoxMTIwfHRydXN0OjE6MXxwYXJ0bmVyaWQ6MTowfHJlbGF0aW9uOjA6fHV1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1bmlxbmFtZTo0MzpOaWdodGluZ2FsZVkxMzYxJUU1JTlDJUE4JUU2JTkwJTlDJUU3JThCJTkwfHJlZnVzZXJpZDozMjpCRjU2Qzc0RTUwQzUyOTVFNDYwMEI0QTQ0NEFDMzFBMHxyZWZuaWNrOjEzOk5pZ2h0aW5nYWxlLll8';
+                    //sohu cookie
+                    document.cookie = 'ppinf=2|1402199707|1403409307|bG9naW5pZDowOnx1c2VyaWQ6NDQ6QkY1NkM3NEU1MEM1Mjk1RTQ2MDBCNEE0NDRBQzMxQTBAcXEuc29odS5jb218c2VydmljZXVzZTozMDowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDB8Y3J0OjA6fGVtdDoxOjB8YXBwaWQ6NDoxMTIwfHRydXN0OjE6MXxwYXJ0bmVyaWQ6MTowfHJlbGF0aW9uOjA6fHV1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1aWQ6MTY6YzA3YWYyODJhZTViNDI3eHx1bmlxbmFtZTo0MzpOaWdodGluZ2FsZVkxMzYxJUU1JTlDJUE4JUU2JTkwJTlDJUU3JThCJTkwfHJlZnVzZXJpZDozMjpCRjU2Qzc0RTUwQzUyOTVFNDYwMEI0QTQ0NEFDMzFBMHxyZWZuaWNrOjEzOk5pZ2h0aW5nYWxlLll8';
                     assert.equal('BF56C74E50C5295E4600B4A444AC31A0@qq.sohu.com', PassportCookieParser.parse().userid);
+                    //sogou cookie
+                    document.cookie = 'ppinf=5|1409662939|1410872539|Y2xpZW50aWQ6NDoyMDAyfGNydDoxMDoxNDA5NjYyOTM5fHJlZm5pY2s6MDp8dHJ1c3Q6MToxfHVzZXJpZDoxNjpsb3ZlbWRAc29nb3UuY29tfHVuaXFuYW1lOjA6fA';
+                    assert.equal('lovemd@sogou.com', PassportCookieParser.parse().userid);
                 }
             });
         });
