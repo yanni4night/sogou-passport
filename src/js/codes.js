@@ -25,7 +25,7 @@ var codes = {
     },
     CAPTCHA_FAILED: {
         code: 20221,
-        info: "验证码验证失败 "
+        info: "验证码验证失败"
     },
     ACCOUNT_NOT_EXIST: {
         code: 20205,
