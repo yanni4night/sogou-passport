@@ -10,9 +10,10 @@
  * 2014-06-07[15:21:54]:search cookie by regexp
  * 2014-06-13[10:01:30]:transplanted jquery.cookie
  * 2014-09-02[21:10:35]:rewrite cookie parser
+ * 2014-09-03[18:06:00]:modified exports
  *
  * @author yanni4night@gmail.com
- * @version 0.1.3
+ * @version 0.1.4
  * @since 0.1.0
  */
 "use strict";
@@ -147,7 +148,7 @@ var exports = module.exports;
     };
 })(exports);
 
-var PassportCookieParser = {
+exports.PassportCookieParser = {
     cookie: {},
     version: null,
     getCookie: function() {
@@ -177,7 +178,7 @@ var PassportCookieParser = {
             parsedArray = unescape(ppinf).split("|");
             this.version = parseInt(parsedArray[0]);
             payload = parsedArray[3];
-            if (!!~array.indexOf([1, 2, 5], this.version) && payload) {
+            if (/*!!~array.indexOf([1, 2, 5], this.version) &&*/ payload) {
                 this._parsePassportCookie(math.utf8to16(math.b64_decodex(payload)));
             }
         } catch (e) {}
@@ -209,11 +210,5 @@ var PassportCookieParser = {
             this.cookie[key] = val;
         }, this);
         return this;
-    }
-};
-
-exports.PassportCookieParser = {
-    parse: function() {
-        return PassportCookieParser.parsePassportCookie().getCookie();
     }
 };

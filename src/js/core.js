@@ -448,7 +448,7 @@ var Passport = {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
 
-        return PassportCookieParser.parse().userid || "";
+        return PassportCookieParser.parsePassportCookie().getCookie().userid || "";
     },
     /**
      * Login callback from iframe.
