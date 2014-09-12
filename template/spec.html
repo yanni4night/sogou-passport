@@ -1,29 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <title>
-            Specification
-        </title>
-        <meta name="author" content="yinyong@sogou-inc.com"/>
-        <link rel="stylesheet" href="css/main.css" type="text/css"/>
-    </head>
-    <body class="flex">
-        <header class="f-f f-m">
-            <div class="logo">S</div>
-            <div class="tit f-1 tc">Development Specification</div>
-            <span class="alpha">@version@</span>
-        </header>
-        <nav>
-            <ul class="f-f">
-                <li class="f-1 tc"><a class="bl" href="/">Index</a></li>
-                <li class="f-1 tc"><a class="bl" target="_blank" href="/doc/">Documentation</a></li>
-                <li class="f-1 tc"><a class="bl hover" href="/spec.html">Specification</a></li>
-                <li class="f-1 tc"><a class="bl" target="_blank" href="/test.html">Code Example</a></li>
-                <li class="f-1 tc"><a class="bl" target="_blank" href="/pop.html">Pop Plugin</a></li>
-            </ul>
-        </nav>
-        <div class="article">
+{%extends "common/parent.tpl"%}
+
+{%block title%}Specification{%endblock%}
+
+{%block content%}
+
+{%set menuIndex=3%}
+{%include "common/menu.tpl"%}
+
+<div class="article">
             <h4>编码规范</h4>
             <ul>
                 <li>代码中使用内部 console 的一系列方法，在发布版中，不会输出任何内容</li>
@@ -83,15 +67,6 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-        <hr/>
-        <footer class="f-f f-c f-m">
-            <span><a href="http://ufo.sogou-inc.com">ufo</a>(C) 2014 All Rights Reserved</span> |
-            <a href="http://git.ufo.sogou-inc.com/yinyong/passport">git.ufo</a> | 
-            <a href="mailto:yinyong@sogou-inc.com">contact</a>
-        </footer>
         <div id="ppcontainer"></div>
-        <script type="text/javascript">
-        
-    </body>
-</html>
+{%endblock%}
+

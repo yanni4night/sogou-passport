@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 
     var pkg = grunt.file.readJSON('package.json');
     var now = new Date();
-    var builtVersion = pkg.version + "." + String(now.getFullYear()).slice(-2) + w(1 + now.getMonth()) + w(now.getDate());
+    var builtVersion = grunt.option('dist') ? (pkg.version + "." + String(now.getFullYear()).slice(-2) + w(1 + now.getMonth()) + w(now.getDate())) : 'local';
 
     function w(d) {
         return d < 10 ? ('0' + d) : d;
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
 
     grunt.initConfig({
-        pkg:pkg,
+        pkg: pkg,
         jshint: {
             options: {
                 strict: true, //use strict
@@ -46,7 +46,7 @@ module.exports = function(grunt) {
                 nonstandard: true //escape,unescape
             },
             lib: {
-                src: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/appendix/*.js',STATIC_DIR + 'js/plugin/*.js'],
+                src: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js', STATIC_DIR + 'js/plugin/*.js'],
             }
         },
         uglify: {
@@ -103,14 +103,6 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            html: {
-                files: [{
-                    expand: true,
-                    cwd: 'template/',
-                    src: ['*.html'],
-                    dest: WEB_DIR
-                }]
-            },
             ico: {
                 files: [{
                     expand: true,
@@ -143,20 +135,16 @@ module.exports = function(grunt) {
         },
         watch: {
             libjs: {
-                files: [STATIC_DIR + 'js/*.js',STATIC_DIR + 'js/{appendix,test}/*.js'],
+                files: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/{appendix,test}/*.js'],
                 tasks: ['libjs-test']
             },
-            plugins:{
-                files:[STATIC_DIR + 'js/plugin/*.js'],
-                tasks:['browserify:plugins']
+            plugins: {
+                files: [STATIC_DIR + 'js/plugin/*.js'],
+                tasks: ['browserify:plugins']
             },
             css: {
                 files: [STATIC_DIR + 'css/**/*.{css,less}'],
                 tasks: ['less:css']
-            },
-            html: {
-                files: ['template/**/*.html','*.md'],
-                tasks: ['copy', 'vars:html']
             },
             img: {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
@@ -191,46 +179,31 @@ module.exports = function(grunt) {
         },
         browserify: {
             plugins: {
-                expand:true,
-                cwd:STATIC_DIR,
-                src: [  'js/plugin/*.js'],
-                dest: TARGET_DIR 
+                expand: true,
+                cwd: STATIC_DIR,
+                src: ['js/plugin/*.js'],
+                dest: TARGET_DIR
             },
             core: {
                 src: [STATIC_DIR + 'js/core.js'],
                 dest: TARGET_DIR + '/js/passport-core.js'
             },
             test: {
-                src: [/*STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js',*/ STATIC_DIR + 'js/test/*.js'],
+                src: [ /*STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js',*/ STATIC_DIR + 'js/test/*.js'],
                 dest: TARGET_DIR + '/js/passport-test.js'
             }
         },
         vars: {
-            dist: {
-                options: {
-                    debug: false
-                },
+            js: {
                 src: [TARGET_DIR + '/js/*.js']
-            },
-            test: {
-                options: {
-                    debug: true
-                },
-                src: [TARGET_DIR + '/js/*.js']
-            },
-            html: {
-                options: {
-                    debug: true
-                },
-                src: [WEB_DIR + '/*.html']
             }
         },
-        jsdoc:{
-            options:{
-                destDir : 'web/doc/',
-                title:'Sogou passport <%=pkg.version%>'
+        jsdoc: {
+            options: {
+                destDir: 'template/doc/',
+                title: 'Sogou passport <%=pkg.version%>'
             },
-            all:[STATIC_DIR+'js/*.js',STATIC_DIR+'js/appendix/*.js']
+            all: [STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js']
         }
     });
 
@@ -252,7 +225,7 @@ module.exports = function(grunt) {
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, +!!options.debug).replace(/@readme@/img, mdHTML);
+                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, grunt.option('dist') ? 0 : 1);
                 grunt.file.write(src, content);
                 grunt.log.ok(src);
             });
@@ -260,13 +233,13 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
-    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:dist', 'uglify:libjs']);
-    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:test' /*, 'uglify:libjs'*/ ]);
-    grunt.registerTask('official', ['copy', 'vars:html', 'imagemin:static', 'less:css']);
+    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars', 'uglify:libjs']);
+    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars']);
+    grunt.registerTask('official', ['copy', 'imagemin:static', 'less:css']);
 
 
-    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official','jsdoc']);
-    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official','jsdoc']);
+    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official', 'jsdoc']);
+    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official', 'jsdoc']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('pub', ['dist']);
     grunt.registerTask('server', ['express']);

@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <title>PC roam tets</title>
-        <meta name="author" content="yanni4night@gmail.com"/>
-        <style type="text/css">
+{%extends "common/parent.tpl"%}
+
+{%block title%}PC roam test{%endblock%}
+
+{%block top%}
+<style type="text/css">
         form{
-            width: 600px;
+            width: 700px;
+            margin: 0 auto;
         }
         .row{
             margin: 10px 0;
@@ -16,11 +16,14 @@
             height: 100px;
         }
         #msg{color: #28b;font-weight: 900;}
-        </style>
-    </head>
-    <body>
-        <form action="#" id="form">
-            <div class="row" id="msg"></div>
+</style>
+{%endblock%}
+
+{%block content%}
+{%set menuIndex=6%}
+{%include "common/menu.tpl"%}
+    <form id="form">
+    <div class="row" id="msg"></div>
             <div class="row">
                 <select id="type">
                     <option value="t">token</option>
@@ -34,8 +37,10 @@
                 <button>Check</button>
             </div>
         </form>
-    </body>
-    <script src="dist/@version@/js/passport-core.js"></script>
+{%endblock%}
+
+{%block bottom%}
+<script src="dist/local/js/passport-core.js"></script>
     <script type="text/javascript">
  PassportSC({
         appid:1120,
@@ -56,4 +61,4 @@ document.getElementById('form').onsubmit = function(e){
     PassportSC.checkToken(type,token);
 };
     </script>
-</html>
+{%endblock%}
