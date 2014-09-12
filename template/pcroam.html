@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>PC roam tets</title>
+        <meta name="author" content="yanni4night@gmail.com"/>
+        <style type="text/css">
+        form{
+            width: 600px;
+        }
+        .row{
+            margin: 10px 0;
+        }
+        textarea{
+            width: 100%;
+            height: 100px;
+        }
+        #msg{color: #28b;font-weight: 900;}
+        </style>
+    </head>
+    <body>
+        <form action="#" id="form">
+            <div class="row" id="msg"></div>
+            <div class="row">
+                <select id="type">
+                    <option value="t">token</option>
+                    <option value="c">cookie</option>
+                </select>
+            </div>
+            <div>
+                <textarea id="token"></textarea>
+            </div class="row">
+            <div class="row">
+                <button>Check</button>
+            </div>
+        </form>
+    </body>
+    <script src="dist/@version@/js/passport-core.js"></script>
+    <script type="text/javascript">
+ PassportSC({
+        appid:1120,
+        redirectUrl:location.protocol + '//' + location.host + '/xjump.html'
+    }).on('pcroamsuccess',function (e) {
+        document.getElementById('msg').innerHTML = 'token check succeed';
+    }).on('pcroamfailed',function (e) {
+        document.getElementById('msg').innerHTML = 'token check failed';
+    });
+
+document.getElementById('form').onsubmit = function(e){
+    e.preventDefault();
+    e.returnValue = false;
+
+    var $select = document.getElementById('type');
+    var type = $select.options[$select.selectedIndex].value;
+    var token = document.getElementById('token').value;
+    PassportSC.checkToken(type,token);
+};
+    </script>
+</html>

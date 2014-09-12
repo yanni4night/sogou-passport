@@ -32,9 +32,10 @@
  * 2014-06-14[12:15:01]:exports utils,add 'setPayload'&'getPayload'
  * 2014-06-24[10:16:46]:add 'getNewCaptcha'
  * 2014-08-08[11:05:06]:initialized plugins here
+ * 2014-09-13[01:31:04]:support pc roam checking
  *
  * @author yanni4night@gmail.com
- * @version 0.2.3
+ * @version 0.2.4
  * @since 0.1.0
  */
 
@@ -62,7 +63,9 @@ var EVENTS = {
     login_failed: 'loginfailed',
     logout_success: 'logoutsuccess',
     third_party_login_complete: '3rdlogincomplete', //popup only
-    param_error: 'paramerror'
+    param_error: 'paramerror',
+    pc_roam_success: 'pcroamsuccess',
+    pc_roam_failed: 'pcroamfailed'
 };
 
 var FIXED_URLS = {
@@ -71,7 +74,8 @@ var FIXED_URLS = {
     active: 'https://account.sogou.com/web/remindActivate',
     captcha: 'https://account.sogou.com/captcha',
     trdparty: 'http://account.sogou.com/connect/login',
-    libprefix: 'http://s.account.sogoucdn.com/u/api'
+    libprefix: 'http://s.account.sogoucdn.com/u/api',
+    pcroam: 'https://account.sogou.com/sso/pc_roam' //validate if a cookie or token from PC client is avaliable
 };
 
 var THIRD_PARTY_SIZE = {
@@ -89,7 +93,11 @@ var gPayload = {};
 
 var gAppendixes = [drawAppendix, statisticAppendix, pluginAppendix];
 
-var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + EXPANDO + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + EXPANDO + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+var expandoLogin = EXPANDO + '_login';
+var expandoRoam = EXPANDO + '_roam';
+
+var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoLogin + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expandoLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+var HTML_PC_ROAM = '<form method="post" action="' + FIXED_URLS.pcroam + '" target="' + expandoRoam + '">' + '<input type="hidden" name="type" value="<%=type%>">' + '<input type="hidden" name="v" value="<%=v%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoam + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
 //For validations of options in bulk
 var VALIDATORS = [{
@@ -132,7 +140,7 @@ function assertgFrameWrapper(callback) {
     if (!type.isHTMLElement(c) || !c.parentNode) {
         c = gFrameWrapper = document.createElement('div');
         c.style.cssText = HIDDEN_CSS;
-        c.className = c.id = EXPANDO;
+        c.className = EXPANDO;
         document.body.appendChild(c);
     }
 
@@ -245,7 +253,7 @@ for (e in Tools) {
 var Passport = {
     /**
      * The current version of passport library.
-     * 
+     *
      * @type {String}
      * @class PassportSC
      * @since 0.0.8
@@ -253,7 +261,7 @@ var Passport = {
     version: '@version@', //see 'package.json'
     /**
      * Commaon passport tools.
-     * 
+     *
      * @class PassportSC
      * @since 0.0.8
      * @see  {#Tools}
@@ -360,6 +368,29 @@ var Passport = {
         });
 
         return true;
+    },
+    /**
+     * Check if a token is avaliable
+     *
+     * @param  {String} ctype  Token ctype,exp:t,c
+     * @param  {String} token  A token from PC client.
+     * @return {Boolean}       True
+     * @class PassportSC
+     * @since 0.0.9
+     */
+    checkToken: function(ctype, token) {
+        type.assertNonEmptyString('ctype', ctype);
+        type.assertNonEmptyString('token', token);
+
+        assertgFrameWrapper(function(container) {
+            container.innerHTML = template(HTML_PC_ROAM, {
+                type: type,
+                v: token,
+                redirectUrl: gOptions.redirectUrl,
+                appid: gOptions.appid
+            });
+            container.getElementsByTagName('form')[0].submit();
+        });
     },
     /**
      * Third party login.
@@ -501,11 +532,27 @@ var Passport = {
         }
     },
     /**
+     * Pc roam checking callback.
+     *
+     * DO NOT call it directly.
+     * 
+     * @param  {Object} token checking result
+     * @class PassportSC
+     * @since 0.0.9
+     */
+    _pcroamcb: function(data){
+        if(data && 0 === +data.status && data.uniqname){
+            this.emit(EVENTS.pc_roam_success, data);
+        }else{
+            this.emit(EVENTS.pc_roam_failed, data);
+        }
+    },
+    /**
      * Third party login callback from 'popup' window.
      * DO NOT call it directly.
      *
      * Callback with 'page' display is not supported.
-     * 
+     *
      * @class PassportSC
      * @since 0.0.8
      */
@@ -637,7 +684,7 @@ var core = {
 
 //Merge plugin
 //We have to initialize plugins because 'onApiLoaded'
-UTILS.array.forEach(gAppendixes, function(appendixInit,idx) {
+UTILS.array.forEach(gAppendixes, function(appendixInit, idx) {
     appendixInit(core);
 });
 
