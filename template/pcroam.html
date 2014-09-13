@@ -22,21 +22,23 @@
 {%block content%}
 {%set menuIndex=6%}
 {%include "common/menu.tpl"%}
-    <form id="form">
-    <div class="row" id="msg"></div>
-            <div class="row">
-                <select id="type">
-                    <option value="t">token</option>
-                    <option value="c">cookie</option>
-                </select>
-            </div>
-            <div>
-                <textarea id="token"></textarea>
-            </div class="row">
-            <div class="row">
-                <button>Check</button>
-            </div>
-        </form>
+<form id="form">
+    <div class="row" id="msg">检测token是否有效，该token来自pc浏览器，输入法，用于带入登录态</div>
+    <div class="row">
+        <label for="type">类型</label>
+        <select id="type">
+            <option value="t">token</option>
+            <option value="c">cookie</option>
+        </select>
+    </div>
+    <div>
+        <label for="token">TOKEN/COOKIE</label>
+        <textarea id="token"></textarea>
+    </div class="row">
+    <div class="row">
+        <button type="submit">检测</button>
+    </div>
+</form>
 {%endblock%}
 
 {%block bottom%}

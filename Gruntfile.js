@@ -15,16 +15,12 @@
  * @since 0.1.0
  */
 
-var markdown = require('markdown').markdown;
-
 module.exports = function(grunt) {
 
     "use strict";
     var STATIC_DIR = 'src/';
     var WEB_DIR = 'web/';
     var CDN_DIR = 'dist/';
-
-    var mdHTML = markdown.toHTML(grunt.file.read('./README.md'));
 
     var pkg = grunt.file.readJSON('package.json');
     var now = new Date();
@@ -150,6 +146,10 @@ module.exports = function(grunt) {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
                 tasks: ['official']
             },
+            markdown:{
+                files:['*.md'],
+                tasks:['markdown']
+            },
             skin: {
                 files: [STATIC_DIR + "skin/**/*"],
                 tasks: ['skin']
@@ -159,7 +159,7 @@ module.exports = function(grunt) {
             options: {
                 force: true
             },
-            built: [WEB_DIR + "*", "**/._*", "**/.DS_Store"]
+            built: [WEB_DIR]
         },
         express: {
             test: {
@@ -198,6 +198,19 @@ module.exports = function(grunt) {
                 src: [TARGET_DIR + '/js/*.js']
             }
         },
+        markdown: {
+            options: {
+                template: 'template/common/markdown.tpl'
+            },
+            all: {
+                files: [{
+                    expand: true,
+                    src: '*.md',
+                    dest: 'template',
+                    ext: '.html'
+                }]
+            }
+        },
         jsdoc: {
             options: {
                 destDir: 'template/doc/',
@@ -211,6 +224,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-markdown');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -238,8 +252,8 @@ module.exports = function(grunt) {
     grunt.registerTask('official', ['copy', 'imagemin:static', 'less:css']);
 
 
-    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official', 'jsdoc']);
-    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official', 'jsdoc']);
+    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official', 'markdown', 'jsdoc']);
+    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official', 'markdown', 'jsdoc']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('pub', ['dist']);
     grunt.registerTask('server', ['express']);

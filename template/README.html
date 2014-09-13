@@ -1,0 +1,65 @@
+{%extends "common/parent.tpl"%}
+
+
+{%block top%}
+<style>
+    .content{
+        width: 1000px;
+        margin: 0 auto;
+    }
+</style>
+{%endblock%}
+
+{%block content%}
+{%set menuIndex=7%}
+{%include "common/menu.tpl"%}
+<div class="content"><h1 id="passport">passport</h1>
+<p>This is a tentative improvement for sogou passport javascript library.</p>
+<p>Continuous developing is still on,see <a href="http://passport.ufo.sogou-inc.com">http://passport.ufo.sogou-inc.com</a>.</p>
+<h1 id="build">build</h1>
+<p><code>grunt dist</code> or <code>grunt test</code></p>
+<h1 id="test">test</h1>
+<p><code>grunt karma</code></p>
+<h1 id="history">history</h1>
+<ul>
+<li>0.0.9.14090*:<ul>
+<li>rewrite sogou cookie parser,version 5 is supported</li>
+</ul>
+</li>
+<li>0.0.9.140822:<ul>
+<li>plugins supported;</li>
+<li>pop function supported with jQuery sniffing;</li>
+</ul>
+</li>
+<li>0.0.8.140811-fix1:<ul>
+<li>Fixed crash about var undefined;</li>
+<li>Fixed &quot;far&quot; submit button showed in IE7</li>
+</ul>
+</li>
+<li>0.0.8.140808-fixed3:<ul>
+<li>Moved utils.<em>hideSource/mixin/extend/getIEVersion</em> to lone;</li>
+<li>Added a new <code>now</code> function in lone;</li>
+<li>Export PassportSC.utils.<em>cookie</em>;</li>
+<li>Get logined username in <code>email</code> cookie;</li>
+<li>Fixed a bug when loading async;</li>
+<li>Show required error message on dialog;</li>
+<li>Fixed wrong submit bg on IE6;</li>
+</ul>
+</li>
+<li>0.0.8.140721:<ul>
+<li>Fixed css in draw plugin;</li>
+</ul>
+</li>
+<li>0.0.8.140709:<ul>
+<li>First beta version;</li>
+</ul>
+</li>
+</ul>
+<h1 id="contact">contact</h1>
+<ul>
+<li><a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#x79;&#x69;&#x6e;&#121;&#111;&#x6e;&#x67;&#64;&#x73;&#111;&#x67;&#111;&#x75;&#x2d;&#x69;&#x6e;&#99;&#x2e;&#99;&#111;&#x6d;">&#x79;&#x69;&#x6e;&#121;&#111;&#x6e;&#x67;&#64;&#x73;&#111;&#x67;&#111;&#x75;&#x2d;&#x69;&#x6e;&#99;&#x2e;&#99;&#111;&#x6d;</a></li>
+</ul>
+<h1 id="license">license</h1>
+<p><img src="http://www.gnu.org/graphics/gplv3-88x31.png" alt="GPLv3"></p>
+</div>
+{%endblock%}

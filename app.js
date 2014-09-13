@@ -33,11 +33,16 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
-app.get('/', function(req, res) {
+/*app.get('/', function(req, res) {
     return res.redirect('/index.html');
+});*/
+
+app.get(/\/$/, function(req, res) {
+    return res.redirect(req.path + 'index.html');
 });
-app.get(/(\w+)\.html$/, function(req, res) {
-    return res.render(RegExp.$1);
+
+app.get(/\.html$/, function(req, res) {
+    return res.render(req.path.replace(/(^\/|\.html$)/m,''));
 });
 
 http.createServer(app).listen(app.get('port'), function() {

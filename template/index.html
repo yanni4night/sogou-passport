@@ -77,7 +77,7 @@
             <p>初步的尝试基本完成，下面的设计可能存在的不合理之处，以及可能造成混淆的 case，已经以 Question 的形式提出以供讨论:</p>
             <p>由于各产品线对于跨域页面文件 <a href="http://wan.sogou.com/static/jump.html" target="_blank">jump.html</a> 的部署已经十分广泛，为兼容及重用，我们仍然使用 <q>PassportSC</q> 作为入口对象名：</p>
 <pre>
-&lt;script type="text/javascript" src="dist/@version@/js/passport-core.js"&gt;
+&lt;script type="text/javascript" src="dist/local/js/passport-core.js"&gt;
 &lt;/script&gt;
 &lt;script type="text/javascript"&gt;
     window.PassportSC
@@ -93,7 +93,7 @@ var PassportSC = {
         //Do your passport work here
     }
 };
-loadSync('dist/@version@/js/passport-core.js');
+loadSync('dist/local/js/passport-core.js');
 &lt;/script&gt;
 </pre>
             <p>初始化函数必须首先调用：</p>
@@ -213,7 +213,7 @@ PassportSC
                 </fieldset>
             </form>
             <p>
-                测试页面 <a href="test.html">test.html</a>,<a href="pop.html">pop.html</a>。
+                测试页面 <a href="test.html">test.html</a>,<a href="pop.html">pop.html</a>,<a href="pcroam.html">pcroam.html</a>。
             </p>
             <p><a href="/doc/">API doc</a></p>
         </div><!--article-->
