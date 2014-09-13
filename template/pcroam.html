@@ -27,15 +27,15 @@
 {%endblock%}
 
 {%block bottom%}
-<script src="dist/local/js/passport-core.js"></script>
+<script src="dist/{{version}}/js/passport-core.js"></script>
     <script type="text/javascript">
  PassportSC({
         appid:1120,
         redirectUrl:location.protocol + '//' + location.host + '/xjump.html'
     }).on('pcroamsuccess',function (e) {
-        document.getElementById('msg').innerHTML = 'token check succeed';
+        document.getElementById('msg').innerHTML = 'token 验证成功';
     }).on('pcroamfailed',function (e) {
-        document.getElementById('msg').innerHTML = 'token check failed';
+        document.getElementById('msg').innerHTML = 'token 验证失败';
     });
 
 document.getElementById('form').onsubmit = function(e){
@@ -45,7 +45,7 @@ document.getElementById('form').onsubmit = function(e){
     var $select = document.getElementById('type');
     var type = $select.options[$select.selectedIndex].value;
     var token = document.getElementById('token').value;
-    PassportSC.checkToken(type,token);
+    PassportSC.checkPCToken(type,token);
 };
     </script>
 {%endblock%}

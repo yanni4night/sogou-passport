@@ -1,7 +1,7 @@
 {%extends "common/parent.tpl"%}
 
 {%block top%}
-<script src="dist/local/js/passport-core.js" type="text/javascript"></script>
+<script src="dist/{{version}}/js/passport-core.js" type="text/javascript"></script>
 {%endblock%}
 
 {%block bodyClass%}body-index{%endblock%}
@@ -80,7 +80,7 @@
             <p>初步的尝试基本完成，下面的设计可能存在的不合理之处，以及可能造成混淆的 case，已经以 Question 的形式提出以供讨论:</p>
             <p>由于各产品线对于跨域页面文件 <a href="http://wan.sogou.com/static/jump.html" target="_blank">jump.html</a> 的部署已经十分广泛，为兼容及重用，我们仍然使用 <q>PassportSC</q> 作为入口对象名：</p>
 <pre>
-&lt;script type="text/javascript" src="dist/local/js/passport-core.js"&gt;
+&lt;script type="text/javascript" src="dist/{{version}}/js/passport-core.js"&gt;
 &lt;/script&gt;
 &lt;script type="text/javascript"&gt;
     window.PassportSC
@@ -96,7 +96,7 @@ var PassportSC = {
         //Do your passport work here
     }
 };
-loadSync('dist/local/js/passport-core.js');
+loadSync('dist/{{version}}/js/passport-core.js');
 &lt;/script&gt;
 </pre>
             <p>初始化函数必须首先调用：</p>
@@ -145,9 +145,6 @@ loadSync('dist/local/js/passport-core.js');
             <p>
             
             <a href="#disqus_thread" class="q">是否需要考虑未来可能存在较大的集成插件对仅使用核心功能的产品带来的影响？</a>
-            <a href="#disqus_thread" class="q">是否有必要定义统一的搜狗登录框样式？</a>
-            
-            <p>更多的集成插件仍在丰富中...</p>
 
             <p>有必要说明 PassportSC 对象初始定义实质为一函数，因此在<b>同步引入模式下</b> <a href="api-init">Passport.init</a> 也可以这样写</p>
             <code>PassportSC(options);</code>

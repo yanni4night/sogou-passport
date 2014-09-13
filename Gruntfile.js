@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 
     var pkg = grunt.file.readJSON('package.json');
     var now = new Date();
-    var builtVersion = grunt.option('dist') ? (pkg.version + "." + String(now.getFullYear()).slice(-2) + w(1 + now.getMonth()) + w(now.getDate())) : 'local';
+    var builtVersion = pkg.version + "." + String(now.getFullYear()).slice(-2) + w(1 + now.getMonth()) + w(now.getDate());
 
     function w(d) {
         return d < 10 ? ('0' + d) : d;
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['**/*.{ico,woff,svg,eot,ttf}'],
+                    src: ['img/*.ico', 'fonts/*.{ico,woff,woff2,svg,eot,ttf}'],
                     dest: WEB_DIR
                 }]
             }
@@ -146,9 +146,13 @@ module.exports = function(grunt) {
                 files: [STATIC_DIR + 'img/**/*.{png,jpg,gif,ico}'],
                 tasks: ['official']
             },
-            markdown:{
-                files:['*.md'],
-                tasks:['markdown']
+            fonts: {
+                files: [STATIC_DIR + 'fonts/*'],
+                tasks: ['official']
+            },
+            markdown: {
+                files: ['*.md'],
+                tasks: ['markdown']
             },
             skin: {
                 files: [STATIC_DIR + "skin/**/*"],
@@ -189,12 +193,21 @@ module.exports = function(grunt) {
                 dest: TARGET_DIR + '/js/passport-core.js'
             },
             test: {
-                src: [ /*STATIC_DIR + 'js/*.js', STATIC_DIR + 'js/appendix/*.js',*/ STATIC_DIR + 'js/test/*.js'],
+                src: [STATIC_DIR + 'js/test/*.js'],
                 dest: TARGET_DIR + '/js/passport-test.js'
             }
         },
         vars: {
-            js: {
+            js_debug: {
+                options: {
+                    debug: 1
+                },
+                src: [TARGET_DIR + '/js/*.js']
+            },
+            js_dist: {
+                options: {
+                    debug: 0
+                },
                 src: [TARGET_DIR + '/js/*.js']
             }
         },
@@ -239,22 +252,27 @@ module.exports = function(grunt) {
         this.files.forEach(function(f) {
             f.src.forEach(function(src) {
                 var content = grunt.file.read(src);
-                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, grunt.option('dist') ? 0 : 1);
+                content = content.replace(/@version@/img, builtVersion).replace(/@debug@/img, +!!options.debug);
                 grunt.file.write(src, content);
                 grunt.log.ok(src);
             });
         });
     });
 
+    grunt.registerTask('version', 'set version', function() {
+        grunt.file.write('template/common/version.tpl', '{%set version="' + builtVersion + '"%}\n');
+    });
+
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
-    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars', 'uglify:libjs']);
-    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars']);
+    grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:js_debug']);
+    grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:js_dist', 'uglify:libjs']);
     grunt.registerTask('official', ['copy', 'imagemin:static', 'less:css']);
 
 
-    grunt.registerTask('test', ['clean', 'skin', 'libjs-test', 'official', 'markdown', 'jsdoc']);
-    grunt.registerTask('dist', ['clean', 'skin', 'libjs-dist', 'official', 'markdown', 'jsdoc']);
+    grunt.registerTask('test', ['version', 'clean', 'skin', 'libjs-test', 'official', 'markdown', 'jsdoc']);
+    grunt.registerTask('dist', ['version', 'clean', 'skin', 'libjs-dist', 'official', 'markdown', 'jsdoc']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('pub', ['dist']);
+
     grunt.registerTask('server', ['express']);
 };

@@ -5,5 +5,5 @@
                 <a class="{%if 4==menuIndex%}hover{%endif%}" href="/test.html">代码</a>
                 <a class="{%if 5==menuIndex%}hover{%endif%}" href="/pop.html">弹出插件</a>
                 <a class="{%if 6==menuIndex%}hover{%endif%}" href="/pcroam.html">PC登录态带入</a>
-                <a class="{%if 7==menuIndex%}hover{%endif%}" href="/README.html">README</a>
+                <a class="{%if 7==menuIndex%}hover{%endif%}" href="/README.html">关于</a>
         </nav>

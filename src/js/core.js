@@ -378,7 +378,7 @@ var Passport = {
      * @class PassportSC
      * @since 0.0.9
      */
-    checkToken: function(ctype, token) {
+    checkPCToken: function(ctype, token) {
         type.assertNonEmptyString('ctype', ctype);
         type.assertNonEmptyString('token', token);
 
@@ -391,6 +391,8 @@ var Passport = {
             });
             container.getElementsByTagName('form')[0].submit();
         });
+
+        return true;
     },
     /**
      * Third party login.
