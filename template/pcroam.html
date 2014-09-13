@@ -2,27 +2,12 @@
 
 {%block title%}PC roam test{%endblock%}
 
-{%block top%}
-<style type="text/css">
-        form{
-            width: 700px;
-            margin: 0 auto;
-        }
-        .row{
-            margin: 10px 0;
-        }
-        textarea{
-            width: 100%;
-            height: 100px;
-        }
-        #msg{color: #28b;font-weight: 900;}
-</style>
-{%endblock%}
+{%block bodyClass%}body-pcroam{%endblock%}
 
 {%block content%}
 {%set menuIndex=6%}
 {%include "common/menu.tpl"%}
-<form id="form">
+<form id="form" class="content">
     <div class="row" id="msg">检测token是否有效，该token来自pc浏览器，输入法，用于带入登录态</div>
     <div class="row">
         <label for="type">类型</label>

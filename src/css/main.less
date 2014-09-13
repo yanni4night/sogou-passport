@@ -1,219 +1,127 @@
 @charset 'utf-8';
-@import url('flexable.css');
-
-@contentWidth:1000px;
-
-html,body{
-    padding: 0;margin: 0;
-    font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
-    background: #fff;
-    color: #333;
-}
-
-@font-face {
-    font-family: 'jenna_sueregular';
-    src: url('/fonts/jenna_sue_-webfont.eot');
-    src: url('/fonts/jenna_sue_-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/fonts/jenna_sue_-webfont.woff2') format('woff2'),
-         url('/fonts/jenna_sue_-webfont.woff') format('woff'),
-         url('/fonts/jenna_sue_-webfont.ttf') format('truetype'),
-         url('/fonts/jenna_sue_-webfont.svg#jenna_sueregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-a{
-    color: #333;
-    padding: 0 3px;
-}
-
-a:hover,a.hover{
-    background: #333;
-    color: #eee;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.tc{
-    text-align: center;
-}
-.bl{
-    display: block;
-}
-.fl{
-    float: left;
-}
-.cl{
-    clear: both;
-    display: block;
-    height: 0;
-    font-size: 0;
-}
-
-h4{
-    font-size: 24px;
-}
-
-h4::before{
-    content:">> "
-}
-
-p{text-indent: 2em;}
+@import url('common.less');
+@import url('header.less');
 
 
-.fork{
-    position: fixed;
-    -webkit-transform:rotate(-45deg);
-    -moz-transform:rotate(-45deg);
-    -ms-transform:rotate(-45deg);
-    transform:rotate(-45deg);
-    left: -83px;
-    top: 47px;
-    background: #333;
-    color: #fff;
-    height: 40px;
-    line-height: 40px;
-    width: 300px;
-    font-weight: 900;
-    text-decoration: none;
-    text-align: center;
-}
-
-header{
-    .logo{
-        &::after{
-            content: "";
-            display:block;
-            width: 50px;
-            height: 50px;
-            background: #fff;
-            -webkit-transform:rotate(45deg);
-            -moz-transform:rotate(45deg);
-            -ms-transform:rotate(45deg);
-            transform:rotate(45deg);
-            position: absolute;
-            right: -25px;
-            top: 50%;
-            margin-top: -25px;
+.body-index{
+    .article{
+        h4{font-size: 24px;}
+        h4::before{content:">> ";}
+        p{text-indent: 2em;}
+        .q::before{content: "Question:"}
+        .q:first-letter{font-size: 50px;}
+        .q{
+            border: #28b 3px solid;
+            border-radius: 5px;
+            text-indent: 0;
+            display: block;
+            text-decoration: none;
+            color: #28b;
+            margin: 1em 0 1em 1em;
         }
-        margin-right: 40px;
-        background: #333;
-        position: relative;
-        width: 128px;
-        height: 128px;
-        border-radius: 999em;
-        text-align: center;
-        color: #fff;
-        font: 70px/128px 'cursive',arial,sans-serif;
-    }
-    .tit{
-        font-size: 80px;
-        margin-left: 10px;
-        font-family:'jenna_sueregular',cursive,arial,sans-serif;
-        font-weight: 800;
-        margin: 0;
-    }
-    padding: 10px 0;
-    width: @contentWidth;
-    margin: 0 auto 10px;
-    position: relative;
-}
-
-nav{
-    a{
-        text-decoration: underline;
-        padding: 5px;
-        font-size: 13px;
-    }
-    text-align: right;
-    position: fixed;
-    right: 0;
-    top:0;
-    height:20px;
-}
-
-.article{
-    .q::before{content: "Question:"}
-    .q:first-letter{font-size: 50px;}
-    .q{
-        border: #28b 3px solid;
-        border-radius: 5px;
-        text-indent: 0;
-        display: block;
-        text-decoration: none;
-        color: #28b;
-        margin: 1em 0 1em 1em;
-    }
-    .q:hover{
-        background: #ececec;
-    }
-    table{
-        img{
-            max-width: 300px;
-            filter: gray;
-            -webkit-filter:grayscale(1);
-            filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
-            -ms-filter:grayscale(1);
-            filter:grayscale(1);
+        .q:hover{
+            background: #ececec;
         }
-        td,th{
-            border:1px solid #ccc;
-            padding: 1em;
-            text-align: center;
+        table{
+            img{
+                max-width: 300px;
+                filter: gray;
+                -webkit-filter:grayscale(1);
+                filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+                -ms-filter:grayscale(1);
+                filter:grayscale(1);
+            }
+            td,th{
+                border:1px solid #ccc;
+                padding: 1em;
+                text-align: center;
+                vertical-align: middle;
+            }
+            width: 100%;
+            border-collapse: collapse;
+        }
+        &>code,&>pre{
+            display: block;
+            border-left: 5px solid #aaa;
+            padding-left: 5px;
+            background: #f0f0f0;
+            margin-left: 1em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        #info{
+            font-size: 16px;
+            color:#28b;
+            font-weight: 900;
+            height: 30px;
+            line-height: 30px;
+        }
+        #captcha-img{
+            height: 20px;
             vertical-align: middle;
+            border: 0;
         }
-        width: 100%;
-        border-collapse: collapse;
+        #ppcontainer{
+            display: none;
+        }
+        width: @contentWidth;
+        margin: 0 auto 10px;
     }
-    &>code,&>pre{
-        display: block;
-        border-left: 5px solid #aaa;
-        padding-left: 5px;
-        background: #f0f0f0;
-        margin-left: 1em;
-        margin-top: 1em;
-        margin-bottom: 1em;
+    form {
+        label{
+            width: 6em;
+            display: inline-block;
+        }
     }
-    #info{
-        font-size: 16px;
-        color:#28b;
-        font-weight: 900;
-        height: 30px;
-        line-height: 30px;
-    }
-    #captcha-img{
-        height: 20px;
-        vertical-align: middle;
-        border: 0;
-    }
-    #ppcontainer{
-        display: none;
-    }
-    width: @contentWidth;
-    margin: 0 auto 10px;
+    
 }
-form {
-    label{
-        width: 6em;
-        display: inline-block;
+
+.body-test{
+    .passport-dialog{
+        width: 400px;
+        position: fixed;
+        _position:absolute;
+        left: 50%;
+        top:100px;
+        margin-left: -200px;
+    }
+    pre{
+        background: #000;
+        padding: 1em;
+        color: #eee;
+        font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
+    }
+    .orange{
+        color: orange;
+    }
+    .cyan{
+        color: cyan;
+    }
+    .yellow{
+        color: yellow;
+    }
+    .red{
+        color: red;
+    }
+    button{
+        padding: 0.2em 1em;
+        text-align: center;
+        height: 25px;
+        border-radius: 10px;
+        margin: 5px;
+    }
+    .markd{
+        background: #ccc;
     }
 }
-#disqus_thread{
-    width: @contentWidth;
-    margin: 0 auto 10px;
-}
-hr{
-    display: block;
-    color:#999;
-    margin: 50px 0 10px;
-}
-footer{
-    a{
-        text-decoration: none;
-    }
-    font-size: 16px;
-    width: @contentWidth;
-    margin: 0 auto 10px;
-    text-align: center;
+
+.body-pcroam{
+        .row{
+            margin: 10px 0;
+        }
+        textarea{
+            width: 100%;
+            height: 100px;
+        }
+        #msg{color: #28b;font-weight: 900;}
 }

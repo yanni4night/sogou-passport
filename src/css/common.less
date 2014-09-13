@@ -1,0 +1,89 @@
+@charset 'utf-8';
+
+@contentWidth:1000px;
+
+html,body{
+    padding: 0;margin: 0;
+    font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+@font-face {
+    font-family: 'jenna_sueregular';
+    src: url('/fonts/jenna_sue_-webfont.eot');
+    src: url('/fonts/jenna_sue_-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/jenna_sue_-webfont.woff2') format('woff2'),
+         url('/fonts/jenna_sue_-webfont.woff') format('woff'),
+         url('/fonts/jenna_sue_-webfont.ttf') format('truetype'),
+         url('/fonts/jenna_sue_-webfont.svg#jenna_sueregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+a{
+    color: #333;
+    padding: 0 3px;
+}
+
+a:hover,a.hover{
+    background: #333;
+    color: #eee;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.tc{
+    text-align: center;
+}
+.bl{
+    display: block;
+}
+.fl{
+    float: left;
+}
+.cl{
+    clear: both;
+    display: block;
+    height: 0;
+    font-size: 0;
+}
+.fork{
+    position: fixed;
+    -webkit-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg);
+    transform:rotate(-45deg);
+    left: -83px;
+    top: 47px;
+    background: #333;
+    color: #fff;
+    height: 40px;
+    line-height: 40px;
+    width: 300px;
+    font-weight: 900;
+    text-decoration: none;
+    text-align: center;
+}
+
+#disqus_thread{
+    width: @contentWidth;
+    margin: 0 auto 10px;
+}
+hr{
+    display: block;
+    color:#999;
+    margin: 50px 0 10px;
+}
+footer{
+    a{
+        text-decoration: none;
+    }
+    font-size: 16px;
+    width: @contentWidth;
+    margin: 0 auto 10px;
+    text-align: center;
+}
+
+.content{width: @contentWidth;margin: 0 auto; }

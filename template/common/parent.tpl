@@ -10,7 +10,7 @@
         {%block top%}
         {%endblock%}
     </head>
-    <body>
+    <body class="{%block bodyClass%}{%endblock%}">
          <a href="http://git.ufo.sogou-inc.com/yinyong/passport" class="fork f-f f-m f-c">Fork me</a>
         <header>
             <div class="logo fl">P</div>
@@ -25,7 +25,6 @@
             <a href="http://git.ufo.sogou-inc.com/yinyong/passport">git.ufo</a> | 
             <a href="mailto:yinyong@sogou-inc.com">contact</a>
         </footer>
-        {%block bottom%}
-        {%endblock%}
+        {%block bottom%}{%endblock%}
     </body>
 </html>
