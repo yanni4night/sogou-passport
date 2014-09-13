@@ -107,7 +107,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: STATIC_DIR,
-                    src: ['**/*.{ico}'],
+                    src: ['**/*.{ico,woff,svg,eot,ttf}'],
                     dest: WEB_DIR
                 }]
             }
