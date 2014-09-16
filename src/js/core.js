@@ -75,7 +75,8 @@ var FIXED_URLS = {
     captcha: 'https://account.sogou.com/captcha',
     trdparty: 'http://account.sogou.com/connect/login',
     libprefix: 'http://s.account.sogoucdn.com/u/api',
-    pcroam: 'https://account.sogou.com/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
+    pcroam: 'http://10.11.192.231:8090/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
+    //pcroam: 'https://account.sogou.com/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
 };
 
 var THIRD_PARTY_SIZE = {

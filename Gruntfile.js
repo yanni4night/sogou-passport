@@ -31,7 +31,7 @@ module.exports = function(grunt) {
     }
 
     var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
-    var LATEEST_DIR = WEB_DIR + CDN_DIR + 'lastest';
+    var LATEEST_DIR = WEB_DIR + CDN_DIR + 'latest';
 
     grunt.initConfig({
         pkg: pkg,
