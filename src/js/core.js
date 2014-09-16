@@ -33,9 +33,10 @@
  * 2014-06-24[10:16:46]:add 'getNewCaptcha'
  * 2014-08-08[11:05:06]:initialized plugins here
  * 2014-09-13[01:31:04]:support pc roam checking
+ * 2014-09-16[23:59:28]:add 'loginPcroam',rename 'checkPCToken'
  *
  * @author yanni4night@gmail.com
- * @version 0.2.4
+ * @version 0.2.5
  * @since 0.1.0
  */
 
@@ -401,7 +402,7 @@ var Passport = {
      * @class PassportSC
      * @since 0.0.9
      */
-    checkPCToken: function(ctype, token) {
+    checkPcroamToken: function(ctype, token) {
         type.assertNonEmptyString('ctype', ctype);
         type.assertNonEmptyString('token', token);
 

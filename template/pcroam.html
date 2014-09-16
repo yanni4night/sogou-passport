@@ -52,7 +52,7 @@ document.getElementById('form').onsubmit = function(e){
     var type = $select.options[$select.selectedIndex].value;
     console.log(type);
     var token = document.getElementById('token').value;
-    PassportSC.checkPCToken(type,token);
+    PassportSC.checkPcroamToken(type,token);
 };
     </script>
 {%endblock%}
