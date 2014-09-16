@@ -31,6 +31,7 @@ module.exports = function(grunt) {
     }
 
     var TARGET_DIR = WEB_DIR + CDN_DIR + builtVersion;
+    var LATEEST_DIR = WEB_DIR + CDN_DIR + 'lastest';
 
     grunt.initConfig({
         pkg: pkg,
@@ -105,6 +106,14 @@ module.exports = function(grunt) {
                     cwd: STATIC_DIR,
                     src: ['img/*.ico', 'fonts/*.{ico,woff,woff2,svg,eot,ttf}'],
                     dest: WEB_DIR
+                }]
+            },
+            lastest: {
+                files: [{
+                    expand: true,
+                    cwd: TARGET_DIR,
+                    src: ['**/*.{js,css,png,jpg,gif,bmp}', '!*-test.js'],
+                    dest: LATEEST_DIR
                 }]
             }
         },
@@ -266,11 +275,11 @@ module.exports = function(grunt) {
     grunt.registerTask('skin', ['uglify:skin', 'imagemin:skin', 'less:skin']);
     grunt.registerTask('libjs-test', ['jshint', 'browserify', 'vars:js_debug']);
     grunt.registerTask('libjs-dist', ['jshint', 'browserify', 'vars:js_dist', 'uglify:libjs']);
-    grunt.registerTask('official', ['copy', 'imagemin:static', 'less:css']);
+    grunt.registerTask('official', ['copy:ico', 'imagemin:static', 'less:css']);
 
 
-    grunt.registerTask('test', ['version', 'clean', 'skin', 'libjs-test', 'official', 'markdown', 'jsdoc']);
-    grunt.registerTask('dist', ['version', 'clean', 'skin', 'libjs-dist', 'official', 'markdown', 'jsdoc']);
+    grunt.registerTask('test', ['version', 'clean', 'skin', 'libjs-test', 'official', 'markdown', 'jsdoc', 'copy:lastest']);
+    grunt.registerTask('dist', ['version', 'clean', 'skin', 'libjs-dist', 'official', 'markdown', 'jsdoc', 'copy:lastest']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('pub', ['dist']);
 
