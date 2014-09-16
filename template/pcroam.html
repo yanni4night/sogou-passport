@@ -32,11 +32,16 @@
     <script type="text/javascript">
  PassportSC({
         appid:1120,
-        redirectUrl:location.protocol + '//' + location.host + '/xjump.html'
-    }).on('pcroamsuccess',function (e) {
+        pcroamRedirectUrl:location.protocol + '//' + location.host + '/xjump.html',
+        redirectUrl:location.protocol + '//' + location.host + '/jump.html'
+    }).on('pcroamsuccess',function (e,data) {
         document.getElementById('msg').innerHTML = 'token 验证成功';
-    }).on('pcroamfailed',function (e) {
+
+        this.loginPcroam(data.r_key);
+    },PassportSC).on('pcroamfailed',function (e) {
         document.getElementById('msg').innerHTML = 'token 验证失败';
+    }).on('loginsuccess',function(){
+        alert('登录成功');
     });
 
 document.getElementById('form').onsubmit = function(e){

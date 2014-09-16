@@ -75,8 +75,7 @@ var FIXED_URLS = {
     captcha: 'https://account.sogou.com/captcha',
     trdparty: 'http://account.sogou.com/connect/login',
     libprefix: 'http://s.account.sogoucdn.com/u/api',
-    pcroam: 'http://10.11.192.231:8090/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
-    //pcroam: 'https://account.sogou.com/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
+    pcroam: 'https://account.sogou.com/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
 };
 
 var THIRD_PARTY_SIZE = {
@@ -96,9 +95,11 @@ var gAppendixes = [drawAppendix, statisticAppendix, pluginAppendix];
 
 var expandoLogin = EXPANDO + '_login';
 var expandoRoam = EXPANDO + '_roam';
+var expandoRoamLogin = EXPANDO + '_roam_login';
 
 var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoLogin + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expandoLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 var HTML_PC_ROAM = '<form method="post" action="' + FIXED_URLS.pcroam + '" target="' + expandoRoam + '">' + '<input type="hidden" name="type" value="<%=type%>">' + '<input type="hidden" name="s" value="<%=s%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoam + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+var HTML_PC_ROAM_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoRoamLogin + '">' + '<input type="hidden" name="module" value="<%=module%>">' + '<input type="hidden" name="key" value="<%=key%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoamLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
 //For validations of options in bulk
 var VALIDATORS = [{
@@ -113,6 +114,14 @@ var VALIDATORS = [{
     name: ['redirectUrl'],
     validate: function(name, value) {
         return type.isNonEmptyString(value) && new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
+    },
+    errmsg: function(name, value) {
+        return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
+    }
+}, {
+    name: ['pcroamRedirectUrl'],
+    validate: function(name, value) {
+        return type.isNullOrUndefined(value) || new RegExp('^' + location.protocol + "//" + location.host, 'i').test(value);
     },
     errmsg: function(name, value) {
         return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
@@ -370,6 +379,19 @@ var Passport = {
 
         return true;
     },
+    loginPcroam: function(key) {
+        type.assertNonEmptyString('key', key);
+        var payload = {
+            module: 'quicklogin',
+            key: key,
+            appid: gOptions.appid,
+            redirectUrl:gOptions.redirectUrl
+        };
+        assertgFrameWrapper(function(container) {
+            container.innerHTML = template(HTML_PC_ROAM_LOGIN, payload);
+            container.getElementsByTagName('form')[0].submit();
+        });
+    },
     /**
      * Check if a token is avaliable
      *
@@ -387,7 +409,7 @@ var Passport = {
             container.innerHTML = template(HTML_PC_ROAM, {
                 type: ctype,
                 s: token,
-                redirectUrl: gOptions.redirectUrl,
+                redirectUrl: gOptions.pcroamRedirectUrl,
                 appid: gOptions.appid
             });
             container.getElementsByTagName('form')[0].submit();
