@@ -12,13 +12,14 @@
     <div class="row">
         <label for="type">类型</label>
         <select id="type">
-            <option value="t">token</option>
-            <option value="c">cookie</option>
+            <option value="pinyint">输入法 gpitok</option>
+            <option value="iet">浏览器 token</option>
+            <option value="iec">浏览器 cookie</option>
         </select>
     </div>
     <div>
         <label for="token">TOKEN/COOKIE</label>
-        <textarea id="token"></textarea>
+        <textarea id="token">cLNfjivuXYp/MFT4LsqOtMBreljWGFlfpO7dKGc2PYD1THrEagviBQ8i8vNdYzL97B8V9LXaeaaOlrYBYafbUp0Nx2smvIXg/XmVDi3ybtojWjHSk4g19da0L0yp/EnuHuVUlhP3mXbaAD7GAaA7kvqIsmxNVI8e590FtYKjs3FtF65hn6vnH8g2FKvjKAsIvuBtpt0fs0PvlzPiEFODyMYXNh0bJ7gqRTQSmBdbUWhX3tNTJ70QlMqbyKTR+aqc</textarea>
     </div class="row">
     <div class="row">
         <button type="submit">检测</button>
@@ -44,6 +45,7 @@ document.getElementById('form').onsubmit = function(e){
 
     var $select = document.getElementById('type');
     var type = $select.options[$select.selectedIndex].value;
+    console.log(type);
     var token = document.getElementById('token').value;
     PassportSC.checkPCToken(type,token);
 };

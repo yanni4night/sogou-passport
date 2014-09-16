@@ -75,7 +75,7 @@ var FIXED_URLS = {
     captcha: 'https://account.sogou.com/captcha',
     trdparty: 'http://account.sogou.com/connect/login',
     libprefix: 'http://s.account.sogoucdn.com/u/api',
-    pcroam: 'https://account.sogou.com/sso/pc_roam' //validate if a cookie or token from PC client is avaliable
+    pcroam: 'https://account.sogou.com/sso/pc_roam_go' //validate if a cookie or token from PC client is avaliable
 };
 
 var THIRD_PARTY_SIZE = {
@@ -97,7 +97,7 @@ var expandoLogin = EXPANDO + '_login';
 var expandoRoam = EXPANDO + '_roam';
 
 var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoLogin + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expandoLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
-var HTML_PC_ROAM = '<form method="post" action="' + FIXED_URLS.pcroam + '" target="' + expandoRoam + '">' + '<input type="hidden" name="type" value="<%=type%>">' + '<input type="hidden" name="v" value="<%=v%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoam + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+var HTML_PC_ROAM = '<form method="post" action="' + FIXED_URLS.pcroam + '" target="' + expandoRoam + '">' + '<input type="hidden" name="type" value="<%=type%>">' + '<input type="hidden" name="s" value="<%=s%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoam + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
 //For validations of options in bulk
 var VALIDATORS = [{
@@ -372,7 +372,7 @@ var Passport = {
     /**
      * Check if a token is avaliable
      *
-     * @param  {String} ctype  Token ctype,exp:t,c
+     * @param  {String} ctype  Token ctype,exp:iet,iec,pinyint
      * @param  {String} token  A token from PC client.
      * @return {Boolean}       True
      * @class PassportSC
@@ -384,8 +384,8 @@ var Passport = {
 
         assertgFrameWrapper(function(container) {
             container.innerHTML = template(HTML_PC_ROAM, {
-                type: type,
-                v: token,
+                type: ctype,
+                s: token,
                 redirectUrl: gOptions.redirectUrl,
                 appid: gOptions.appid
             });
@@ -543,7 +543,7 @@ var Passport = {
      * @since 0.0.9
      */
     _pcroamcb: function(data){
-        if(data && 0 === +data.status && data.uniqname){
+        if(data && 0 === +data.status && data.r_key){
             this.emit(EVENTS.pc_roam_success, data);
         }else{
             this.emit(EVENTS.pc_roam_failed, data);
