@@ -5,6 +5,8 @@ This is a tentative improvement for sogou passport javascript library.
 
 Continuous developing is still on,see <http://passport.ufo.sogou-inc.com>.
 
+The version published will never change,if you need a continuous upgrading,'lastest' version it is.
+
 build
 ======
 
@@ -17,6 +19,9 @@ test
 
 history
 ======
+
+- 0.1.0.140917:
+    - support pc token/cookie logining
 - 0.0.9.140916:
     - rewrite sogou cookie parser,version 5 is supported
 - 0.0.9.140822:

@@ -1,50 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<title>Passport Pop Test</title>
-<meta name="author" content="yanni4night@gmail.com"/>
-<style>
-    body{
-        padding: 0;
-        margin: 0;
-        background: #333;
-        color: #fff;
-    }
-    pre{
-        background: #000;
-        padding: 1em;
-        white-space: pre-wrap;
-        font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
-    }
-    .orange{
-        color: orange;
-    }
-    .cyan{
-        color: cyan;
-    }
-    .yellow{
-        color: yellow;
-    }
-    .red{
-        color: red;
-    }
-    button{
-        padding: 0.2em 1em;
-        text-align: center;
-        height: 25px;;
-        background: #eee;
-        border: 1px solid #fff;
-        border-radius: 10px;
-        margin: 5px;
-    }
-</style>
-</head>
-<body>
-允许省略构建登录对话框，直接弹出
-<button>弹出<sup>&beta;</sup></button>
-<pre>
+{%extends "common/parent.tpl"%}
 
+
+{%block title%}Passport Pop Test{%endblock%}
+
+
+{%block bodyClass%}body-test{%endblock%}
+
+{%block content%}
+
+{%set menuIndex=5%}
+{%include "common/menu.tpl"%}
+<div class="content">
+    <div class="markd">
+        <span>允许省略构建登录对话框，直接弹出</span>
+        <button>弹出</button>
+    </div>
+<pre>
 <span class="orange">PassportSC</span>({
     appid:1120,
     redirectUrl:location.protocol + '//' + location.host + '/jump.html'
@@ -60,9 +31,12 @@
     });
 });
 </pre>
-</body>
+</div>
+{%endblock%}
+
+{%block bottom%}
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
-<script src="dist/@version@/js/passport-core.js"></script>
+<script src="dist/{{version}}/js/passport-core.js"></script>
 <script>
  PassportSC({
         appid:1120,
@@ -80,4 +54,5 @@ $('button').click(function(e){
 });
 });
 </script>
-</html>
+{%endblock%}
+

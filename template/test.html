@@ -1,54 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<title>Passport Test</title>
-<meta name="author" content="yanni4night@gmail.com"/>
-<style>
-    body{
-        padding: 0;
-        margin: 0;
-        background: #333;
-        color: #fff;
-    }
-    .passport-dialog{
-        width: 400px;
-        position: fixed;
-        _position:absolute;
-        left: 50%;
-        top:100px;
-        margin-left: -200px;
-    }
-    pre{
-        background: #000;
-        padding: 1em;
-        font:20px/1.5 "Courier New",Helvetica,Arial,sans-serif;
-    }
-    .orange{
-        color: orange;
-    }
-    .cyan{
-        color: cyan;
-    }
-    .yellow{
-        color: yellow;
-    }
-    .red{
-        color: red;
-    }
-    button{
-        padding: 0.2em 1em;
-        text-align: center;
-        height: 25px;;
-        background: #eee;
-        border: 1px solid #fff;
-        border-radius: 10px;
-        margin: 5px;
-    }
-</style>
-</head>
-<body>
-    <p>选择皮肤与库加载模式，点击“构建”按钮，将会自动生成一个登录对话框。</p>
+{%extends "common/parent.tpl"%}
+
+{%block title%}Passport Test{%endblock%}
+
+
+{%block bodyClass%}body-test{%endblock%}
+
+{%block content%}
+
+{%set menuIndex=4%}
+{%include "common/menu.tpl"%}
+
+
+<div class="content">
+ <p>选择皮肤与库加载模式，点击“构建”按钮，将会自动生成一个登录对话框。</p>
     <p id="msg"></p>
     <form action="#" id="form">
         <div>
@@ -113,13 +77,17 @@ var PassportSC = {
     }//onApiLoaded
 };
 </pre>
-    <div class="passport-dialog" id="passport-dialog"></div>
-</body>
+<div class="passport-dialog" id="passport-dialog"></div>
+
+</div>
+{%endblock%}
+
+{%block bottom%}
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 
 <script>
     var skin,mode,loaded;
-    var libjs = "dist/@version@/js/passport-core.js";
+    var libjs = "dist/{{version}}/js/passport-core.js";
 
     $(':radio[name="skin"]').change(function(e){
         skin = this.value;
@@ -135,10 +103,8 @@ var PassportSC = {
         
         $(':radio[name="mode"]').not($(this)).prop('disabled',true);
         
-     /*var pre =*/ $('pre#demo-'+mode).show();
-
-     /*      pre.html(pre.html().replace(/\b(PassportSC)\b/mg,'<span class="orange">$1</span>').replace(/\b(on|draw|init)\b/mg,'<span class="cyan">$1</span>').replace(/\b(onApiLoaded)\b/mg,'<span class="yellow">$1</span>').replace(/\b(canvasclosing|drawcomplete|loginstart|loginsuccess|loginfailed|3rdlogincomplete)\b/mg,'<span class="red">$1</span>'));*/
-        
+        $('pre#demo-'+mode).show();
+       
         if(skin&&mode){
             $('#submitWrap').show();
         }
@@ -203,4 +169,5 @@ var PassportSC = {
         loaded = true;
     });
 </script>
-</html>
+{%endblock%}
+
