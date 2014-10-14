@@ -11,7 +11,6 @@
  * HTML dialog part,and export the least number
  * of interfaces.
  *
- * We plan to support HTML dialog by plugins.
  *
  * changelog
  * 2014-05-24[20:43:42]:authorized
@@ -34,9 +33,10 @@
  * 2014-08-08[11:05:06]:initialized plugins here
  * 2014-09-13[01:31:04]:support pc roam checking
  * 2014-09-16[23:59:28]:add 'loginPcroam',rename 'checkPCToken'
+ * 2014-10-14[15:48:14]:support third domain login (eg. teemo.cn)
  *
  * @author yanni4night@gmail.com
- * @version 0.2.5
+ * @version 0.2.6
  * @since 0.1.0
  */
 
@@ -98,7 +98,7 @@ var expandoLogin = EXPANDO + '_login';
 var expandoRoam = EXPANDO + '_roam';
 var expandoRoamLogin = EXPANDO + '_roam_login';
 
-var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoLogin + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expandoLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
+var HTML_FRAME_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoLogin + '">' + '<input type="hidden" name="username" value="<%=username%>">' + '<input type="hidden" name="password" value="<%=password%>">' + '<input type="hidden" name="captcha" value="<%=vcode%>">' + '<input type="hidden" name="autoLogin" value="<%=autoLogin%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="domain" value="<%=domain%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '<input type="hidden" name="token" value="<%=token%>"></form>' + '<iframe name="' + expandoLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 var HTML_PC_ROAM = '<form method="post" action="' + FIXED_URLS.pcroam + '" target="' + expandoRoam + '">' + '<input type="hidden" name="type" value="<%=type%>">' + '<input type="hidden" name="s" value="<%=s%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoam + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 var HTML_PC_ROAM_LOGIN = '<form method="post" action="' + FIXED_URLS.login + '" target="' + expandoRoamLogin + '">' + '<input type="hidden" name="module" value="<%=module%>">' + '<input type="hidden" name="key" value="<%=key%>">' + '<input type="hidden" name="client_id" value="<%=appid%>">' + '<input type="hidden" name="xd" value="<%=redirectUrl%>">' + '</form>' + '<iframe name="' + expandoRoamLogin + '" src="about:blank" style="' + HIDDEN_CSS + '"></iframe>';
 
@@ -127,6 +127,14 @@ var VALIDATORS = [{
     errmsg: function(name, value) {
         return '"' + name + '" SHOULD be a URL which has the some domain as the current page';
     }
+}, {
+    name: ['domain'],
+    validate: function(name, value) {
+        return type.isNullOrUndefined(value) || type.isNonEmptyString(value);
+    },
+    errmsg: function(name, value) {
+        return '"' + name + '" SHOULD be undefined or non-empty string';
+    }
 }];
 
 var gOptions = null;
@@ -134,7 +142,9 @@ var PassportSC = null;
 var gFrameWrapper = null;
 var defaultOptions = {
     appid: null,
-    redirectUrl: null
+    redirectUrl: null,
+    domain: null,
+    pcroamRedirectUrl: null
 };
 
 var NOT_INITIALIZED_ERROR = 'Passport has not been initialized yet';
@@ -168,31 +178,28 @@ function assertgFrameWrapper(callback) {
  *
  * @param {Object} options
  * @ignore
- * @throws {Error} If any validattion failed
+ * @throws {Error} If any validation failed
  */
 function validateOptions(options) {
-    var i, j, validator, name, opt;
-
-    opt = gOptions = {};
+    var i, j, validator, name;
 
     type.assertPlainObject('options', options);
 
-    UTILS.lone.mixin(opt, defaultOptions);
-    UTILS.lone.mixin(opt, options);
+    UTILS.lone.mixin(gOptions = {}, {
+        _token: UTILS.math.uuid()
+    }, defaultOptions, options);
 
     for (i = VALIDATORS.length - 1; i >= 0; --i) {
         validator = VALIDATORS[i];
         for (j = validator.name.length - 1; j >= 0; --j) {
             name = validator.name[j];
-            if (!validator.validate(name, opt[name])) {
+            if (!validator.validate(name, gOptions[name])) {
                 throw new Error(type.strfunction === typeof validator.errmsg ?
-                    validator.errmsg(name, opt[name]) : validator.errmsg
+                    validator.errmsg(name, gOptions[name]) : validator.errmsg
                 );
             }
         }
     }
-    //DON'T FORGET IT
-    opt._token = UTILS.math.uuid();
 }
 
 /**
@@ -294,6 +301,8 @@ var Passport = {
      * The following options must be set in options:
      * 1.appid -- Integer of ID,it depends on the product line;
      * 2.redirectUrl -- A same domain page url for cross-domain;
+     * 3.pcroamRedirectUrl -- A same domain page url for pc roam cross-domain;
+     * 4.domain -- A third domain that requires login(eg. teemo.cn);
      *
      * @param  {Object} options Required options
      * @class PassportSC
@@ -364,6 +373,7 @@ var Passport = {
         payload = {
             username: username,
             password: password,
+            domain: gOptions.domain || "",
             vcode: vcode || "",
             autoLogin: +(!!autoLogin), //:0/1
             appid: gOptions.appid,
@@ -386,7 +396,7 @@ var Passport = {
             module: 'quicklogin',
             key: key,
             appid: gOptions.appid,
-            redirectUrl:gOptions.redirectUrl
+            redirectUrl: gOptions.redirectUrl
         };
         assertgFrameWrapper(function(container) {
             container.innerHTML = template(HTML_PC_ROAM_LOGIN, payload);
@@ -561,15 +571,15 @@ var Passport = {
      * Pc roam checking callback.
      *
      * DO NOT call it directly.
-     * 
+     *
      * @param  {Object} token checking result
      * @class PassportSC
      * @since 0.0.9
      */
-    _pcroamcb: function(data){
-        if(data && 0 === +data.status && data.r_key){
+    _pcroamcb: function(data) {
+        if (data && 0 === +data.status && data.r_key) {
             this.emit(EVENTS.pc_roam_success, data);
-        }else{
+        } else {
             this.emit(EVENTS.pc_roam_failed, data);
         }
     },
@@ -610,6 +620,22 @@ var Passport = {
      */
     getOptions: function() {
         return UTILS.lone.mixin({}, gOptions);
+    },
+    /**
+     * Set passport option.If the value is illegal,it will be ignored.
+     *
+     * @param {String} key   Options key
+     * @param {Mixed} value Options value
+     * @class PassportSC
+     * @since 0.1.1
+     * @return {Mixed} New option value.
+     */
+    setOption: function(key, value) {
+        if (type.isNullOrUndefined(key)) {
+            return key;
+        }
+        gOptions[key] = value;
+        return gOptions[key];
     },
     /**
      * Get a copy of events which passport supports.
@@ -678,7 +704,7 @@ UTILS.lone.mixin(PassportSC, Passport, new XEvent());
 
 //PassportSC is shy.
 //We do this for hiding source of its function members,
-//which may show up in chrome console.
+//which may show up in chrome/firefox/opera console.
 for (e in PassportSC) {
     if (type.isFunction(PassportSC[e])) {
         UTILS.lone.hideSource(e, PassportSC[e]);
@@ -708,7 +734,7 @@ var core = {
     }
 };
 
-//Merge plugin
+//Merge appendixes
 //We have to initialize plugins because 'onApiLoaded'
 UTILS.array.forEach(gAppendixes, function(appendixInit, idx) {
     appendixInit(core);

@@ -1,0 +1,85 @@
+{%extends "common/parent.tpl"%}
+
+{%block top%}{%endblock%}
+
+{%block bodyClass%}body-index{%endblock%}
+
+
+{%block content%}
+
+{%set menuIndex=8%}
+{%include "common/menu.tpl"%}
+
+        <div class="article"> 
+        <h4>准备</h4>
+        <p>
+            搜狗通行证系统为每个应用分配了一个唯一的Appid，如游戏为1100，壁纸为2002等。
+        </p>
+        <p>
+            除了<a href="http://account.sogou.com/" target="_blank">通行证官网</a>外，所有 Web 端产品均为跨域登录。为实现跨域，我们使用 iframe，但需要一个与应用同域的辅助页面，称为 <dfn>jump.html</dfn>，如<a target="_blank" href="view-source:http://wan.sogou.com/static/jump.html">游戏</a>和<a target="_blank" href="view-source:http://bizhi.sogou.com/user/jump">壁纸</a>。
+        </p>
+        <h4>安装</h4>
+        <p>
+            我们推荐引用通行证 CDN 上的 SDK。
+        </p>
+        <p>
+            新版JS SDK版本发布不定期，一旦发布不再修改，bug修复和新功能开发会发布新版本。查看所有版本及修改历史，请移步<a href="/README.html">这里</a>。
+        </p>
+        <p>
+            当前最新版本为：<a href="http://s.account.sogoucdn.com/u/api/{{version}}/js/passport-core.js">http://s.account.sogoucdn.com/u/api/{{version}}/js/passport-core.js</a>。
+        </p>
+        <p>
+            如果你能够承受新版发布所带来的不兼容风险，你也可以使用：<a href="http://s.account.sogoucdn.com/u/api/latest/js/passport-core.js">http://s.account.sogoucdn.com/u/api/latest/js/passport-core.js</a>。
+        </p>
+        <h4>编码</h4>
+        <h5>初始化</h5>
+        <pre>
+PassportSC({
+    appid: 1010,
+    redirectUrl: location.protocol+"//"+location.host+'/jump.html',
+    domain: 'teemo.cn'//支持外域登录
+});</pre>
+<h5>事件</h5>
+        <pre>
+//All events
+var evts = PassportSC.getSupportedEvents();
+PassportSC.on([evts.login_success, evts.third_party_login_complete].join(' '),
+    function(evt, data){
+        //login succeed
+}).on(evts.login_failed, function(evt, data){
+    //login failed
+    alert(data.msg);
+    if ( !!data.captchaimg ){
+        //show captcha
+    }else if ( !!data.activeurl ){
+        //your account need to be actived
+    }
+});</pre>
+<h5>登录</h5>
+<pre>
+PassportSC.login('user', 'pass', '0EF5'/*captcha*/, true/*auto login*/);
+</pre>
+<h5>第三方登录</h5>
+<p>弹出式的第三方登录需要另一个辅助页面，请参考<a href="view-source:http://wan.sogou.com/static/popup.html" target="_blank">http://wan.sogou.com/static/popup.html</a>。非弹出式则不需要。</p>
+<pre>
+PassportSC.login3rd('qq', 'popup',location.protocol+"//"+location.host+"/popup.html");
+</pre>
+<h5>退出</h5>
+<pre>
+PassportSC.logout();
+</pre>
+        </div><!--article-->
+        <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'sogou-ufo'; // required: replace example with your forum shortname
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+{%endblock%}

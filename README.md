@@ -20,6 +20,8 @@ test
 history
 ======
 
+- 0.1.1.1410*(proceeding):
+    - support third domain login(teemo.cn)
 - 0.1.0.140917:
     - support pc token/cookie logining
 - 0.0.9.140916:
