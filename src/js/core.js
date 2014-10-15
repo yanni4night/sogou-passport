@@ -34,9 +34,10 @@
  * 2014-09-13[01:31:04]:support pc roam checking
  * 2014-09-16[23:59:28]:add 'loginPcroam',rename 'checkPCToken'
  * 2014-10-14[15:48:14]:support third domain login (eg. teemo.cn)
+ * 2014-10-15[12:07:28]:support phone number
  *
  * @author yanni4night@gmail.com
- * @version 0.2.6
+ * @version 0.2.7
  * @since 0.1.0
  */
 
@@ -227,7 +228,7 @@ var Tools = {
      * @since 0.0.8
      */
     validateUsername: function(username) {
-        return type.isNonEmptyString(username) && /^[a-zA-Z]([a-zA-Z0-9_@\.-]{3,})$/.test(username);
+        return type.isNonEmptyString(username) && /^([a-zA-Z0-9_@\.-]{4,})$/.test(username);
     },
     /**
      * Validate password.
