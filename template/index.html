@@ -115,11 +115,11 @@ loadSync('dist/{{version}}/js/passport-core.js');
             <p>
                登录接口（异步）：
             </p>
-            <code id="api-login">PassportSC.login(username, password, vcode, autoLogin);</code>
+            <code id="api-login">PassportSC.login(username, password, vcode, autoLogin, function(){}, function(){});</code>
             <p>
                 登出接口（异步）：
             </p>
-            <code id="api-logout">PassportSC.logout();</code>
+            <code id="api-logout">PassportSC.logout(function(){});</code>
             <a href="#disqus_thread" class="q">
                 由于登出调用并无失败返回，因此 <q>logoutsuccess</q> 事件是否有意义，在其事件回调内的代码是否安全？
             </a>
@@ -129,7 +129,7 @@ loadSync('dist/{{version}}/js/passport-core.js');
             <code id="api-userid">PassportSC.userid();</code>
 
             <p>第三方登录：</p>
-            <code id="api-login3rd">PassportSC.login3rd(provider,display,redirectUrl);</code>
+            <code id="api-login3rd">PassportSC.login3rd(provider,display,redirectUrl, function(){});</code>
             <a href="#disqus_thread" class="q">
                 第三方登录在使用 <q>window.open</q> 打开弹出窗口需要依赖一个同域下的回调文件，即 <q>redirectUrl</q>，该值应该在 <i>Passport.init</i> 中传入还是应该在
                 <i>PassportSC.login3rd</i> 中传入？
@@ -261,7 +261,7 @@ PassportSC
             $('info').innerHTML = msg;
         }
         PassportSC({
-            appid: 1120,
+            appid: 2020,
             redirectUrl: location.protocol+"//"+location.host+'/jump.html'
         })
         .on('loginstart',function(){
@@ -270,9 +270,9 @@ PassportSC
         .on('paramerror',function(){
             $('info').innerHTML = 'Parameter(s) error';
         })
-        .on(' loginsuccess  loginfailed  logoutsuccess needcaptcha 3rdlogincomplete',function(evt,data){
-            $('info').innerHTML = 'Event:' + evt.type.replace(/(log(?:in|out)|need)/,"$1 ");
-            if('needcaptcha' === evt.type){
+        .on('logoutsuccess 3rdlogincomplete',function(evt,data){
+            $('info').innerHTML = 'Event:' + evt.type.replace(/(log(?:in|out))/,"$1 ") + (decodeURIComponent(data.msg||""));
+            if(!! data.captchaimg){
                 $('captcha-div').style.display = 'block';
                 $('captcha-img').src = data.captchaimg;
                 $('captcha').value = '';
@@ -290,7 +290,17 @@ PassportSC
                 var $domain = $('domain');
                 e = e || window.event;
                 PassportSC.setOption('domain',$domain.options[$domain.selectedIndex].value);
-                PassportSC.login($('username').value,$('password').value,$('captcha').value,false);
+                PassportSC.login($('username').value,
+                    $('password').value,
+                    $('captcha').value,
+                    false,
+                    function(){
+                        $('info').innerHTML = '登录成功';
+                    },
+                    function(){
+                        $('info').innerHTML = '登录失败';
+                    }
+                    );
                 e.preventDefault&&e.preventDefault();
                 e.returnValue = false;
             }catch(err){

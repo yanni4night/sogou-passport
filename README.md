@@ -3,9 +3,9 @@ passport
 
 This is a tentative improvement for sogou passport javascript library.
 
-Continuous developing is still on,see <http://passport.ufo.sogou-inc.com>.
+Continuous developing is still on,see <http://passport.ufo.sogou-inc.com/>.
 
-The version published will never change,if you need a continuous upgrading,'lastest' version it is.
+The version published will never change,if you need a continuous upgrading,'latest' version it is.
 
 build
 ======
@@ -15,11 +15,13 @@ build
 test
 ======
 
-`grunt karma`
+`grunt karma` or `karma start`
 
 history
 ======
 
+- 0.2.0.141016:
+    - support immediate callback for 'login/'login3rd/logout'
 - 0.1.1.141015:
     - support mobile number
 - 0.1.1.141014:

@@ -68,7 +68,9 @@ var EventEmitter = function() {
         var evtArr, objs;
 
         type.assertNonEmptyString('event', event);
-        type.assertFunction('func', func);
+        if (func) {
+            type.assertFunction('func', func);
+        }
 
         evtArr = string.trim(event).split(/\s/);
         array.forEach(evtArr, function(evt) {

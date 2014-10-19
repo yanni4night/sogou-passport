@@ -35,9 +35,10 @@
  * 2014-09-16[23:59:28]:add 'loginPcroam',rename 'checkPCToken'
  * 2014-10-14[15:48:14]:support third domain login (eg. teemo.cn)
  * 2014-10-15[12:07:28]:support phone number
+ * 2014-10-15[20:47:02]:support instant-defined callback for login/login3rd/logout
  *
  * @author yanni4night@gmail.com
- * @version 0.2.7
+ * @version 0.2.8
  * @since 0.1.0
  */
 
@@ -263,6 +264,11 @@ for (e in Tools) {
     }
 }
 
+var alwaysLoginSuccessCb = type.noop,
+    alwaysLoginFailureCb = type.noop,
+    alwaysTrdLoginCompleteCb = type.noop,
+    alwaysLogoutSuccessCb = type.noop;
+
 /**
  * Core passport object.
  *
@@ -326,13 +332,15 @@ var Passport = {
      * @class PassportSC
      * @param  {String} username
      * @param  {String} password
-     * @param  {String} vcode
+     * @param  {String} vcode captcha
      * @param  {Boolean} autoLogin
+     * @param  {Function} successcb Success callback
+     * @param  {Function} failurecb Failure callback
      * @return {Boolean} If login action is executed
      * @throws {Error} If not initialized
      * @since 0.0.8
      */
-    login: function(username, password, vcode, autoLogin) {
+    login: function(username, password, vcode, autoLogin, successcb, failurecb) {
         if (!this.isInitialized()) {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
@@ -341,9 +349,16 @@ var Passport = {
 
         var payload;
 
-        if (arguments.length < 4) {
-            autoLogin = vcode;
-            vcode = '';
+        this.off(EVENTS.login_failed, alwaysLoginFailureCb);
+        if (failurecb) {
+            type.assertFunction('failurecb', failurecb);
+            this.on(EVENTS.login_failed, alwaysLoginFailureCb = failurecb);
+        }
+
+        this.off(EVENTS.login_success, alwaysLoginSuccessCb);
+        if (successcb) {
+            type.assertFunction('successcb', successcb);
+            this.on(EVENTS.login_success, alwaysLoginSuccessCb = successcb);
         }
 
         if (!Tools.validateUsername(username)) {
@@ -436,11 +451,12 @@ var Passport = {
      * @param  {String} provider qq|sina|renren
      * @param  {String} display page|popup
      * @param  {String} redirectUrl
+     * @param  {Function} completecb Login 3rd complete callback
      * @return {this}
      * @throws {Error} If any parameter failed
      * @since 0.0.8
      */
-    login3rd: function(provider, display, redirectUrl) {
+    login3rd: function(provider, display, redirectUrl, completecb) {
         if (!this.isInitialized()) {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
@@ -450,6 +466,12 @@ var Passport = {
         var size = THIRD_PARTY_SIZE.size[provider];
         if (!size) {
             throw new Error('provider:"' + provider + '" is not supported in  third party login');
+        }
+
+        this.off(EVENTS.third_party_login_complete, alwaysTrdLoginCompleteCb);
+        if (completecb) {
+            type.assertFunction('completecb', completecb);
+            this.on(EVENTS.third_party_login_complete, alwaysTrdLoginCompleteCb = completecb);
         }
 
         if ('popup' === display) {
@@ -483,22 +505,30 @@ var Passport = {
      *
      * Alert:we cannot get the logout failure callback.
      *
+     * @param {Function} successcb Logout success callback
      * @class PassportSC
      * @return {this}
      * @throws {Error} If not initialized
      * @since 0.0.8
      */
-    logout: function() {
+    logout: function(successcb) {
         if (!this.isInitialized()) {
             throw new Error(NOT_INITIALIZED_ERROR);
         }
+
+        this.off(EVENTS.logout_success, alwaysLogoutSuccessCb);
+        if (successcb) {
+            type.assertFunction('successcb', successcb);
+            this.on(EVENTS.logout_success, alwaysLogoutSuccessCb = successcb);
+        }
+
         console.debug('logouting');
         var self = this;
         var url = FIXED_URLS.logout + '?client_id=' + gOptions.appid;
 
         assertgFrameWrapper(function(container) {
             UTILS.dom.addIframe(container, url, function() {
-                self.emit(EVENTS.logout_success);
+                self.emit(EVENTS.logout_success, {});
             });
         });
 
@@ -630,6 +660,7 @@ var Passport = {
      * @class PassportSC
      * @since 0.1.1
      * @return {Mixed} New option value.
+     * @todo  validation
      */
     setOption: function(key, value) {
         if (type.isNullOrUndefined(key)) {
