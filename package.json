@@ -1,5 +1,5 @@
 {
-  "name": "passport",
+ "name": "passport-jsdk",
   "version": "0.2.0",
   "description": "simple sogou passport font-end library",
   "keywords": [
@@ -14,17 +14,17 @@
     "url": "http://yanni4night.com"
   },
   "bugs": {
-    "url": "http://git.ufo.sogou-inc.com/yinyong/passport/issues"
+    "url": "http://git.ufo.sogou-inc.com/passport/passport-jsdk/issues"
   },
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git@git.ufo.sogou-inc.com:yinyong/passport.git"
+    "url": "git@git.ufo.sogou-inc.com:passport/passport-jsdk.git"
   },
   "licenses": [
     {
       "type": "GPLv3",
-      "url": "http://git.ufo.sogou-inc.com/yinyong/passport/blob/master/LICENSE-GPLv3"
+      "url": "http://git.ufo.sogou-inc.com/passport/passport-jsdk/blob/master/LICENSE-GPLv3"
     }
   ],
   "devDependencies": {
