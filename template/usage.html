@@ -68,12 +68,20 @@ true/*auto login*/, function(){}/*success callback*/, function(){}/*failure call
 <p>弹出式的第三方登录需要另一个辅助页面，请参考<a href="view-source:http://wan.sogou.com/static/popup.html" target="_blank">http://wan.sogou.com/static/popup.html</a>。非弹出式则不需要。</p>
 <pre>
 PassportSC.login3rd('qq', 'popup',
-location.protocol+"//"+location.host+"/popup.html", function(){}/*complete callback*/);
+location.protocol+"//"+location.host+"/static/popup.html", function(){}/*complete callback*/);
 </pre>
 <h5>退出</h5>
 <pre>
 PassportSC.logout(function(){}/*success callback*/);
 </pre>
+<h5>工具</h5>
+<p>如果你不想自定义用户名密码的校验函数，可以使用</p>
+<pre>
+PassportSC.tools.validateUsername()
+PassportSC.tools.validatePassport()
+PassportSC.tools.validateCaptcha()
+</pre>
+
         </div><!--article-->
         <div id="disqus_thread"></div>
     <script type="text/javascript">

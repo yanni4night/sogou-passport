@@ -36,9 +36,10 @@
  * 2014-10-14[15:48:14]:support third domain login (eg. teemo.cn)
  * 2014-10-15[12:07:28]:support phone number
  * 2014-10-15[20:47:02]:support instant-defined callback for login/login3rd/logout
+ * 2014-10-23[22:16:56]:comments
  *
  * @author yanni4night@gmail.com
- * @version 0.2.8
+ * @version 0.2.9
  * @since 0.1.0
  */
 
@@ -264,6 +265,7 @@ for (e in Tools) {
     }
 }
 
+//Some instant callback
 var alwaysLoginSuccessCb = type.noop,
     alwaysLoginFailureCb = type.noop,
     alwaysTrdLoginCompleteCb = type.noop,
@@ -406,10 +408,17 @@ var Passport = {
 
         return true;
     },
+    /**
+     * Login by r_key,which is a string exchanged by iet/etc/gpbtok.
+     * 
+     * @param  {String} key r_key
+     * @return {this}
+     * @throws {Error} If key is not a non-empty string.
+     */
     loginPcroam: function(key) {
         type.assertNonEmptyString('key', key);
         var payload = {
-            module: 'quicklogin',
+            module: 'quicklogin',//never changed
             key: key,
             appid: gOptions.appid,
             redirectUrl: gOptions.redirectUrl
@@ -418,14 +427,19 @@ var Passport = {
             container.innerHTML = template(HTML_PC_ROAM_LOGIN, payload);
             container.getElementsByTagName('form')[0].submit();
         });
+
+        return this;
     },
     /**
-     * Check if a token is avaliable
+     * Check if a token is avaliable in pc roam login.
+     *
+     * A pc_roam_success/pc_roam_failed event will be emmited.
      *
      * @param  {String} ctype  Token ctype,exp:iet,iec,pinyint
      * @param  {String} token  A token from PC client.
-     * @return {Boolean}       True
+     * @return {this}
      * @class PassportSC
+     * @throws {Error} If ctype/token is not validated.
      * @since 0.0.9
      */
     checkPcroamToken: function(ctype, token) {
@@ -442,7 +456,7 @@ var Passport = {
             container.getElementsByTagName('form')[0].submit();
         });
 
-        return true;
+        return this;
     },
     /**
      * Third party login.
@@ -500,8 +514,9 @@ var Passport = {
         return this;
     },
     /**
-     * Do logout.This functions does not accept any parameter,it's
-     * callback is event "loginoutsuccess".
+     * Do logout.
+     * 
+     * A 'loginoutsuccess' event will be emmited.
      *
      * Alert:we cannot get the logout failure callback.
      *
@@ -534,7 +549,7 @@ var Passport = {
 
     },
     /**
-     * Get userid from cookie.
+     * Get userid from 'ppinf' cookie.
      *
      * @class PassportSC
      * @return {String} userid or empty string
@@ -554,6 +569,7 @@ var Passport = {
      * DO NOT call it directly.
      *
      * @param {Object} data login result
+     * @throws {Error} If not initialized
      * @class PassportSC
      * @since 0.0.8
      */

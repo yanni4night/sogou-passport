@@ -93,6 +93,9 @@ var pluginInit = function(core) {
      * This function accept multiple plugin names and a callback function.
      * Only all the plugins loaded successfully,the callback could be called.
      *
+     * eg.
+     * PassportSC.requirePlugins('pop','jQuery',function(){});
+     *
      * @param {String} names... Plugin name.
      * @param  {Function} done Plugins loaded callback.
      * @class PassportSC
@@ -138,7 +141,7 @@ var pluginInit = function(core) {
 
         this.on(this.getSupportedEvents().plugin_loaded, function(e, data) {
             //Just check the loading plugins
-            if (~array.indexOf(names, data.plugin) /* && !--nonLoadedPluginsCnt*/ ) {
+            if (~array.indexOf(names, data.plugin)) {
                 //Avoid dumplicated names in requirement.
                 names = array.filter(names, function(name) {
                     return name !== data.plugin;

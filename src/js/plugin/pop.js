@@ -69,7 +69,8 @@ function funInit() {
     PC[_pluginName] = function(conf) {
         conf = this.utils.lone.extend({
             mask: false,
-            maskClickClose: false
+            maskClickClose: false,
+            closeOnSuccess: true
         }, conf || {});
 
         if (!$dialog) {
@@ -133,12 +134,18 @@ function funInit() {
                     });
                     calculatePos(true);
                 }
-            }).on('canvasclosing', function(e) {
+            }).on('canvasclosing ', function(e) {
                 $dialog.hide();
                 if ($mask) {
                     $mask.hide();
                 }
-
+            }).on(evts.login_success, function(e) {
+                if (conf.closeOnSuccess) {
+                    $dialog.hide();
+                    if ($mask) {
+                        $mask.hide();
+                    }
+                }
             }).draw(conf);
         } else {
             if ($mask) {

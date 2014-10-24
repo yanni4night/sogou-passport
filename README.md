@@ -20,8 +20,11 @@ test
 history
 ======
 
+- 0.2.0.141023:
+    - pop plugin support close on success
 - 0.2.0.141016:
     - support immediate callback for 'login/'login3rd/logout'
+    - 'vcode' cannot be void in 'login'
 - 0.1.1.141015:
     - support mobile number
 - 0.1.1.141014:
