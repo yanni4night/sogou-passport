@@ -20,6 +20,8 @@ test
 history
 ======
 
+- 0.2.0.141028:
+    - fixed wrong string.trim
 - 0.2.0.141023:
     - pop plugin support close on success
 - 0.2.0.141016:

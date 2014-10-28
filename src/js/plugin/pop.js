@@ -134,7 +134,7 @@ function funInit() {
                     });
                     calculatePos(true);
                 }
-            }).on('canvasclosing ', function(e) {
+            }).on('canvasclosing', function(e) {
                 $dialog.hide();
                 if ($mask) {
                     $mask.hide();
@@ -159,7 +159,6 @@ function funInit() {
         //Return PassportSC self,requires.
         return this;
     };
-
     //!This event has to be emitted.
     PC.emit(evts.plugin_loaded, {
         plugin: _pluginName

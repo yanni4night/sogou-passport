@@ -17,8 +17,8 @@
 var type = require('./type');
 
 //https://github.com/jquery/sizzle/blob/96728dd43c62dd5e94452f18564a888e7115f936/src/sizzle.js#L102
-var whitespace = "[\\x20\\t\\r\\n\\f]";
-var rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g");
+var whitespace = "[\\x20\\t\\r\\n\\f\\uFEFF]";
+var rtrim = new RegExp("(^" + whitespace + "+)|(" + whitespace + "+$)", "g");
 
 module.exports = {
     /**
